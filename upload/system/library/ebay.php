@@ -1,13 +1,9 @@
 <?php
-final class Ebay 
+final class Ebay
 {
     private $registry;
     private $url    = 'https://uk.openbaypro.com/';
-    private $noLog  = array(
-                            'notification/getPublicNotifications/',
-                            'setup/getEbayCategories/',
-                            'item/getItemAllList/'
-                      );
+    private $noLog  = array('notification/getPublicNotifications/','setup/getEbayCategories/','item/getItemAllList/', 'account/validate/');
 
     public function __construct($registry) {
         $this->registry     = $registry;
@@ -18,6 +14,9 @@ final class Ebay
         $this->server       = 1;
         $this->lasterror    = '';
         $this->lastmsg      = '';
+
+        $this->load->library('log');
+        $this->logger = new Log('ebaylog.log');
     }
     
     public function __get($name) {
@@ -25,15 +24,6 @@ final class Ebay
     }
 
     public function log($data, $write = true){
-        /*
-        * log
-        *
-        * Logs data to the ebay log
-        *
-        * @param $data
-        * @param bool $write
-        */
-
         if($this->logging == 1){
             if(function_exists('getmypid')){
                 $pId = getmypid();
@@ -41,7 +31,7 @@ final class Ebay
             }
             
             if($write == true){
-                $this->ebaylog->write($data);
+                $this->logger->write($data);
             }
         }
     }
