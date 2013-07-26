@@ -140,6 +140,8 @@
         </table>
 
 
+
+      <form action="<?php echo $delete; ?>" method="post" enctype="multipart/form-data" id="form">
         <table class="list">
           <thead>
             <tr>
@@ -224,6 +226,7 @@
             <?php } ?>
           </tbody>
         </table>
+      </form>
       <div class="pagination"><?php echo $pagination; ?></div>
     </div>
   </div>
