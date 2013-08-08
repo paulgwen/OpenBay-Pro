@@ -1616,26 +1616,26 @@
 }
 
     function profileGenericUpdate(){
-    if($('#profile_generic').val() != 'def'){
-        $('#profileGenericLoading').show();
+        if($('#profile_generic').val() != 'def'){
+            $('#profileGenericLoading').show();
 
-        $.ajax({
-            type:'GET',
-            dataType: 'json',
-            url: 'index.php?route=ebay/profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_generic').val(),
-            success: function(data){
-                setTimeout(function(){
+            $.ajax({
+                type:'GET',
+                dataType: 'json',
+                url: 'index.php?route=ebay/profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_generic').val(),
+                success: function(data){
+                    setTimeout(function(){
+                        if(data.data.private_listing == 1){
+                            $('#private_listing').prop('checked', true);
+                        }else{
+                            $('#private_listing').removeAttr('checked');
+                        }
 
-                    if(data.data.private_listing == 1){
-                        $('#private_listing').prop('checked', true);
-                    }else{
-                        $('#private_listing').removeAttr('checked');
-                    }
-
-                    $('#profileGenericLoading').hide();
-                }, 1000);
-            }
-        });
+                        $('#profileGenericLoading').hide();
+                    }, 1000);
+                }
+            });
+        }
     }
 }
 
