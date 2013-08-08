@@ -1468,7 +1468,7 @@ final class Ebay
                     $this->db->query("UPDATE `" . DB_PREFIX . "ebay_setting_option` SET `data` = '" . $this->db->escape(serialize($response['countries'])) . "', `last_updated`  = now() WHERE `key` = 'countries' LIMIT 1");
                     $this->log('Updated countries into ebay_setting_option table');
                 } else {
-                    $this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_setting_option` SET `key` = 'dispatch_time_max', `data` = '" . $this->db->escape(serialize($response['countries'])) . "', `last_updated`  = now()");
+                    $this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_setting_option` SET `key` = 'countries', `data` = '" . $this->db->escape(serialize($response['countries'])) . "', `last_updated`  = now()");
                     $this->log('Inserted countries into ebay_setting_option table');
                 }
             } else {
