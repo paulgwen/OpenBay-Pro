@@ -1637,7 +1637,6 @@
             });
         }
     }
-}
 
     function removeVariationImage(grp_id, id, number){
         $('#option_image_'+grp_id+'_'+id+'_'+number).remove();
