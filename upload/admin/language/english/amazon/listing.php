@@ -9,6 +9,8 @@ $_['button_return'] = 'Back to products';
 $_['button_amazon_price'] = "Get Amazon's price";
 $_['button_list'] = "List on Amazon";
 
+//Text
+$_['text_products_sent'] = 'Products were sent for processing';
 $_['text_view_on_amazon'] = 'View on Amazon';
 $_['text_list'] = 'List';
 $_['text_new'] = 'New';
@@ -181,3 +183,6 @@ $_['column_model'] = 'Model';
 $_['column_combination'] = 'Combination';
 $_['column_sku'] = 'SKU';
 $_['column_amazon_sku'] = 'Amazon item SKU';
+$_['error_sending_products'] = 'Could not send products for listing. Please contact OpenBay Pro support';
+$_['lang_no_results'] = 'No results found';
+$_['error_no_products_selected'] = 'No products were selected for listing';

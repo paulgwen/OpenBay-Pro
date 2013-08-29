@@ -1,6 +1,6 @@
 <?php
-class ModelAmazonPatch extends Model
-{ 
+class ModelAmazonPatch extends Model { 
+    
     public function runPatch($manual = true){
         /*
          * Manual flag to true is set when the user runs the patch method manually
@@ -26,7 +26,7 @@ class ModelAmazonPatch extends Model
                     AUTO_INCREMENT = 1,
                     ADD PRIMARY KEY (`id`),
                     ADD `var` char(100) NOT NULL DEFAULT ''");
-            }
+        }
             
             //Check if we have amazon_product table without "var" column
             $amazonProductVarColumn = $this->db->query("SHOW COLUMNS FROM `" . DB_PREFIX . "amazon_product` WHERE `Field` = 'var'")->rows;
@@ -77,6 +77,16 @@ class ModelAmazonPatch extends Model
                 $this->db->query("ALTER TABLE `" . DB_PREFIX . "amazon_product`
                     MODIFY `status` ENUM('saved','uploaded','ok','error')");
             }
+
+            $this->db->query("
+                CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "amazon_product_search` (
+                    `product_id` int(11) NOT NULL,
+                    `marketplace` enum('uk','de','es','it','fr') NOT NULL,
+                    `status` enum('searching','finished') NOT NULL,
+                    `matches` int(11) DEFAULT NULL,
+                    `data` text,
+                    PRIMARY KEY (`product_id`,`marketplace`)
+                ) DEFAULT COLLATE=utf8_general_ci;");
         }
 
         return true;
