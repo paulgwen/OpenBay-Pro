@@ -1320,6 +1320,12 @@ class ControllerExtensionOpenbay extends Controller {
             'href'      => $this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL'),
             'separator' => ' :: '
         );
+        
+        if ($this->config->get('amazon_status')) {
+            $this->data['href_amazon_bulk_list'] = $this->url->link('openbay/amazon/bulkListProducts', 'token=' . $this->session->data['token'] . $url, 'SSL');
+        } else {
+            $this->data['href_amazon_bulk_list'] = '';
+        }
 
         $this->data['products'] = array();
 
