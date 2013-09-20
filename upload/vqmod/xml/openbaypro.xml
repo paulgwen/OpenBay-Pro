@@ -156,7 +156,23 @@
 
     <!-- add order status info / update -->
     <file name="admin/view/template/sale/order_info.tpl">
-        <operation>
+        <!-- 1.5.1.3 -->
+        <operation error="skip">
+            <search position="after"><![CDATA[function history() {]]></search>
+            <add><![CDATA[
+                    if(typeof verifyStatusChange == 'function'){
+                        if(verifyStatusChange() == false){
+                            return false;
+                        }else{
+                            addOrderInfo();
+                        }
+                    }else{
+                        addOrderInfo();
+                    }
+                  ]]></add>
+        </operation>
+        <!-- 1.5.1.3 > -->
+        <operation error="skip">
             <search position="after"><![CDATA[$('#button-history').live('click', function() {]]></search>
             <add><![CDATA[
                     if(typeof verifyStatusChange == 'function'){
