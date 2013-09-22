@@ -498,7 +498,7 @@
                         <td><?php echo $lang_despatch_country; ?></td>
                         <td>
                             <select name="country" id="country">
-                                <?php foreach($product['countries'] as $country){ ?>
+                                <?php foreach($setting['countries'] as $country){ ?>
                                 <option value="<?php echo $country['code'];?>"><?php echo $country['name'];?></option>
                                 <?php } ?>
                             </select>
@@ -508,7 +508,7 @@
                         <td><?php echo $lang_despatch_time; ?></td>
                         <td>
                             <select name="dispatch_time" id="dispatch_time">
-                                <?php foreach($product['dispatchTimes'] as $dis){ ?>
+                                <?php foreach($setting['dispatch_times'] as $dis){ ?>
                                     <option value="<?php echo $dis['DispatchTimeMax'];?>"><?php echo $dis['Description'];?></option>
                                 <?php } ?>
                             </select>
@@ -555,53 +555,84 @@
                             <select name="profile_return" id="profile_return" class="returns_input">
                                 <option value="def"><?php echo $lang_select; ?></option>
                                 <?php if(is_array($product['profiles_returns'])){ foreach($product['profiles_returns'] as $profile) { ?>
-                                    <?php echo '<option value="'.$profile['ebay_profile_id'].'">'.$profile['name'].'</option>'; ?>
+                                <option value="<?php echo $profile['ebay_profile_id']; ?>"><?php echo $profile['name']; ?></option>
                                 <?php } } ?>
                             </select>
                             <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" id="profileReturnsLoading" class="displayNone" />
                         </td>
                     </tr>
+                    <?php if(!empty($setting['returns']['accepted'])) { ?>
                     <tr>
                         <td><?php echo $lang_return_accepted; ?></td>
                         <td>
                             <select name="returns_accepted" id="returns_accepted" class="returns_input">
-                                <option value="ReturnsNotAccepted"><?php echo $lang_no; ?></option>
-                                <option value="ReturnsAccepted"><?php echo $lang_yes; ?></option>
+                                <?php foreach($setting['returns']['accepted'] as $v) { ?>
+                                <option value="<?php echo $v['ReturnsAcceptedOption']; ?>"><?php echo $v['Description']; ?></option>
+                                <?php } ?>
                             </select>
                         </td>
                     </tr>
-                    <tr>
-                        <td><?php echo $lang_return_type; ?></td>
-                        <td>
-                            <select name="returns_option" id="returns_option" class="returns_input">
-                                <option value="MoneyBack"><?php echo $lang_return_type_1; ?></option>
-                                <option value="MoneyBackOrExchange"><?php echo $lang_return_type_2; ?></option>
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><?php echo $lang_return_policy; ?></td>
-                        <td><textarea name="return_policy" id="returns_policy" class="returns_input" style="width:400px; height:100px;"></textarea></td>
-                    </tr>
+                    <?php } ?>
+
+                    <?php if(!empty($setting['returns']['within'])) { ?>
                     <tr>
                         <td><?php echo $lang_return_days; ?></td>
                         <td>
                             <select name="returns_within" id="returns_within" class="returns_input">
-                                <option value="Days_14"><?php echo $lang_return_14day; ?></option>
-                                <option value="Days_30"><?php echo $lang_return_30day; ?></option>
-                                <option value="Days_60"><?php echo $lang_return_60day; ?></option>
+                                <?php foreach($setting['returns']['within'] as $v) { ?>
+                                <option value="<?php echo $v['ReturnsWithinOption']; ?>"><?php echo $v['Description']; ?></option>
+                                <?php } ?>
                             </select>
                         </td>
                     </tr>
+                    <?php } ?>
+
+                    <?php if(!empty($setting['returns']['paidby'])) { ?>
                     <tr>
                         <td><?php echo $lang_return_scosts; ?></td>
                         <td>
                             <select name="returns_shipping" id="returns_shipping" class="returns_input">
-                                <option value="Buyer"><?php echo $lang_return_buy_pays; ?></option>
-                                <option value="Seller"><?php echo $lang_return_seller_pays; ?></option>
+                                <?php foreach($setting['returns']['paidby'] as $v) { ?>
+                                <option value="<?php echo $v['ShippingCostPaidByOption']; ?>"><?php echo $v['Description']; ?></option>
+                                <?php } ?>
                             </select>
                         </td>
                     </tr>
+                    <?php } ?>
+
+                    <?php if(!empty($setting['returns']['refund'])) { ?>
+                    <tr>
+                        <td><?php echo $lang_return_type; ?></td>
+                        <td>
+                            <select name="returns_option" id="returns_option" class="returns_input">
+                                <?php foreach($setting['returns']['refund'] as $v) { ?>
+                                <option value="<?php echo $v['RefundOption']; ?>"><?php echo $v['Description']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <?php } ?>
+
+                    <?php if($setting['returns']['description'] == true) { ?>
+                    <tr>
+                        <td><?php echo $lang_return_policy; ?></td>
+                        <td><textarea name="return_policy" id="returns_policy" class="returns_input" style="width:400px; height:100px;"></textarea></td>
+                    </tr>
+                    <?php } ?>
+
+                    <?php if(!empty($setting['returns']['restocking_fee'])) { ?>
+                    <tr>
+                        <td><?php echo $lang_return_restock; ?></td>
+                        <td>
+                            <select name="returns_restocking_fee" id="returns_restocking_fee" class="returns_input">
+                                <?php foreach($setting['returns']['restocking_fee'] as $v) { ?>
+                                <option value="<?php echo $v['RestockingFeeValueOption']; ?>"><?php echo $v['Description']; ?></option>
+                                <?php } ?>
+                            </select>
+                        </td>
+                    </tr>
+                    <?php } ?>
+
                 </table>
             </div>
 
@@ -1552,14 +1583,28 @@
             $.ajax({
                 type:'GET',
                 dataType: 'json',
-                url: 'index.php?route=ebay/profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_return').val(),
-                success: function(data){ 
+                url: 'index.php?route=openbay/ebay_profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_return').val(),
+                success: function(data){
                     setTimeout(function(){
-                        $('#returns_accepted').val(data.data.returns_accepted);
-                        $('#returns_option').val(data.data.returns_option);
-                        $('#returns_within').val(data.data.returns_within);
-                        $('#returns_policy').val(data.data.returns_policy);
-                        $('#returns_shipping').val(data.data.returns_shipping);
+                        if($('#returns_accepted').length){
+                            $('#returns_accepted').val(data.data.returns_accepted);
+                        }
+                        if($('#returns_option').length){
+                            $('#returns_option').val(data.data.returns_option);
+                        }
+                        if($('#returns_within').length){
+                            $('#returns_within').val(data.data.returns_within);
+                        }
+                        if($('#returns_policy').length){
+                            $('#returns_policy').val(data.data.returns_policy);
+                        }
+                        if($('#returns_shipping').length){
+                            $('#returns_shipping').val(data.data.returns_shipping);
+                        }
+                        if($('#returns_restocking_fee').length){
+                            $('#returns_restocking_fee').val(data.data.returns_restocking_fee);
+                        }
+
                         $('#profileReturnsLoading').hide();
                     }, 1000);
                 }

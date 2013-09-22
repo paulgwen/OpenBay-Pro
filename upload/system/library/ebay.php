@@ -1418,13 +1418,13 @@ final class Ebay
         
         return array('msg' => $this->lastmsg, 'error' => $this->lasterror);
     }
-    
+
     public function loadSettings() {
         $response = $this->openbay_call('setup/getEbayDetails/', array(), array(), 'json', true);
 
         $this->log('Getting eBay settings / sync');
 
-        if ($this->lasterror === false){
+        if ($this->lasterror === false) {
             if (isset($response['urls']['ViewItemURL'])) {
                 $this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE  `key` = 'openbaypro_ebay_itm_link' LIMIT 1");
                 $this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `value` = '" . $this->db->escape((string) $response['urls']['ViewItemURL']) . "', `key` = 'openbaypro_ebay_itm_link', `group` = 'openbay'");
@@ -1434,7 +1434,7 @@ final class Ebay
             }
 
             //ebay payment methods
-            if(isset($response['payment_options'])){
+            if(isset($response['payment_options'])) {
                 $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "ebay_payment_method`");
                 $this->log('Emptied ebay_payment_method table');
 
@@ -1565,6 +1565,21 @@ final class Ebay
                 }
             } else {
                 $this->log('No countries set!');
+            }
+
+            //returns
+            if (isset($response['returns'])) {
+                $qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_setting_option` WHERE `key` = 'returns' LIMIT 1");
+
+                if ($qry->num_rows > 0) {
+                    $this->db->query("UPDATE `" . DB_PREFIX . "ebay_setting_option` SET `data` = '" . $this->db->escape(serialize($response['returns'])) . "', `last_updated`  = now() WHERE `key` = 'returns' LIMIT 1");
+                    $this->log('Updated countries into ebay_setting_option table');
+                } else {
+                    $this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_setting_option` SET `key` = 'returns', `data` = '" . $this->db->escape(serialize($response['returns'])) . "', `last_updated`  = now()");
+                    $this->log('Inserted countries into ebay_setting_option table');
+                }
+            } else {
+                $this->log('No returns set!');
             }
         }
 
