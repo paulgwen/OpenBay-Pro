@@ -852,6 +852,12 @@ class ControllerOpenbayOpenbay extends Controller {
         $this->data['validation']   = $this->ebay->validate();
         $this->data['token']        = $this->session->data['token'];
 
+        if (isset($this->session->data['warning'])) {
+            $this->data['error_warning'] = $this->session->data['warning'];
+        } else {
+            $this->data['error_warning'] = '';
+        }
+
         $this->template = 'ebay/syncronise.tpl';
         $this->children = array(
             'common/header',
@@ -1177,6 +1183,24 @@ class ControllerOpenbayOpenbay extends Controller {
                 $this->data['token']    = $this->session->data['token'];
                 $product_info           = $this->model_catalog_product->getProduct($this->request->get['product_id']);
 
+                //load the settings from eBay
+                $setting = array();
+
+                $setting['dispatch_times'] = $this->openbay->ebay->getSetting('dispatch_time_max');
+                if(is_array($setting['dispatch_times'])) { ksort($setting['dispatch_times']); }
+
+                $setting['countries'] = $this->openbay->ebay->getSetting('countries');
+                if(is_array($setting['countries'])) { ksort($setting['countries']); }
+
+                $setting['returns'] = $this->openbay->ebay->getSetting('returns');
+
+                if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
+                    $this->session->data['warning'] = $this->language->get('lang_error_missing_settings');
+                    $this->redirect($this->url->link('openbay/openbay/viewSync&token=' . $this->session->data['token'], 'SSL'));
+                }
+
+                $this->data['setting'] = $setting;
+
                 if ($this->ebay->addonLoad('openstock') == true && $product_info['has_option'] == 1) {
                     $this->load->model('openstock/openstock');
                     $this->data['addon']['openstock'] = true;
@@ -1251,12 +1275,6 @@ class ControllerOpenbayOpenbay extends Controller {
                 $product_info['payments']                           = $this->model_ebay_openbay->getPaymentTypes();
                 $product_info['templates']                          = $this->model_ebay_template->getAll();
                 $product_info['store_cats']                         = $this->model_ebay_openbay->getSellerStoreCategories();
-
-                $product_info['dispatchTimes']                      = $this->ebay->getSetting('dispatch_time_max');
-                if(is_array($product_info['dispatchTimes'])){ ksort($product_info['dispatchTimes']); }
-
-                $product_info['countries']                          = $this->ebay->getSetting('countries');
-                if(is_array($product_info['countries'])){ ksort($product_info['countries']); }
 
                 $product_info['defaults']['ebay_payment_types']     = $this->config->get('ebay_payment_types');
                 $product_info['defaults']['paypal_address']         = $this->config->get('field_payment_paypal_address');
@@ -1357,6 +1375,24 @@ class ControllerOpenbayOpenbay extends Controller {
                             if($this->data['count'] > 5){
                                 $this->data['error_warning']['count'] = sprintf($this->language->get('lang_error_count'), $this->data['count']);
                             }
+
+                            //load the settings from eBay
+                            $setting = array();
+
+                            $setting['dispatch_times'] = $this->openbay->ebay->getSetting('dispatch_time_max');
+                            if(is_array($setting['dispatch_times'])) { ksort($setting['dispatch_times']); }
+
+                            $setting['countries'] = $this->openbay->ebay->getSetting('countries');
+                            if(is_array($setting['countries'])) { ksort($setting['countries']); }
+
+                            $setting['returns'] = $this->openbay->ebay->getSetting('returns');
+
+                            if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
+                                $this->session->data['warning'] = $this->language->get('lang_error_missing_settings');
+                                $this->redirect($this->url->link('openbay/openbay/viewSync&token=' . $this->session->data['token'], 'SSL'));
+                            }
+
+                            $this->data['setting'] = $setting;
 
                             //get generic profiles
                             $product_info['profiles_generic'] = $this->model_ebay_profile->getAll(3);
@@ -1533,10 +1569,12 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['paypal_email']       = $this->config->get('field_payment_paypal_address');
                 $data['payment_instruction']= $this->config->get('field_payment_instruction');
 
-                $data['returns_within']     = $profile_return['data']['returns_within'];
-                $data['return_policy']      = $profile_return['data']['returns_policy'];
-                $data['returns_shipping']   = $profile_return['data']['returns_shipping'];
                 $data['returns_accepted']   = $profile_return['data']['returns_accepted'];
+                $data['return_policy']      = $profile_return['data']['returns_policy'];
+                $data['returns_option']     = $profile_return['data']['returns_option'];
+                $data['returns_within']     = $profile_return['data']['returns_within'];
+                $data['returns_shipping']   = $profile_return['data']['returns_shipping'];
+                $data['returns_restocking_fee']     = $profile_return['data']['returns_restocking_fee'];
 
                 $data['location']           = $profile_shipping['data']['postcode'];
                 $data['dispatch_time']      = $profile_shipping['data']['dispatch_time'];
@@ -1715,10 +1753,12 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['paypal_email']       = $this->config->get('field_payment_paypal_address');
                 $data['payment_instruction']= $this->config->get('field_payment_instruction');
 
-                $data['returns_within']     = $profile_return['data']['returns_within'];
-                $data['return_policy']      = $profile_return['data']['returns_policy'];
-                $data['returns_shipping']   = $profile_return['data']['returns_shipping'];
                 $data['returns_accepted']   = $profile_return['data']['returns_accepted'];
+                $data['return_policy']      = $profile_return['data']['returns_policy'];
+                $data['returns_option']     = $profile_return['data']['returns_option'];
+                $data['returns_within']     = $profile_return['data']['returns_within'];
+                $data['returns_shipping']   = $profile_return['data']['returns_shipping'];
+                $data['returns_restocking_fee']     = $profile_return['data']['returns_restocking_fee'];
 
                 $data['location']           = $profile_shipping['data']['location'];
                 $data['postcode']           = $profile_shipping['data']['postcode'];

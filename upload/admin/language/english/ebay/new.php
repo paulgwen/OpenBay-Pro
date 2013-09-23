@@ -149,19 +149,12 @@ $_['lang_shipping_getitfast']       = 'Get It Fast!';
  */
 $_['lang_return_accepted']          = 'Returns accepted?';
 $_['lang_return_type']              = 'Return Type';
-$_['lang_return_type_1']            = 'Refund';
-$_['lang_return_type_2']            = 'Refund or Exchange';
 $_['lang_return_policy']            = 'Return Policy';
 $_['lang_return_days']              = 'Return days';
 $_['lang_return_scosts']            = 'Shipping costs';
 $_['lang_return_scosts_1']          = 'Buyer pays for all return shipping';
 $_['lang_return_scosts_2']          = 'Seller pays for all return shipping';
-$_['lang_return_buy_pays']          = 'Buyer pays';
-$_['lang_return_seller_pays']       = 'Seller pays';
-$_['lang_return_10day']             = '10 days';
-$_['lang_return_14day']             = '14 days';
-$_['lang_return_30day']             = '30 days';
-$_['lang_return_60day']             = '60 days';
+$_['lang_return_restock']           = 'Restocking fee';
 
 /**
  * Review page
@@ -220,3 +213,4 @@ $_['lang_error_choose_category']    = 'You must choose a category';
 $_['lang_error_enter_text']         = 'Enter search text';
 $_['lang_error_no_stock']           = 'You cannot list an item with zero stock';
 $_['lang_error_no_catalog_data']    = 'No eBay catalog data was found for your product in eBay';
+$_['lang_error_missing_settings']   = 'You cannot list items until you sync the eBay settings';
