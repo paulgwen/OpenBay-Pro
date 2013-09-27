@@ -997,7 +997,7 @@ class ControllerExtensionOpenbay extends Controller {
             } else {
                 $markets[] = array(
                     'name' => 'Amazon EU',
-                    'status' => 1,
+                    'status' => 0,
                     'text' => $this->language->get('lang_openbay_new'),
                     'href' => $this->url->link('amazon/listing/create', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id, 'SSL'),
                     'target'    => '',
@@ -1036,7 +1036,7 @@ class ControllerExtensionOpenbay extends Controller {
             } else {
                 $markets[] = array(
                     'name' => 'Amazon US',
-                    'status' => 1,
+                    'status' => 0,
                     'text' => $this->language->get('lang_openbay_new'),
                     'href' => $this->url->link('amazonus/listing/create', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id, 'SSL'),
                     'target'    => '',
