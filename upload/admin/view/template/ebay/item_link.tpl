@@ -141,19 +141,19 @@ function checkLinkedItems(){
 
                         if(val.status == 1){
                             $('#item_id_'+key).removeClass('unprocessed');
-                        }else{
-                            $('#text_status_'+$(this).val()).text('Listing ended');
-                            $('#row_'+$(this).val()+' > td').css('background-color', '#FFD4D4');
-                            $('#text_buttons_'+$(this).val()).html('<a onclick="removeLink('+$(this).val()+');" class="button"><span><?php echo $lang_btn_remove_link; ?></span></a>');
-                        }
 
-                        if($('#ebay_qty_'+key).val() == $('#store_qty_'+key).val()){
-                            $('#text_status_'+key).text('OK');
-                            $('#row_'+key+' > td').css('background-color', '#E3FFC8');
+                            if($('#ebay_qty_'+key).val() == $('#store_qty_'+key).val()){
+                                $('#text_status_'+key).text('OK');
+                                $('#row_'+key+' > td').css('background-color', '#E3FFC8');
+                            }else{
+                                $('#text_status_'+key).text('Stock error');
+                                $('#row_'+key+' > td').css('background-color', '#FFD4D4');
+                                $('#text_buttons_'+key).html('<a onclick="updateLink('+key+','+val.qty+','+product_id+', '+storeQty+');" class="button"><span><?php echo $lang_btn_resync; ?></span></a>');
+                            }
                         }else{
-                            $('#text_status_'+key).text('Stock error');
+                            $('#text_status_'+key).text('Listing ended');
                             $('#row_'+key+' > td').css('background-color', '#FFD4D4');
-                            $('#text_buttons_'+key).html('<a onclick="updateLink('+key+','+val.qty+','+product_id+', '+storeQty+');" class="button"><span><?php echo $lang_btn_resync; ?></span></a>');
+                            $('#text_buttons_'+key).html('<a onclick="removeLink('+key+');" class="button"><span><?php echo $lang_btn_remove_link; ?></span></a>');
                         }
                     }else{
                         var htmlInj = '';
@@ -167,6 +167,13 @@ function checkLinkedItems(){
                         });
 
                         $('#text_qty_'+key).html(htmlInj);
+
+                        if(val.status == 0){
+                            $('#text_status_'+key).text('Listing ended');
+                            $('#row_'+key+' > td').css('background-color', '#FFD4D4');
+                            $('#text_buttons_'+key).html('<a onclick="removeLink('+key+');" class="button"><span><?php echo $lang_btn_remove_link; ?></span></a>');
+                        }
+
                         $('#item_id_'+key).removeClass('unprocessed');
                     }
                 });

@@ -6,7 +6,7 @@
             <h1><?php echo $lang_page_title; ?></h1>
             <div class="buttons">
                 <a href="<?php echo $view_link; ?>" class="button" target="_BLANK"><span><?php echo $lang_view; ?></span></a>
-                <a onclick="endItem();" class="button"><span><?php echo $lang_end; ?></span></a>
+                <a onclick="endItem();" class="button" id="btn_end_item"><span><?php echo $lang_end; ?></span></a>
                 <a onclick="removeLink();" class="button"><span><?php echo $lang_remove; ?></span></a>
                 <a onclick="location = '<?php echo $cancel; ?>';" class="button"><span><?php echo $lang_cancel; ?></span></a>
             </div>
@@ -24,7 +24,7 @@
 
         <div class="content displayNone" id="mainForm">
             <div class="success displayNone mBottom5" id="successForm"><?php echo $lang_saved; ?></div>
-            <div class="warning displayNone" id="errorBox"></div>
+            <div class="warning displayNone" id="error_box"></div>
 
             <form method="post" enctype="multipart/form-data" id="form">
                 <table class="form">
@@ -137,85 +137,81 @@ function load(){
         },
         success: function(data) {
             if(data.error == false){
+                if(data.data.listing.status == 0){
+                    $('#form').hide();
+                    $('#btn_end_item').hide();
+                    $('#error_box').html('<p><?php echo $lang_error_ended; ?></p>').fadeIn('slow');
+                }else{
+                    $('#title').val(data.data.listing.title);
+                    $('#itemId').val(data.data.listing.itemId);
 
-                $('#title').val(data.data.listing.title);
-                $('#itemId').val(data.data.listing.itemId);
+                    if(data.data.variant.variant == 1){
+                        $('.stdMatrix').remove();
+                        $('#optGroupArray').val(data.data.variant.data.grp_info.optGroupArray);
+                        $('#optGroupRelArray').val(data.data.variant.data.grp_info.optGroupRelArray);
 
-                if(data.data.variant.variant == 1){
-                    $('.stdMatrix').remove();
+                        var i = 0;
+                        var html = '';
 
-                    $('#optGroupArray').val(data.data.variant.data.grp_info.optGroupArray);
-                    $('#optGroupRelArray').val(data.data.variant.data.grp_info.optGroupRelArray);
-
-
-                    var i = 0;
-                    var html = '';
-
-                    $.each(data.data.variant.data.options, function( k, v ) {
-
-                        html = '';
-
-                        $('#stdMatrixTbl').append('<input type="hidden" name="opt['+i+'][sku]" value="'+v.ebay.SKU+'" />');
-
-                        html +='<tr>';
-                        html +='<input type="hidden" name="varPriceExCount" class="varPriceExCount" value="'+i+'" />';
-                        html +='<td class="center width50">'+v.local.var+'</td>';
-                        html +='<td class="center width50">'+v.local.stock+'</td>';
-                        html +='<td class="center width50 textCenter">'+v.ebay.Quantity+'</td>';
-                        html +='<td class="center width75"><input type="text" name="opt['+i+'][reserve]" value="'+v.local.reserve+'" class="width50 textCenter"/></td>';
-                        html +='<td class="left">'+v.local.combi+'</td>';
-                        html +='<td class="left width100"><input type="text" name="opt['+i+'][price]" value="'+v.ebay.StartPrice+'" value="0" class="width75 textCenter" /></td>';
-                        html +='<td class="left width100 center"><input type="hidden" name="opt['+i+'][active]" value="0" /><input type="checkbox" name="opt['+i+'][active]" value="1" checked="checked" /></td>';
-                        html +='</tr>';
-
-                        $('#stdMatrixTbl').append(html);
-
-                        i++;
-                    });
-
-                    if(data.data.variant.data.optionsinactive != false){
-
-                        $('#variantMatrixInactive').show();
-
-                        $.each(data.data.variant.data.optionsinactive, function( k, v ) {
-
-                            $('#stdMatrixTbl').append('<input type="hidden" name="opt['+i+'][sku]" value="'+v.local.var+'" />');
+                        $.each(data.data.variant.data.options, function( k, v ) {
                             html = '';
+
+                            $('#stdMatrixTbl').append('<input type="hidden" name="opt['+i+'][sku]" value="'+v.ebay.SKU+'" />');
 
                             html +='<tr>';
                             html +='<input type="hidden" name="varPriceExCount" class="varPriceExCount" value="'+i+'" />';
-                            html +='<td class="center width50">'+ v.local.var+ '</td>';
-                            html +='<td class="center width50">'+ v.local.stock+ '</td>';
+                            html +='<td class="center width50">'+v.local.var+'</td>';
+                            html +='<td class="center width50">'+v.local.stock+'</td>';
+                            html +='<td class="center width50 textCenter">'+v.ebay.Quantity+'</td>';
                             html +='<td class="center width75"><input type="text" name="opt['+i+'][reserve]" value="'+v.local.reserve+'" class="width50 textCenter"/></td>';
                             html +='<td class="left">'+v.local.combi+'</td>';
-                            html +='<td class="left width100"><input type="text" name="opt['+i+'][price]" value="'+ v.local.price+'" value="0" class="width75 textCenter" /></td>';
-                            html +='<td class="left width100 center"><input type="hidden" name="opt['+i+'][active]" value="0" /><input type="checkbox" name="opt['+i+'][active]" value="1" /></td>';
+                            html +='<td class="left width100"><input type="text" name="opt['+i+'][price]" value="'+v.ebay.StartPrice+'" value="0" class="width75 textCenter" /></td>';
+                            html +='<td class="left width100 center"><input type="hidden" name="opt['+i+'][active]" value="0" /><input type="checkbox" name="opt['+i+'][active]" value="1" checked="checked" /></td>';
                             html +='</tr>';
 
-                            $('#stdMatrixInactiveTbl').append(html);
+                            $('#stdMatrixTbl').append(html);
 
                             i++;
                         });
+
+                        if(data.data.variant.data.optionsinactive != false){
+                            $('#variantMatrixInactive').show();
+
+                            $.each(data.data.variant.data.optionsinactive, function( k, v ) {
+                                $('#stdMatrixTbl').append('<input type="hidden" name="opt['+i+'][sku]" value="'+v.local.var+'" />');
+                                html = '';
+
+                                html +='<tr>';
+                                html +='<input type="hidden" name="varPriceExCount" class="varPriceExCount" value="'+i+'" />';
+                                html +='<td class="center width50">'+ v.local.var+ '</td>';
+                                html +='<td class="center width50">'+ v.local.stock+ '</td>';
+                                html +='<td class="center width75"><input type="text" name="opt['+i+'][reserve]" value="'+v.local.reserve+'" class="width50 textCenter"/></td>';
+                                html +='<td class="left">'+v.local.combi+'</td>';
+                                html +='<td class="left width100"><input type="text" name="opt['+i+'][price]" value="'+ v.local.price+'" value="0" class="width75 textCenter" /></td>';
+                                html +='<td class="left width100 center"><input type="hidden" name="opt['+i+'][active]" value="0" /><input type="checkbox" name="opt['+i+'][active]" value="1" /></td>';
+                                html +='</tr>';
+
+                                $('#stdMatrixInactiveTbl').append(html);
+
+                                i++;
+                            });
+                        }
+
+                    }else{
+                        $('#variantMatrix').remove();
+
+                        $('#price').val(data.data.listing.price);
+                        $('#qty_instock').text(data.data.stock.quantity);
+                        $('#qty_local').val(data.data.stock.quantity);
+                        $('#qty_listed').text(data.data.listing.qty);
+                        $('#qty_ebay').val(data.data.listing.qty);
+                        $('#qty_reserve').val(data.data.reserve);
                     }
-
-                }else{
-                    $('#variantMatrix').remove();
-
-                    $('#price').val(data.data.listing.price);
-                    $('#qty_instock').text(data.data.stock.quantity);
-                    $('#qty_local').val(data.data.stock.quantity);
-                    $('#qty_listed').text(data.data.listing.qty);
-                    $('#qty_ebay').val(data.data.listing.qty);
-                    $('#qty_reserve').val(data.data.reserve);
                 }
-
-
-                $('#loadingForm').hide();
-                $('#mainForm').fadeIn('slow');
-            }else{
-                $('#loadingForm').hide();
-                $('#errorForm').fadeIn('slow');
             }
+
+            $('#loadingForm').hide();
+            $('#mainForm').fadeIn('slow');
         },
         failure: function(){
             $('#loadingForm').hide();
@@ -237,7 +233,7 @@ function save(){
         beforeSend: function(){
             $('#reviewButtonLoading').show();
             $('#reviewButton').hide();
-            $('#errorBox').empty().hide();
+            $('#error_box').empty().hide();
             $('#successForm').hide();
         },
         success: function(data) {
@@ -246,13 +242,13 @@ function save(){
 
             if(data.Errors){
                 if(data.Errors.ShortMessage){
-                    $('#errorBox').append('<p class="m3">'+data.Errors.LongMessage+'</p>');
+                    $('#error_box').append('<p class="m3">'+data.Errors.LongMessage+'</p>');
                 }else{
                     $.each(data.Errors, function(key,val){
-                        $('#errorBox').append('<p class="m3">'+val.LongMessage+'</p>');
+                        $('#error_box').append('<p class="m3">'+val.LongMessage+'</p>');
                     });
                 }
-                $('#errorBox').fadeIn('slow');
+                $('#error_box').fadeIn('slow');
             }
 
             if(data.Ack !== 'Failure'){
