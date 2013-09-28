@@ -868,6 +868,8 @@ class ControllerOpenbayOpenbay extends Controller {
     }
 
     public function viewItemLinks() {
+        $this->load->model('ebay/openbay');
+
         $this->data = array_merge($this->data, $this->load->language('ebay/item_link'));
 
         $this->document->setTitle($this->language->get('lang_page_title'));
@@ -903,7 +905,31 @@ class ControllerOpenbayOpenbay extends Controller {
         $this->data['return']       = $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['validation']   = $this->ebay->validate();
         $this->data['token']        = $this->session->data['token'];
-        $this->data['items']        = $this->ebay->getLiveProducts();
+
+        $total_linked = $this->model_ebay_openbay->totalLinked();
+
+        if(isset($this->request->get['linked_item_page'])){
+            $linked_item_page = (int)$this->request->get['linked_item_page'];
+        }else{
+            $linked_item_page = 1;
+        }
+
+        if(isset($this->request->get['linked_item_limit'])){
+            $linked_item_limit = (int)$this->request->get['linked_item_limit'];
+        }else{
+            $linked_item_limit = 100;
+        }
+
+        $pagination = new Pagination();
+        $pagination->total = $total_linked;
+        $pagination->page = $linked_item_page;
+        $pagination->limit = $this->config->get('config_admin_limit');
+        $pagination->text = $this->language->get('text_pagination');
+        $pagination->url = $this->url->link('openbay/openbay/viewItemLinks', 'token=' . $this->session->data['token'] . '&linked_item_page={page}', 'SSL');
+
+        $this->data['pagination'] = $pagination->render();
+
+        $this->data['linked_items'] = $this->model_ebay_openbay->loadLinked($linked_item_limit, $linked_item_page);
 
         $this->template = 'ebay/item_link.tpl';
         $this->children = array(
@@ -940,6 +966,44 @@ class ControllerOpenbayOpenbay extends Controller {
         $this->load->language('openbay/openbay');
         $this->ebay->removeItemId($this->request->get['ebay_id']);
         $this->response->setOutput(json_encode(array('error' => false, 'msg' => $this->language->get('item_link_removed'))));
+    }
+
+    public function loadUnlinked(){
+        set_time_limit(0);
+
+        $this->load->model('ebay/openbay');
+        $data = $this->model_ebay_openbay->loadUnlinked(100, $this->request->get['page']);
+
+        if (!empty($data)) {
+            $data['more_pages'] = 1;
+
+            if($data['next_page'] > $data['max_page']){
+                $data['more_pages'] = 0;
+            }
+
+            $json['data'] = $data;
+        } else {
+            $json['data'] = null;
+        }
+
+        $this->response->setOutput(json_encode($json));
+    }
+
+    public function loadLinkedStatus(){
+        set_time_limit(0);
+
+        $this->load->model('ebay/openbay');
+
+        $json['data'] = '';
+        if(isset($this->request->post['item_id']) && !empty($this->request->post['item_id'])){
+            $data = $this->model_ebay_openbay->loadLinkedStatus($this->request->post['item_id']);
+
+            if (!empty($data)) {
+                $json['data'] = $data;
+            }
+        }
+
+        $this->response->setOutput(json_encode($json));
     }
 
     private function validate() {

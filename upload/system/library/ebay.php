@@ -1655,5 +1655,10 @@ final class Ebay
             return false;
         }
     }
+
+    public function getEbayItemList($limit = 100, $page = 1) {
+        $this->log('getEbayItemList() - Get active eBay items from API');
+        return $this->openbay_call('item/getItemListLimited/', array('page' => $page, 'limit' => $limit));
+    }
 }
 ?>

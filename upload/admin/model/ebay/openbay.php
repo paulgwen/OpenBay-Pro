@@ -249,41 +249,6 @@ class ModelEbayOpenbay extends Model{
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_order`;");
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_profile`;");
     }
-
-    public function loadItemLinks(){
-        $local      = $this->ebay->getLiveListingArray();
-        $response   = $this->ebay->getEbayActiveListings();
-        
-        $data = array(
-            'unlinked'  => array(),
-            'linked'    => array()
-        );
-        
-        if(!empty($response)){
-            foreach($response as $key => $value){
-                if(!in_array($key, $local)){
-                    $data['unlinked'][$key] = $value;
-                }else{
-                    $data['linked'][$key] = $value;
-                }
-            }
-        }
-        
-        return $data;
-    }
-    
-    public function saveItemLink($data) {
-        $this->ebay->log('Creating item link.');
-        $this->ebay->createLink($data['pid'], $data['itemId'], $data['variants']);
-        if(($data['qty'] != $data['ebayqty']) || $data['variants'] == 1){
-            $this->load->model('catalog/product');
-            $this->ebay->log('Updating eBay with new qty');
-            $this->ebay->productUpdateListen($data['pid'], $this->model_catalog_product->getProduct($data['pid']));
-        }else{
-            $this->ebay->log('Qty on eBay is the same as our stock, no update needed');
-            return array('msg' => 'ok', 'error' => false);
-        }
-    }
     
     public function getSellerStoreCategories(){
         $qry = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . "ebay_store_category'");
@@ -707,5 +672,162 @@ class ModelEbayOpenbay extends Model{
         }
 
         return $product_attribute_group_data;
+    }
+
+    public function totalLinked(){
+        $sql = "SELECT COUNT(DISTINCT p.product_id) AS total
+                FROM `" . DB_PREFIX . "ebay_listing` `el`
+                LEFT JOIN `" . DB_PREFIX . "product` `p` ON (`el`.`product_id` = `p`.`product_id`)
+                LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`)
+                WHERE `el`.`status` = '1'
+                AND `pd`.`language_id` = '" . (int)$this->config->get('config_language_id') . "'";
+
+        $query = $this->db->query($sql);
+
+        return $query->row['total'];
+    }
+
+    public function loadLinked($limit = 100, $page = 1){
+        $this->load->model('tool/image');
+
+        $start = $limit * ($page - 1);
+
+        $has_option = '';
+        if ($this->ebay->addonLoad('openstock') ) {
+            $this->load->model('openstock/openstock');
+            $has_option = '`p`.`has_option`, ';
+        }
+
+        $sql = "
+        SELECT
+			".$has_option."
+			`el`.`ebay_item_id`,
+			`p`.`product_id`,
+			`p`.`sku`,
+			`p`.`model`,
+			`p`.`quantity`,
+			`pd`.name
+        FROM `" . DB_PREFIX . "ebay_listing` `el`
+        LEFT JOIN `" . DB_PREFIX . "product` `p` ON (`el`.`product_id` = `p`.`product_id`)
+        LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`)
+        WHERE `el`.`status` = '1'
+        AND `pd`.`language_id` = '" . (int)$this->config->get('config_language_id') . "'";
+
+        $sql .= " LIMIT " . (int)$start . "," . (int)$limit;
+
+        $qry = $this->db->query($sql);
+
+        $data = array();
+        if($qry->num_rows){
+            foreach($qry->rows as $row){
+                $data[$row['ebay_item_id']] = array(
+                    'product_id'    => $row['product_id'],
+                    'sku'           => $row['sku'],
+                    'model'         => $row['model'],
+                    'qty'           => $row['quantity'],
+                    'name'          => $row['name'],
+                    'link_edit'     => $this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id='.$row['product_id'], 'SSL'),
+                    'link_ebay'     => $this->config->get('openbaypro_ebay_itm_link').$row['ebay_item_id'],
+                );
+
+                $data[$row['ebay_item_id']]['options'] = 0;
+
+                if ((isset($row['has_option']) && $row['has_option'] == 1) && $this->ebay->addonLoad('openstock')) {
+                    $data[$row['ebay_item_id']]['options'] = $this->model_openstock_openstock->getProductOptionStocks((int)$row['product_id']);
+                }
+
+                //get the allocated stock - items that have been bought but not assigned to an order
+                if($this->config->get('openbaypro_stock_allocate') == 0){
+                    $data[$row['ebay_item_id']]['allocated'] = $this->ebay->getAllocatedStock($row['product_id']);
+                }else{
+                    $data[$row['ebay_item_id']]['allocated'] = 0;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    public function loadLinkedStatus($item_ids){
+        $this->ebay->log('loadLinkedStatus() - Get item status from ebay for multiple IDs');
+        return $this->openbay->ebay->openbay_call('item/getItemsById/', array('item_ids' => $item_ids));
+    }
+
+    public function loadUnlinked($limit = 100, $page = 1){
+
+        $unlinked = array();
+
+        // - continue until no more pages or 10 or more found
+
+        while(count($unlinked) < 5){
+
+            $this->ebay->log('Checking unlinked page: '.$page);
+
+            //some products from ebay (100)
+            $response = $this->ebay->getEbayItemList($limit, $page);
+
+            if($this->ebay->lasterror == true){
+                break;
+            }
+
+            //loop over these and check if any are not in the db
+            foreach($response['items'] as $itemId => $item){
+                if($this->ebay->getProductId($itemId, 1) == false){
+                    //ebay item ID not in the db
+                    $unlinked[$itemId] = $item;
+                }
+            }
+
+            $this->ebay->log('Unlinked count: '.count($unlinked));
+
+            //if end of the loop and less than 10, request next page
+            //if the last page requested was the max page of results
+            if($response['max_page'] == $page || count($unlinked) >= 5){
+                break;
+            }else{
+                $page++;
+            }
+        }
+
+        return array(
+            'items' => $unlinked,
+            'next_page' => $response['page']+1,
+            'max_page' => $response['max_page']
+        );
+    }
+
+    public function loadItemLinks(){
+        $local      = $this->openbay->ebay->getLiveListingArray();
+        $response   = $this->openbay->ebay->getEbayActiveListings();
+
+        $data = array(
+            'unlinked'  => array(),
+            'linked'    => array()
+        );
+
+        if(!empty($response)){
+            foreach($response as $key => $value){
+                if(!in_array($key, $local)){
+                    $data['unlinked'][$key] = $value;
+                }else{
+                    $data['linked'][$key] = $value;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    public function saveItemLink($data) {
+        $this->ebay->log('Creating item link.');
+        $this->ebay->createLink($data['pid'], $data['itemId'], $data['variants']);
+        if(($data['qty'] != $data['ebayqty']) || $data['variants'] == 1){
+            $this->load->model('catalog/product');
+            $this->ebay->log('Updating eBay with new qty');
+            $this->ebay->productUpdateListen($data['pid'], $this->model_catalog_product->getProduct($data['pid']));
+        }else{
+            $this->ebay->log('Qty on eBay is the same as our stock, no update needed');
+            return array('msg' => 'ok', 'error' => false);
+        }
     }
 }
