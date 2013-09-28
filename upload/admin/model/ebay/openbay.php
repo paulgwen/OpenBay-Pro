@@ -750,7 +750,7 @@ class ModelEbayOpenbay extends Model{
 
     public function loadLinkedStatus($item_ids){
         $this->ebay->log('loadLinkedStatus() - Get item status from ebay for multiple IDs');
-        return $this->openbay->ebay->openbay_call('item/getItemsById/', array('item_ids' => $item_ids));
+        return $this->ebay->openbay_call('item/getItemsById/', array('item_ids' => $item_ids));
     }
 
     public function loadUnlinked($limit = 100, $page = 1){

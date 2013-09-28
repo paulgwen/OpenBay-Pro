@@ -131,6 +131,7 @@ function checkLinkedItems(){
                 $('#show_linked_items').html('<tr><td colspan="8"><p><?php echo $lang_ajax_error_listings; ?></p></td></tr>').show();
             }else{
                 $.each(json.data, function(key, val){
+                    key                 = String(key);
                     var product_id      = $('#product_id_'+key).val();
                     var storeQty        = $('#store_qty_'+key).val();
 
