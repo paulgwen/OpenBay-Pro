@@ -1937,4 +1937,52 @@ class ControllerOpenbayOpenbay extends Controller {
     public function endItem(){
         return $this->response->setOutput(json_encode($this->ebay->endItem($this->request->get['id'])));
     }
+
+    public function bulkLinking(){
+        $this->load->model('ebay/openbay');
+
+        $this->data = array_merge($this->data, $this->load->language('ebay/item_link_bulk'));
+
+        $this->document->setTitle($this->language->get('lang_page_title'));
+        $this->document->addStyle('view/stylesheet/openbay.css');
+        $this->document->addScript('view/javascript/openbay/faq.js');
+
+        $this->data['breadcrumbs'] = array();
+
+        $this->data['breadcrumbs'][] = array(
+            'href' => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+            'text' => $this->language->get('text_home'),
+            'separator' => FALSE
+        );
+
+        $this->data['breadcrumbs'][] = array(
+            'href' => $this->url->link('extension/openbay', 'token=' . $this->session->data['token'], 'SSL'),
+            'text' => $this->language->get('lang_openbay'),
+            'separator' => ' :: '
+        );
+
+        $this->data['breadcrumbs'][] = array(
+            'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
+            'text' => $this->language->get('lang_ebay'),
+            'separator' => ' :: '
+        );
+
+        $this->data['breadcrumbs'][] = array(
+            'href' => $this->url->link('openbay/openbay/bulkLinking', 'token=' . $this->session->data['token'], 'SSL'),
+            'text' => $this->language->get('lang_heading'),
+            'separator' => ' :: '
+        );
+
+        $this->data['return']       = $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['validation']   = $this->ebay->validate();
+        $this->data['token']        = $this->session->data['token'];
+
+        $this->template = 'ebay/item_link_bulk.tpl';
+        $this->children = array(
+            'common/header',
+            'common/footer'
+        );
+
+        $this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));
+    }
 }
