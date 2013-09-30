@@ -830,4 +830,61 @@ class ModelEbayOpenbay extends Model{
             return array('msg' => 'ok', 'error' => false);
         }
     }
+
+    public function totalAvailableToLink(){
+        $query = $this->db->query("SELECT `p`.`product_id`
+        FROM `" . DB_PREFIX . "product` `p`
+        LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`)
+        WHERE `p`.`sku` != ''
+        AND `p`.`quantity` > 0
+        AND `p`.`product_id` NOT IN (
+            SELECT `product_id`
+            FROM `" . DB_PREFIX . "ebay_listing`
+            WHERE `status` = '1'
+        )
+        GROUP BY `p`.`sku`
+        HAVING COUNT(`p`.`sku`) = 1");
+
+        return $query->num_rows;
+    }
+
+    public function availableToLink($limit = 100, $page = 1){
+        $start = $limit * ($page - 1);
+
+        $sql = "SELECT
+			`p`.`product_id`,
+			`p`.`sku`,
+			`p`.`model`,
+			`p`.`quantity`,
+			`pd`.`name`
+        FROM `" . DB_PREFIX . "product` `p`
+        LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`)
+        WHERE `p`.`sku` != ''
+        AND `p`.`quantity` > 0
+        AND `p`.`product_id` NOT IN (
+            SELECT `product_id`
+            FROM `" . DB_PREFIX . "ebay_listing`
+            WHERE `status` = '1'
+        )
+        GROUP BY `p`.`sku`
+        HAVING COUNT(`p`.`sku`) = 1";
+
+        $sql .= " LIMIT " . (int)$start . "," . (int)$limit;
+
+        $qry = $this->db->query($sql);
+
+        $products = array();
+
+        foreach($qry->rows as $row){
+            $products[] = array(
+                'product_id'    => $row['product_id'],
+                'sku'           => $row['sku'],
+                'model'         => $row['model'],
+                'quantity'      => $row['quantity'],
+                'name'          => $row['name'],
+            );
+        }
+
+        return $products;
+    }
 }

@@ -1977,6 +1977,25 @@ class ControllerOpenbayOpenbay extends Controller {
         $this->data['validation']   = $this->ebay->validate();
         $this->data['token']        = $this->session->data['token'];
 
+        $total_available_to_link = $this->model_ebay_openbay->totalAvailableToLink();
+
+        if(isset($this->request->get['item_page'])){
+            $item_page = (int)$this->request->get['item_page'];
+        }else{
+            $item_page = 1;
+        }
+
+        $pagination = new Pagination();
+        $pagination->total = $total_available_to_link;
+        $pagination->page = $item_page;
+        $pagination->limit = 100;
+        $pagination->text = $this->language->get('text_pagination');
+        $pagination->url = $this->url->link('openbay/openbay/bulkLinking', 'token=' . $this->session->data['token'] . '&item_page={page}', 'SSL');
+
+        $this->data['pagination'] = $pagination->render();
+
+        $this->data['available_items'] = $this->model_ebay_openbay->availableToLink(100, $item_page);
+
         $this->template = 'ebay/item_link_bulk.tpl';
         $this->children = array(
             'common/header',
@@ -1984,5 +2003,59 @@ class ControllerOpenbayOpenbay extends Controller {
         );
 
         $this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));
+    }
+
+    public function bulkLinkingRequest(){
+        $this->load->model('ebay/openbay');
+
+        $skus = array();
+        $found = array();
+
+        if(!isset($this->request->get['item_page'])){
+            $item_page = 1;
+        }else{
+            $item_page = $this->request->get['item_page'];
+        }
+
+        $available_items = $this->model_ebay_openbay->availableToLink(100, $item_page);
+
+        foreach($available_items as $available){
+            $skus[] = $available['sku'];
+        }
+
+
+        if(!empty($skus)){
+            $request_data['page'] = 1;
+            $request_data['sku_array'] = $skus;
+
+            $response = $this->ebay->openbay_call('item/getMatching/', $request_data);
+
+            if(isset($response['results']) && !empty($response['results'])){
+                while($response['page_total'] > $response['page']){
+                    $response = $this->ebay->openbay_call('item/getMatching/', $request_data);
+
+                    if(empty($response['results'])){
+                        die('Empty response');
+                    }
+
+                    $found = $found + $response['results'];
+
+                    $request_data['page'] = $response['page']+1;
+                }
+            }
+
+            $json = array(
+                'matches' => (int)'',
+                'results' => $found,
+            );
+        }else{
+
+            $json = array(
+                'matches' => 0,
+                'results' => array(),
+            );
+        }
+
+        return $this->response->setOutput(json_encode($json));
     }
 }
