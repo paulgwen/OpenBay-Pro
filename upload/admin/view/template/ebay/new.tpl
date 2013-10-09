@@ -1583,7 +1583,7 @@
             $.ajax({
                 type:'GET',
                 dataType: 'json',
-                url: 'index.php?route=openbay/ebay_profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_return').val(),
+                url: 'index.php?route=ebay/profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_return').val(),
                 success: function(data){
                     setTimeout(function(){
                         if($('#returns_accepted').length){

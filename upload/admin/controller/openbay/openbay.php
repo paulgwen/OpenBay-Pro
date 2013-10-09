@@ -1985,6 +1985,8 @@ class ControllerOpenbayOpenbay extends Controller {
             $item_page = 1;
         }
 
+        $this->data['item_page'] = $item_page;
+
         $pagination = new Pagination();
         $pagination->total = $total_available_to_link;
         $pagination->page = $item_page;
@@ -2023,7 +2025,6 @@ class ControllerOpenbayOpenbay extends Controller {
             $skus[] = $available['sku'];
         }
 
-
         if(!empty($skus)){
             $request_data['page'] = 1;
             $request_data['sku_array'] = $skus;
@@ -2031,6 +2032,9 @@ class ControllerOpenbayOpenbay extends Controller {
             $response = $this->ebay->openbay_call('item/getMatching/', $request_data);
 
             if(isset($response['results']) && !empty($response['results'])){
+
+                $found = $response['results'];
+
                 while($response['page_total'] > $response['page']){
                     $response = $this->ebay->openbay_call('item/getMatching/', $request_data);
 
