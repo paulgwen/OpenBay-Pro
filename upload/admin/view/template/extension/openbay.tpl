@@ -15,7 +15,6 @@
     <?php // error messages
     if($this->data['mcrypt'] != 1){ echo'<div class="warning">'.$lang_mcrypt_text_false.'</div>';}
     if($this->data['mbstring'] != 1){ echo'<div class="warning">'.$lang_mb_text_false.'</div>';}
-    if($this->data['ftpenabled'] != 1){ echo'<div class="warning">'.$lang_ftp_text_false.'</div>';}
     if(VERSION < '1.5.1'){ echo'<div class="warning">' . $lang_error_oc_version . '</div>';}
     ?>
 

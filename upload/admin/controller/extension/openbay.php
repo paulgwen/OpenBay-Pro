@@ -25,7 +25,6 @@ class ControllerExtensionOpenbay extends Controller {
 
         $this->data['mcrypt']           = $this->model_openbay_openbay->checkMcrypt();
         $this->data['mbstring']         = $this->model_openbay_openbay->checkMbstings();
-        $this->data['ftpenabled']       = $this->model_openbay_openbay->checkFtpenabled();
         $this->data['manage_link']  = $this->url->link('extension/openbay/manage', 'token=' . $this->session->data['token'], 'SSL');
 
         $this->data['success']      = '';
@@ -293,22 +292,6 @@ class ControllerExtensionOpenbay extends Controller {
         );
 
         $this->response->setOutput($this->render());
-    }
-
-    public function ftpTestConnection() {
-        $this->load->model('openbay/openbay');
-
-        $data = $this->model_openbay_openbay->ftpTestConnection();
-
-        $this->response->setOutput(json_encode($data));
-    }
-
-    public function ftpUpdateModule() {
-        $this->load->model('openbay/openbay');
-
-        $data = $this->model_openbay_openbay->ftpUpdateModule();
-
-        return $this->response->setOutput(json_encode($data));
     }
 
     public function getNotifications() {

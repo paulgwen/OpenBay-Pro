@@ -25,8 +25,6 @@ $_['lang_version_old_1']        = 'A new version is available. Your version is';
 $_['lang_version_old_2']        = 'the latest is';
 $_['lang_use_beta']             = 'Use Beta release';
 $_['lang_use_beta_2']           = 'NOT suggested!';
-$_['lang_test_conn']            = 'Test FTP connection';
-$_['lang_text_run_1']           = 'Run update';
 $_['lang_text_run_2']           = 'Run';
 $_['lang_no']                   = 'No';
 $_['lang_yes']                  = 'Yes';
@@ -42,30 +40,12 @@ $_['lang_column_action']        = 'Action';
 $_['error_permission']          = 'Warning: You do not have permission to modify eBay extensions!';
 $_['lang_error_retry']          = 'Could not connect to the OpenBay server. ';
 
-// Updates
-$_['lang_use_pasv']                     = 'Use passive FTP';
-$_['field_ftp_user']                    = 'FTP Username';
-$_['field_ftp_pw']                      = 'FTP Password';
-$_['field_ftp_server_address']          = 'FTP server address';
-$_['field_ftp_root_path']               = 'FTP path on server';
-$_['field_ftp_root_path_info']          = '(No trailing slash e.g. httpdocs/www)';
-$_['desc_ftp_updates']                  = 'Enabling updates from here means you do not have to manually update your module using the standard drag and drop through FTP. Your FTP are not sent to the API.<br />';
-
 //Updates
-$_['lang_run_patch_desc']               = 'Post update patch<span class="help">Only needed if you manually update</span>';
-$_['lang_run_patch']                    = 'Run patch';
-$_['update_error_username']             = 'Username expected';
-$_['update_error_password']             = 'Password expected';
-$_['update_error_server']               = 'Server expected';
-$_['update_error_admindir']             = 'Admin directory expected';
-$_['update_okcon_noadmin']              = 'Connection OK but your OpenCart admin directory was not found';
-$_['update_okcon_nofiles']              = 'Connection OK but OpenCart folders were not found! Is your root path correct?';
-$_['update_okcon']                      = 'Connected to server OK. OpenCart folders found';
-$_['update_failed_user']                = 'Could not login with that user';
-$_['update_failed_connect']             = 'Could not connect to server';
 $_['update_success']                    = 'Module has been updated (v.%s)';
+$_['lang_run_patch']                    = 'Run patch';
 $_['lang_patch_notes1']                 = 'To read about the recent and past updates';
 $_['lang_patch_notes2']                 = 'click here';
+$_['lang_patch_notes3']                 = 'To update your module you must upload the files manually and click the patch button';
 
 //Help tab
 $_['lang_help_title']                   = 'Information on help & support';
@@ -80,7 +60,6 @@ $_['lang_help_guide_description']       = 'To download and view the eBay and Ama
 
 $_['lang_mcrypt_text_false']            = 'PHP function "mcrypt_encrypt" is not enabled. Contact your hosting provider.';
 $_['lang_mb_text_false']                = 'PHP library "mb strings" is not enabled. Contact your hosting provider.';
-$_['lang_ftp_text_false']               = 'PHP FTP functions are not enabled. Contact your hosting provider.';
 $_['lang_error_oc_version']             = 'Your version of OpenCart is not tested to work with this module. You may experience problems.';
 $_['lang_patch_applied']                = 'Patch applied';
 $_['faqbtn']                            = 'View FAQ';
