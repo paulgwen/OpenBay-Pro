@@ -1,25 +1,25 @@
 <?php
 class ModelOpenbayOpenbay extends Model
 {
-    private $url    = 'https://uk.openbaypro.com/';
+    private $url    = 'https://account.openbaypro.com/';
 
     public function setUrl($url){
         $this->url = $url;
     }
-    
-    public function getNotifications(){
-        $data = $this->call('notification/getPublicNotifications/');
+
+    public function getNotifications() {
+        $data = $this->call('update/getNotifications/');
         return $data;
     }
 
-    public function getVersion(){
-        $data = $this->call('notification/getStableVersion/');
+    public function getVersion() {
+        $data = $this->call('update/getStableVersion/');
         return $data;
     }
 
     public function faqGet($route){
         if($this->faqIsDismissed($route) != true){
-            $data = $this->call('notification/getFaq/', array('route' => $route));
+            $data = $this->call('faq/get/', array('route' => $route));
             return $data;
         }else{
             return false;
@@ -138,16 +138,6 @@ class ModelOpenbayOpenbay extends Model
                 return false;
             }
         }
-    }
-    
-    public function writeUpdateLog($data){
-        $file = DIR_LOGS . 'openbay_update_'.date('Y_m_d_G_i_s').'.log';
-
-        $handle = fopen($file, 'w+');
-        fwrite($handle, "** Update started: ". date('Y-m-d G:i:s') ." **" . "\n");
-
-        fwrite($handle, $data);
-        fclose($handle);
     }
 
     public function getTotalProducts($data = array()) {
