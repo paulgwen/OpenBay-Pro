@@ -57,6 +57,7 @@ class ControllerOpenbayOpenbay extends Controller {
         $this->data['validation']               = $this->ebay->validate();
         $this->data['links_settings']           = $this->url->link('openbay/openbay/settings', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['links_itemlink']           = $this->url->link('openbay/openbay/viewItemLinks', 'token=' . $this->session->data['token'], 'SSL');
+        $this->data['links_bulklink']           = $this->url->link('openbay/openbay/bulkLinking', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['links_addons']             = $this->url->link('openbay/openbay/viewAddons', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['links_subscribe']          = $this->url->link('openbay/openbay/viewSubscription', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['links_itemimport']         = $this->url->link('openbay/openbay/viewItemImport', 'token=' . $this->session->data['token'], 'SSL');
