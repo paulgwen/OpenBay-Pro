@@ -2050,7 +2050,7 @@ class ControllerOpenbayOpenbay extends Controller {
             }
 
             $json = array(
-                'matches' => (int)'',
+                'matches' => (int)count($found),
                 'results' => $found,
             );
         }else{

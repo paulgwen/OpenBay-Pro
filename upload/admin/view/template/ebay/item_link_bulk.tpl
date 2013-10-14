@@ -45,7 +45,7 @@
                     <input type="hidden" value="<?php echo $item['quantity']; ?>" id="sku_row_<?php echo $row_id; ?>_qty" />
 
                     <tr id="sku_row_<?php echo $row_id; ?>_tr" class="no_match">
-                        <td class="center"><input class="link_selected" type="checkbox" name="link_selected[]" value="sku_row_<?php echo $row_id; ?>" id="sku_row_<?php echo $row_id; ?>_checkbox" style="display:none;"/></td>
+                        <td class="center" id="sku_row_<?php echo $row_id; ?>_checkbox"></td>
                         <td class="left"><?php echo $item['sku']; ?></td>
                         <td class="left"><?php echo $item['name']; ?></td>
                         <td class="left link_choice" id="sku_row_<?php echo $row_id; ?>_options"></td>
@@ -59,9 +59,11 @@
             </table>
 
             <div class="buttons">
-                <a onclick="linkItems();" class="button displayNone" id="btn_link_action"><span>Link selected items</span></a>
-                <a onclick="$('.no_match').toggle();" class="button"><span>Toggle no matches</span></a>
+                <a style="display:none;" id="btn_link_action" onclick="linkItems();" class="button displayNone"><span>Link selected items</span></a>
+                <a style="display:none;" id="btn_toggle_match" onclick="$('.no_match').toggle();" class="button displayNone"><span>Toggle no matches</span></a>
             </div>
+
+            <br />
 
             <input type="hidden" name="item_page" id="item_page" value="<?php echo $item_page; ?>" />
 
@@ -91,7 +93,7 @@
 
                     $('#'+row_selector+'_options').append('<p><input type="radio" name="'+row_selector+'_choice" value="'+val.item_id+'" /><input type="hidden" id="'+row_selector+'_qty_'+val.item_id+'" value="'+val.stock+'" /> '+val.item_id+' '+val.title+'</p>');
 
-                    $('#'+row_selector+'_checkbox').show();
+                    $('#'+row_selector+'_checkbox').html('<input class="link_selected" type="checkbox" name="link_selected[]" value="'+row_selector+'" />');
 
                     $('#'+row_selector+'_tr').removeClass('no_match');
                 });
@@ -100,9 +102,16 @@
                     $('input[type=radio]:first', this).attr('checked', true);
                 });
 
+                if($('.no_match').length > 0){
+                    $('#btn_toggle_match').show();
+                }
+
+                if(json.matches > 0){
+                    $('#btn_link_action').show();
+                }
+
                 $('#show_linked_items_loading').hide();
                 $('#show_linked_items').show();
-                $('#btn_link_action').show();
             },
             failure: function(){
 
@@ -114,26 +123,29 @@
     }
 
     function linkItems(){
+        if($('.link_selected:checked').length > 0){
+            var sku_row_id = '';
+            var product_id = '';
+            var qty = '';
+            var ebay_id = '';
+            var ebay_qty = '';
 
-        var sku_row_id = '';
-        var product_id = '';
-        var qty = '';
-        var ebay_id = '';
-        var ebay_qty = '';
+            $('#btn_link_action').hide();
 
-        $('#btn_link_action').hide();
+            $('.link_selected:checked').each(function() {
+                sku_row_id = $(this).val();
+                product_id = $('#'+sku_row_id+'_product_id').val();
+                qty = $('#'+sku_row_id+'_qty').val();
+                ebay_id = $('input:radio[name="'+sku_row_id+'_choice"]:checked').val();
+                ebay_qty = $('#'+sku_row_id+'_qty_'+ebay_id+'').val();
 
-        $('.link_selected:checked').each(function() {
-            sku_row_id = $(this).val();
-            product_id = $('#'+sku_row_id+'_product_id').val();
-            qty = $('#'+sku_row_id+'_qty').val();
-            ebay_id = $('input:radio[name="'+sku_row_id+'_choice"]:checked').val();
-            ebay_qty = $('#'+sku_row_id+'_qty_'+ebay_id+'').val();
+                $('#'+sku_row_id+'_status').empty().text('Pending..');
 
-            $('#'+sku_row_id+'_status').empty().text('Pending..');
-
-            saveListingLink(product_id, ebay_id, qty, ebay_qty, sku_row_id);
-        });
+                saveListingLink(product_id, ebay_id, qty, ebay_qty, sku_row_id);
+            });
+        }else{
+            alert('You must select some items to link');
+        }
     }
 
     function saveListingLink(product_id, ebay_id, qty, ebay_qty, sku_row_id){
@@ -143,11 +155,11 @@
             type: 'post',
             dataType: 'json',
             beforeSend: function(){
-                $('#'+sku_row_id+'_status').empty().html('<img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" /> Linking');
+                $('#'+sku_row_id+'_status').empty().html('<img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" />');
             },
             success: function(json) {
-                $('#'+sku_row_id+'_status').empty().html('<img src="<?php echo HTTPS_SERVER; ?>view/image/success.png" /> Linked');
-                $('#'+sku_row_id+'_checkbox').attr('checked', false).hide();
+                $('#'+sku_row_id+'_status').empty().html('<img src="<?php echo HTTPS_SERVER; ?>view/image/success.png" />');
+                $('#'+sku_row_id+'_checkbox').empty();
             }
         });
     }
