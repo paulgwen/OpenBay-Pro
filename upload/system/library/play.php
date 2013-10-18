@@ -2,7 +2,7 @@
 final class Play {
     
     private $registry;
-    private $url    = 'https://playuk.openbaypro.com/';
+    private $url    = 'https://play.openbaypro.com/';
     private $productIdType = array(
         1 => 'Play ID',
         2 => 'ISBN',
