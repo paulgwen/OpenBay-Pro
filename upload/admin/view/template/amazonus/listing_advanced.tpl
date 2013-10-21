@@ -487,6 +487,7 @@ function validate(formType) {
     var warnings = 0;
     var productIdType;
     var productId;
+    var productIdRequired;
 
     $('.fields_' + formType + ' :input').each(function (i) {
 
@@ -505,6 +506,11 @@ function validate(formType) {
             productIdType = field_value;
         } else if(field_name === 'Value') {
             productId = field_value;
+            if(field_type == 'required') {
+                productIdRequired = true;
+            } else {
+                productIdRequired = false;
+            }
         }
 
         if(field_type == 'required') {
@@ -526,7 +532,7 @@ function validate(formType) {
         }
     });
 
-    if(productIdType !== 'ASIN' && !isValidProductId(productId)) {
+    if(productIdRequired && productIdType !== 'ASIN' && !isValidProductId(productId)) {
         $('.fields_' + formType + ' :input').each(function (i) {
             var field_name = $(this).attr('field_name');
             if(field_name === 'Value') {
