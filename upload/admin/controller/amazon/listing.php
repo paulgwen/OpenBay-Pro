@@ -518,7 +518,7 @@ class ControllerAmazonListing extends Controller{
         }
         $this->load->model('amazon/amazon');
         
-        $links = $this->model_amazon_amazon->getProductLinks();
+        $links = $this->model_amazon_amazon->getProductLinks($product_id);
         foreach ($links as $link) {
             $this->model_amazon_amazon->removeProductLink($link['amazon_sku']);
         }

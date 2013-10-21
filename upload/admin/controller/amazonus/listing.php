@@ -509,7 +509,7 @@ class ControllerAmazonusListing extends Controller{
         }
         $this->load->model('amazonus/amazonus');
         
-        $links = $this->model_amazonus_amazonus->getProductLinks();
+        $links = $this->model_amazonus_amazonus->getProductLinks($product_id);
         foreach ($links as $link) {
             $this->model_amazonus_amazonus->removeProductLink($link['amazonus_sku']);
         }
