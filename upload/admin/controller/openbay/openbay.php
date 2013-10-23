@@ -1576,6 +1576,10 @@ class ControllerOpenbayOpenbay extends Controller {
 
                     $data['product_info'] = $query->row;
 
+                    if(!empty($data['product_info']['sku'])){
+                        $data['sku'] = $data['product_info']['sku'];
+                    }
+
                     $verifyResponse = $this->model_ebay_openbay->ebayVerifyAddItem($data, $this->request->get['options']);
 
                     $this->response->setOutput(json_encode($verifyResponse));
@@ -1622,6 +1626,11 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['price'][0]           = $post['price'];
                 $data['qty'][0]             = (int)$post['qty'];
                 $data['product_id']         = (int)$post['product_id'];
+
+                if(!empty($product_info['sku'])){
+                    $data['sku'] = $product_info['sku'];
+                }
+
                 $data['auction_duration']   = $post['duration'];
                 $data['condition']          = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
                 $data['auction_type']       = 'FixedPriceItem';
@@ -1631,14 +1640,27 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['paypal_email']       = $this->config->get('field_payment_paypal_address');
                 $data['payment_instruction']= $this->config->get('field_payment_instruction');
 
-                $data['returns_accepted']   = $profile_return['data']['returns_accepted'];
-                $data['return_policy']      = $profile_return['data']['returns_policy'];
-                $data['returns_option']     = $profile_return['data']['returns_option'];
-                $data['returns_within']     = $profile_return['data']['returns_within'];
-                $data['returns_shipping']   = $profile_return['data']['returns_shipping'];
-                $data['returns_restocking_fee']     = $profile_return['data']['returns_restocking_fee'];
+                if(isset($profile_return['data']['returns_accepted'])) {
+                    $data['returns_accepted'] = $profile_return['data']['returns_accepted'];
+                }
+                if(isset($profile_return['data']['returns_policy'])) {
+                    $data['return_policy'] = $profile_return['data']['returns_policy'];
+                }
+                if(isset($profile_return['data']['returns_option'])) {
+                    $data['returns_option'] = $profile_return['data']['returns_option'];
+                }
+                if(isset($profile_return['data']['returns_within'])) {
+                    $data['returns_within'] = $profile_return['data']['returns_within'];
+                }
+                if(isset($profile_return['data']['returns_shipping'])) {
+                    $data['returns_shipping'] = $profile_return['data']['returns_shipping'];
+                }
+                if(isset($profile_return['data']['returns_restocking_fee'])) {
+                    $data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
+                }
 
-                $data['location']           = $profile_shipping['data']['postcode'];
+                $data['location']           = $profile_shipping['data']['location'];
+                $data['postcode']           = $profile_shipping['data']['postcode'];
                 $data['dispatch_time']      = $profile_shipping['data']['dispatch_time'];
 
                 if(isset($profile_shipping['data']['country'])) {
@@ -1765,6 +1787,10 @@ class ControllerOpenbayOpenbay extends Controller {
 
             $data['product_info'] = $query->row;
 
+            if(!empty($data['product_info']['sku'])){
+                $data['sku'] = $data['product_info']['sku'];
+            }
+
             $verifyResponse = $this->model_ebay_openbay->ebayAddItem($data, $this->request->get['options']);
 
             $this->response->setOutput(json_encode($verifyResponse));
@@ -1806,6 +1832,11 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['price'][0]           = $post['price'];
                 $data['qty'][0]             = $post['qty'];
                 $data['product_id']         = $post['product_id'];
+
+                if(!empty($product_info['sku'])){
+                    $data['sku'] = $product_info['sku'];
+                }
+
                 $data['auction_duration']   = $post['duration'];
                 $data['condition']          = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
                 $data['auction_type']       = 'FixedPriceItem';
@@ -1815,12 +1846,24 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['paypal_email']       = $this->config->get('field_payment_paypal_address');
                 $data['payment_instruction']= $this->config->get('field_payment_instruction');
 
-                $data['returns_accepted']   = $profile_return['data']['returns_accepted'];
-                $data['return_policy']      = $profile_return['data']['returns_policy'];
-                $data['returns_option']     = $profile_return['data']['returns_option'];
-                $data['returns_within']     = $profile_return['data']['returns_within'];
-                $data['returns_shipping']   = $profile_return['data']['returns_shipping'];
-                $data['returns_restocking_fee']     = $profile_return['data']['returns_restocking_fee'];
+                if(isset($profile_return['data']['returns_accepted'])) {
+                    $data['returns_accepted'] = $profile_return['data']['returns_accepted'];
+                }
+                if(isset($profile_return['data']['returns_policy'])) {
+                    $data['return_policy'] = $profile_return['data']['returns_policy'];
+                }
+                if(isset($profile_return['data']['returns_option'])) {
+                    $data['returns_option'] = $profile_return['data']['returns_option'];
+                }
+                if(isset($profile_return['data']['returns_within'])) {
+                    $data['returns_within'] = $profile_return['data']['returns_within'];
+                }
+                if(isset($profile_return['data']['returns_shipping'])) {
+                    $data['returns_shipping'] = $profile_return['data']['returns_shipping'];
+                }
+                if(isset($profile_return['data']['returns_restocking_fee'])) {
+                    $data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
+                }
 
                 $data['location']           = $profile_shipping['data']['location'];
                 $data['postcode']           = $profile_shipping['data']['postcode'];
