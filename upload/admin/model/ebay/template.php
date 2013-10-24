@@ -32,21 +32,21 @@ class ModelEbayTemplate extends Model{
             return false;
         }
     }
-    
-    public function getAll(){
+
+    public function getAll() {
         $qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_template`");
 
+        $templates = array();
+
         if($qry->num_rows){
-            $templates = array();
             foreach($qry->rows as $row){
-                $row['link_edit']   = HTTPS_SERVER . 'index.php?route=ebay/template/edit&token=' . $this->session->data['token'].'&template_id='.$row['template_id'];
-                $row['link_delete'] = HTTPS_SERVER . 'index.php?route=ebay/template/delete&token=' . $this->session->data['token'].'&template_id='.$row['template_id'];
+                $row['link_edit']   = HTTPS_SERVER . 'index.php?route=openbay/ebay_template/edit&token=' . $this->session->data['token'].'&template_id='.$row['template_id'];
+                $row['link_delete'] = HTTPS_SERVER . 'index.php?route=openbay/ebay_template/delete&token=' . $this->session->data['token'].'&template_id='.$row['template_id'];
                 $templates[]         = $row;
             }
-            
-            return $templates;
-        }else{
-            return false;
         }
+
+        return $templates;
     }
 }
+?>
