@@ -232,19 +232,29 @@ final class Ebay
         }
     }
 
-    public function removeItemId($id){
-        //this will only remove the link.
-        $this->log('removeItemId() - ID: '.$id.'');
-        $this->db->query("UPDATE `" . DB_PREFIX . "ebay_listing` SET `status` = '0' WHERE `ebay_item_id` = '".$this->db->escape($id)."'");
-        $this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_stock_reserve` WHERE `item_id` = '".$this->db->escape($id)."'");
-    }
+	public function removeItemByItemId($item_id) {
+		$this->log('removeItemByItemId() - ID: '.(int)$item_id);
 
-    public function deleteProduct($product_id){
-        //this is called when the product is removed from the database
-        $this->log('deleteProduct() - Removing product id '.$product_id.' from ebay_listing table');
-        $this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_listing` WHERE `product_id` = '".(int)$product_id."'");
-        $this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_stock_reserve` WHERE `product_id` = '".(int)$product_id."'");
-    }
+		$this->db->query("UPDATE `" . DB_PREFIX . "ebay_listing` SET `status` = '0' WHERE `ebay_item_id` = '".(int)$item_id."'");
+
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_stock_reserve` WHERE `item_id` = '".(int)$item_id."'");
+	}
+
+	public function removeItemByProductId($product_id) {
+		$this->log('removeItemByProductId() - ID: '.$product_id.'');
+
+		$this->db->query("UPDATE `" . DB_PREFIX . "ebay_listing` SET `status` = '0' WHERE `product_id` = '".(int)$product_id."'");
+
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_stock_reserve` WHERE `product_id` = '".(int)$product_id."'");
+	}
+
+	public function deleteProduct($product_id) {
+		$this->log('deleteProduct() - ID: '.$product_id);
+
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_listing` WHERE `product_id` = '".(int)$product_id."'");
+
+		$this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_stock_reserve` WHERE `product_id` = '".(int)$product_id."'");
+	}
 
     public function deleteOrder($order_id){
         /**
@@ -379,7 +389,7 @@ final class Ebay
 
         if($this->config->get('openbaypro_enditems') == 1){
             $this->openbay_call('item/endItem/', array('id' => $item_id));
-            $this->removeItemId($item_id);
+            $this->removeItemByItemId($item_id);
 
             if($this->lasterror != true){
                 $this->log('endItem() - OK');
@@ -388,7 +398,7 @@ final class Ebay
                 return array('error' => true, 'msg' => $this->lasterror);
             }
         }else{
-            $this->removeItemId($item_id);
+            $this->removeItemByItemId($item_id);
             $this->log('endItem() - config disables ending items');
             
             $message = "An item has gone out of stock but your settings are not set to end eBay items automatically.\r\n\r\n";
@@ -817,7 +827,7 @@ final class Ebay
                 }
             }
         }else{
-            $this->ebay->removeItemId($item_id);
+            $this->ebay->removeItemByItemId($item_id);
             $this->log('putStockUpdate() - Listing not active, item id: '. $item_id .', status returned: '.$listing['statusActual']);
         }
     }
@@ -909,7 +919,7 @@ final class Ebay
             //check if the itemid was returned by ebay, if not unlink it as it is ended.
             if(!isset($ebay_listings[$item['itemId']])){
                 $this->log('eBay item was not returned, removing link ('.$item['itemId'].')');
-                $this->removeItemId($item['itemId']);
+                $this->removeItemByItemId($item['itemId']);
             }else{
                 //check if the local item is now inactive - end if it is
                 if($endInactive == true && $local_stock['status'] == 0){
@@ -1280,7 +1290,7 @@ final class Ebay
     public function createLink($product_id, $item_id, $variant){
         //flush any old links just in case they still exist.
         $this->deleteProduct($product_id);
-        $this->removeItemId($item_id);
+        $this->removeItemByItemId($item_id);
 
         $this->db->query("
             INSERT INTO `" . DB_PREFIX . "ebay_listing`

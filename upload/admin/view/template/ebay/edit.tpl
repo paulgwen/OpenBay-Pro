@@ -269,7 +269,7 @@ function removeLink() {
         if(id !== ''){
             $.ajax({
                 type: 'GET',
-                url: 'index.php?route=openbay/openbay/removeItemLink&token=<?php echo $token; ?>&ebay_id='+id,
+                url: 'index.php?route=openbay/openbay/removeItemLink&token=<?php echo $token; ?>&product_id=<?php echo $product_id; ?>',
                 dataType: 'json',
                 success: function() {
                     alert('<?php echo $lang_alert_removed; ?>');

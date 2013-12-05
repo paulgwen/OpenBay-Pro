@@ -29,10 +29,10 @@ class ControllerEbayOpenbay extends Controller{
                         if(!empty($rules)){
                             $this->ebay->log('Item is due to be automatically relisted');
                             $this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_listing_pending` SET `ebay_item_id` = '".$data['itemId']."', `product_id` = '".$product_id."', `key` = '".$data['key']."'");
-                            $this->ebay->removeItemId($data['itemId']);
+                            $this->ebay->removeItemByItemId($data['itemId']);
                         }else{
                             $this->ebay->log('No automation rule set');
-                            $this->ebay->removeItemId($data['itemId']);
+                            $this->ebay->removeItemByItemId($data['itemId']);
                         }
                     }
                     

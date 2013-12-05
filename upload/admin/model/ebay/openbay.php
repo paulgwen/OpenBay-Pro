@@ -457,35 +457,43 @@ class ModelEbayOpenbay extends Model{
         return $data2;
     }
 
-    public function logCategoryUsed($categoryId){
-        $breadcrumb = array();
-        $originalId = $categoryId;
-        $stop       = false;
-        $i          = 0; //fallback to stop infinate loop
-        
-        while($stop == false && $i < 10){
-            $cat = $this->getCategoryStructure($categoryId);
-            
-            $breadcrumb[] = $cat['CategoryName'];
-            
-            if($cat['CategoryParentID'] == $categoryId){
-                $stop = true;
-            }else{
-                $categoryId = $cat['CategoryParentID'];
-            }
-            
-            $i++;
-        }
-        
-        $res = $this->db->query("SELECT `used` FROM `" . DB_PREFIX . "ebay_category_history` WHERE `CategoryID` = '".$originalId."' LIMIT 1");
-        
-        if($res->num_rows){
-            $new = $res->row['used'] + 1;
-            $this->db->query("UPDATE `" . DB_PREFIX . "ebay_category_history` SET `used` = '".$new."' WHERE `CategoryID` = '".$originalId."' LIMIT 1");
-        }else{
-            $this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_category_history` SET `CategoryID` = '".$originalId."', `breadcrumb` = '".  $this->db->escape(implode(' > ', array_reverse($breadcrumb)))."', `used` = '1'");
-        }
-    }
+	public function logCategoryUsed($categoryId){
+		$breadcrumb = array();
+		$originalId = $categoryId;
+		$stop       = false;
+		$i          = 0; //fallback to stop infinate loop
+		$err 		= false;
+
+		while($stop == false && $i < 10){
+			$cat = $this->getCategoryStructure($categoryId);
+
+			if(!empty($cat)) {
+				$breadcrumb[] = $cat['CategoryName'];
+
+				if($cat['CategoryParentID'] == $categoryId){
+					$stop = true;
+				}else{
+					$categoryId = $cat['CategoryParentID'];
+				}
+
+				$i++;
+			} else {
+				$stop = true;
+				$err = true;
+			}
+		}
+
+		if($err == false) {
+			$res = $this->db->query("SELECT `used` FROM `" . DB_PREFIX . "ebay_category_history` WHERE `CategoryID` = '".$originalId."' LIMIT 1");
+
+			if($res->num_rows){
+				$new = $res->row['used'] + 1;
+				$this->db->query("UPDATE `" . DB_PREFIX . "ebay_category_history` SET `used` = '".$new."' WHERE `CategoryID` = '".$originalId."' LIMIT 1");
+			}else{
+				$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_category_history` SET `CategoryID` = '".$originalId."', `breadcrumb` = '".  $this->db->escape(implode(' > ', array_reverse($breadcrumb)))."', `used` = '1'");
+			}
+		}
+	}
     
     public function getProductStock($id){
         $res = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product` WHERE `product_id` = '".$this->db->escape($id)."' LIMIT 1");
