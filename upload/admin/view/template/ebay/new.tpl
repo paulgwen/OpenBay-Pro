@@ -226,7 +226,6 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-
                             <p>* <?php echo $lang_images_text_1; ?></p>
                             <p>* <?php echo $lang_images_text_2; ?></p>
 
