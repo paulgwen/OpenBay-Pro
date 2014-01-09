@@ -495,19 +495,28 @@ class ControllerOpenbayOpenbay extends Controller {
         return $this->response->setOutput(json_encode($response));
     }
 
-    public function setProductStock() {
-        $this->load->model('ebay/openbay');
-        $this->load->model('catalog/product');
+	public function setProductStock() {
+		$this->load->model('openbay/ebay');
+		$this->load->model('catalog/product');
 
-        $product_id = $this->request->get['product_id'];
-        $data       = $this->model_catalog_product->getProduct($product_id);
+		$product = $this->model_catalog_product->getProduct($this->request->get['product_id']);
 
-        $this->ebay->log('User updating eBay stock of product id: ' . $product_id);
+		$json = array();
 
-        $this->ebay->productUpdateListen($product_id, $data);
+		if ($product['subtract'] == 1) {
+			$this->openbay->ebay->productUpdateListen($this->request->get['product_id'], $product);
 
-        $this->response->setOutput(json_encode(array('msg' => 'ok', 'error' => false)));
-    }
+			$json['error'] = false;
+			$json['msg'] = 'ok';
+		} else {
+			$this->load->language('ebay/item_link');
+
+			$json['error'] = true;
+			$json['msg'] = $this->language->get('lang_ajax_not_subtract');
+		}
+
+		$this->response->setOutput(json_encode($json));
+	}
 
     public function getUsage() {
         $this->load->model('ebay/openbay');

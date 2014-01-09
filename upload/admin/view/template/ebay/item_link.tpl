@@ -214,17 +214,20 @@ function updateLink(itemid, qty, product_id, storeQty){
             url: 'index.php?route=openbay/openbay/setProductStock&token=<?php echo $token; ?>&product_id='+product_id,
             dataType: 'json',
             success: function(json) {
-                if(json.error === false){
-                    $('#text_status_'+itemid).text('OK');
-                    $('#row_'+itemid+' > td').css('background-color', '#E3FFC8');
-                    $('#l_'+itemid+'_qtyinput').val(qty);
-                    $('#l_'+itemid+'_qty').val(qty);
-                    $('#text_qty_'+itemid).text(storeQty);
-                    $('#text_buttons_'+itemid).empty();
-                }else{
-                    $('#text_buttons_'+itemid).html(varBtnOld);
-                    alert('<?php echo $lang_ajax_load_error; ?>');
-                }
+              if(json.error == false){
+                $('#text_status_'+itemid).text('OK');
+                $('#text_buttons_'+itemid).html('<a href="<?php echo $edit_url; ?>'+product_id+'" class="button"><span><?php echo $lang_btn_edit; ?></span></a>');
+                $('#row_'+itemid+' > td').css('background-color', '#E3FFC8');
+                $('#l_'+itemid+'_qtyinput').val(qty);
+                $('#l_'+itemid+'_qty').val(qty);
+                $('#text_qty_'+itemid).text(storeQty);
+                $('#text_buttons_'+itemid).empty();
+              }
+
+              if(json.error == true) {
+                $('#text_buttons_'+itemid).html(varBtnOld);
+                alert(json.msg);
+              }
             },
             failure: function(){
                 $('#text_buttons_'+itemid).html(varBtnOld);
