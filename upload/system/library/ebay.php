@@ -827,7 +827,7 @@ final class Ebay
                 }
             }
         }else{
-            $this->ebay->removeItemByItemId($item_id);
+            $this->removeItemByItemId($item_id);
             $this->log('putStockUpdate() - Listing not active, item id: '. $item_id .', status returned: '.$listing['statusActual']);
         }
     }
@@ -843,7 +843,7 @@ final class Ebay
          * Try to load OpenStock module
          */
         $openstock = false;
-        if($this->ebay->addonLoad('openstock') == true) {
+        if($this->addonLoad('openstock') == true) {
             $this->load->model('openstock/openstock');
             $openstock = true;
         }
