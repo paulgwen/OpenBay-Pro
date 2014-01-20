@@ -59,8 +59,6 @@ class ModelEbayPatch extends Model{
             if(!isset($settings['openbaypro_confirmadmin_notify']) || $settings['openbaypro_confirmadmin_notify'] == '')    { $settings['openbaypro_confirmadmin_notify'] = 1; }
             if(!isset($settings['openbaypro_created_hours']) || $settings['openbaypro_created_hours'] == '')                { $settings['openbaypro_created_hours'] = 24; }
             if(!isset($settings['openbaypro_create_date']) || $settings['openbaypro_create_date'] == '')                    { $settings['openbaypro_create_date'] = 0; }
-            if(!isset($settings['openbaypro_stock_report']) || $settings['openbaypro_stock_report'] == '')                  { $settings['openbaypro_stock_report'] = 1; }
-            if(!isset($settings['openbaypro_stock_report_summary']) || $settings['openbaypro_stock_report_summary'] == '')  { $settings['openbaypro_stock_report_summary'] = 0; }
             if(!isset($settings['openbaypro_time_offset']) || $settings['openbaypro_time_offset'] == '')  					{ $settings['openbaypro_time_offset'] = 0; }
             if(!isset($settings['openbay_default_addressformat']) || $settings['openbay_default_addressformat'] == '')      { $settings['openbay_default_addressformat'] = '{firstname} {lastname}
 {company}

@@ -248,20 +248,6 @@ class ControllerOpenbayOpenbay extends Controller {
             $this->data['openbaypro_create_date'] = $this->config->get('openbaypro_create_date');
         }
 
-        /**
-         * stock reports
-         */
-        if (isset($this->request->post['openbaypro_stock_report'])) {
-            $this->data['openbaypro_stock_report'] = $this->request->post['openbaypro_stock_report'];
-        } else {
-            $this->data['openbaypro_stock_report'] = $this->config->get('openbaypro_stock_report');
-        }
-        if (isset($this->request->post['openbaypro_stock_report_summary'])) {
-            $this->data['openbaypro_stock_report_summary'] = $this->request->post['openbaypro_stock_report_summary'];
-        } else {
-            $this->data['openbaypro_stock_report_summary'] = $this->config->get('openbaypro_stock_report_summary');
-        }
-
         $this->data['durations'] = array(
             'Days_1' => $this->data['lang_listing_1day'],
             'Days_3' => $this->data['lang_listing_3day'],
@@ -725,52 +711,6 @@ class ControllerOpenbayOpenbay extends Controller {
 
 
         $this->template = 'ebay/item_import.tpl';
-        $this->children = array(
-            'common/header',
-            'common/footer'
-        );
-
-        $this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));
-    }
-
-    public function viewStockReport() {
-        $this->data = array_merge($this->data, $this->load->language('ebay/stock_report'));
-
-        $this->document->setTitle($this->language->get('lang_page_title'));
-        $this->document->addStyle('view/stylesheet/openbay.css');
-        $this->document->addScript('view/javascript/openbay/faq.js');
-
-        $this->data['breadcrumbs'] = array();
-
-        $this->data['breadcrumbs'][] = array(
-            'href' => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
-            'text' => $this->language->get('text_home'),
-            'separator' => FALSE
-        );
-
-        $this->data['breadcrumbs'][] = array(
-            'href' => $this->url->link('extension/openbay', 'token=' . $this->session->data['token'], 'SSL'),
-            'text' => $this->language->get('lang_openbay'),
-            'separator' => ' :: '
-        );
-
-        $this->data['breadcrumbs'][] = array(
-            'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
-            'text' => $this->language->get('lang_ebay'),
-            'separator' => ' :: '
-        );
-
-        $this->data['breadcrumbs'][] = array(
-            'href' => $this->url->link('openbay/openbay/viewStockReport', 'token=' . $this->session->data['token'], 'SSL'),
-            'text' => $this->language->get('lang_heading'),
-            'separator' => ' :: '
-        );
-
-        $this->data['return']       = $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL');
-        $this->data['validation']   = $this->ebay->validate();
-        $this->data['token']        = $this->session->data['token'];
-
-        $this->template = 'ebay/stock_report.tpl';
         $this->children = array(
             'common/header',
             'common/footer'
