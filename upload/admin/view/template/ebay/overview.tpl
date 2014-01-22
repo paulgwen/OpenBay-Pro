@@ -73,7 +73,7 @@
                     </div>
                     -->
                 <?php }else{ ?>
-                    <a class="openbayPod" href="https://uk.openbaypro.com/account/live/register.php" target="_BLANK">
+                    <a class="openbayPod" href="https://account.openbaypro.com/ebay/apiRegister/" target="_BLANK">
                         <img src="<?php echo HTTPS_SERVER; ?>view/image/openbay/openbay_icon2.png" title="" alt="" border="0" />
                         <h3><?php echo $lang_heading_register; ?></h3>
                     </a>
