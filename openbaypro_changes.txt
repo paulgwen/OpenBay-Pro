@@ -1,0 +1,3 @@
+Type: Enhancement, New Feature, Bug
+
+07-02-14 - Bug - Fixed row not hiding when remove link clicked in eBay item links 
