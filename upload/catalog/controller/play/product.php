@@ -1,7 +1,7 @@
 <?php
 class ControllerPlayProduct extends Controller{
     public function getProductChanges(){
-        display_errors(0);
+        
         $this->play->log('getProductChanges()');
 
         if(!empty($this->request->post)){
@@ -83,7 +83,7 @@ class ControllerPlayProduct extends Controller{
     }
 
     public function updateProductChanges(){
-        display_errors(0);
+        
         $this->play->log('updateProductChanges()');
         if(!empty($this->request->post)){
 

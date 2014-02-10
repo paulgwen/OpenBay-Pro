@@ -182,7 +182,7 @@ class ControllerPlayOrder extends Controller{
     }
 
     public function getModifiedOrders(){
-        display_errors(0);
+        
         if(!empty($this->request->post)){
 
             $auth = $this->validateAuth();

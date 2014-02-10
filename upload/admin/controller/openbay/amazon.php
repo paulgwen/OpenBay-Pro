@@ -547,7 +547,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function getOpenstockOptionsAjax() {
-        display_errors(0);
+        
         $options = array();
         if($this->amazon->addonLoad('openstock') == true && isset($this->request->get['product_id'])) {
             $this->load->model('openstock/openstock');
@@ -561,7 +561,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function addItemLinkAjax() {
-        display_errors(0);
+        
         if(isset($this->request->get['product_id']) && isset($this->request->get['amazon_sku'])) {
             $amazon_sku = $this->request->get['amazon_sku'];
             $product_id = $this->request->get['product_id'];
@@ -606,7 +606,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function removeItemLinkAjax() {
-        display_errors(0);
+        
         if(isset($this->request->get['amazon_sku'])) {
             $amazon_sku = $this->request->get['amazon_sku'];            
         } else {
@@ -623,7 +623,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function getItemLinksAjax() {
-        display_errors(0);
+        
         $this->load->model('amazon/amazon');
         $this->load->model('catalog/product');
         
@@ -633,7 +633,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function getUnlinkedItemsAjax() {
-        display_errors(0);        
+                
         $this->load->model('amazon/amazon');
         $this->load->model('catalog/product');
         
@@ -652,7 +652,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function doBulkList() {
-        display_errors(0);
+        
         $this->load->language('amazon/listing');
         $this->load->model('amazon/listing');
        
@@ -709,7 +709,7 @@ class ControllerOpenbayAmazon extends Controller {
     }
     
     public function doBulkSearch() {
-        display_errors(0);
+        
         $this->load->model('catalog/product');
         $this->load->model('amazon/listing');
         $this->load->language('amazon/bulk');

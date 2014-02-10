@@ -564,7 +564,7 @@ class ControllerOpenbayAmazonus extends Controller {
     }
     
     public function getOpenstockOptionsAjax() {
-        display_errors(0);
+        
         $options = array();
         if($this->amazonus->addonLoad('openstock') == true && isset($this->request->get['product_id'])) {
             $this->load->model('openstock/openstock');
@@ -578,7 +578,7 @@ class ControllerOpenbayAmazonus extends Controller {
     }
     
     public function addItemLinkAjax() {
-        display_errors(0);
+        
         if(isset($this->request->get['product_id']) && isset($this->request->get['amazonus_sku'])) {
             $amazonus_sku = $this->request->get['amazonus_sku'];
             $product_id = $this->request->get['product_id'];
@@ -623,7 +623,7 @@ class ControllerOpenbayAmazonus extends Controller {
     }
     
     public function removeItemLinkAjax() {
-        display_errors(0);
+        
         if(isset($this->request->get['amazonus_sku'])) {
             $amazonus_sku = $this->request->get['amazonus_sku'];            
         } else {
@@ -640,7 +640,7 @@ class ControllerOpenbayAmazonus extends Controller {
     }
     
     public function getItemLinksAjax() {
-        display_errors(0);        
+                
         $this->load->model('amazonus/amazonus');
         $this->load->model('catalog/product');
         
@@ -650,7 +650,7 @@ class ControllerOpenbayAmazonus extends Controller {
     }
     
     public function getUnlinkedItemsAjax() {
-        display_errors(0);
+        
         $this->load->model('amazonus/amazonus');
         $this->load->model('catalog/product');
         
