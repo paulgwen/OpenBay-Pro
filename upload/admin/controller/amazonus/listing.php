@@ -520,6 +520,7 @@ class ControllerAmazonusListing extends Controller{
     }
     
     public function search(){
+        display_errors(0);
         $this->load->model('amazonus/listing');
         $this->load->language('amazonus/listing');
 
@@ -546,6 +547,7 @@ class ControllerAmazonusListing extends Controller{
     }
     
     public function bestPrice() {
+        display_errors(0);
         $this->load->model('amazonus/listing');
         $this->load->language('amazonus/listing');
 
@@ -585,6 +587,7 @@ class ControllerAmazonusListing extends Controller{
     }
 
     public function getProductByAsin(){
+        display_errors(0);
         $this->load->model('amazonus/listing');
 
         $data = $this->model_amazonus_listing->getProductByAsin($this->request->post['asin']);

@@ -295,6 +295,7 @@ class ControllerEbayProfile extends Controller {
     }
 
     public function profileGet(){
+        display_errors(0);
         $this->load->model('ebay/profile');
         $this->load->model('ebay/openbay');
 

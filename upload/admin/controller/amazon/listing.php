@@ -529,6 +529,7 @@ class ControllerAmazonListing extends Controller{
     }
     
     public function search(){
+        display_errors(0);
         $this->load->model('amazon/listing');
         $this->load->language('amazon/listing');
 
@@ -559,6 +560,7 @@ class ControllerAmazonListing extends Controller{
     }
     
     public function bestPrice() {
+        display_errors(0);
         $this->load->model('amazon/listing');
         $this->load->language('amazon/listing');
 
@@ -602,6 +604,7 @@ class ControllerAmazonListing extends Controller{
     }
 
     public function getProductByAsin(){
+        display_errors(0);
         $this->load->model('amazon/listing');
 
         $data = $this->model_amazon_listing->getProductByAsin($this->request->post['asin'], $this->request->post['market']);
