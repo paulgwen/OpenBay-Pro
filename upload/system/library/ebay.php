@@ -771,6 +771,14 @@ final class Ebay
         return $this->openbay_call('item/getItemAllList/');
     }
 
+	public function disableProduct($product_id) {
+		$this->db->query("UPDATE `" . DB_PREFIX . "product` SET `status` = 0 WHERE `product_id` = '".(int)$product_id."' LIMIT 1");
+	}
+
+	public function disableVariant($product_id, $sku) {
+		$this->db->query("UPDATE `" . DB_PREFIX . "product_option_relation` SET `active` = 0 WHERE `product_id` = '".(int)$product_id."' AND `var` = '".$this->db->escape($sku)."' LIMIT 1");
+	}
+
     public function putStockUpdate($item_id, $stock, $sku = null){
         $this->log('putStockUpdate()');
         $this->log('putStockUpdate() - New local stock: '.$stock);
@@ -792,7 +800,11 @@ final class Ebay
             if($sku == null){
                 $this->log('putStockUpdate() - Listing stock: '.$listing['qty'].', new stock: '.$stock);
 
-                if($stock == 0){
+                if($stock <= 0){
+					if ($this->config->get('ebay_disable_nostock') == 1) {
+						$this->disableProduct($product_id);
+					}
+
                     $this->endItem($item_id);
                     return true;
                 }elseif($listing['qty'] != $stock){
@@ -816,6 +828,12 @@ final class Ebay
                         break;
                     }
                 }
+
+				if ($stock <= 0) {
+					if ($this->config->get('ebay_disable_nostock') == 1) {
+						$this->disableVariant($product_id, $sku);
+					}
+				}
 
                 if($variantStock == true || $stock > 0){
                     $this->log('putStockUpdate() - Revising item with Item ID "'.$item_id.'" to stock level "'.$stock.'", sku "'.$sku.'"');
@@ -1069,6 +1087,7 @@ final class Ebay
                         return $response;
                     }else{
                         $this->log('productUpdateListen() - Ending item');
+
                         $this->endItem($item_id);
                     }
             }else{

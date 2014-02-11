@@ -189,6 +189,11 @@ class ControllerOpenbayOpenbay extends Controller {
         } else {
             $this->data['openbaypro_relistitems'] = $this->config->get('openbaypro_relistitems');
         }
+		if (isset($this->request->post['ebay_disable_nostock'])) {
+            $this->data['ebay_disable_nostock'] = $this->request->post['ebay_disable_nostock'];
+        } else {
+            $this->data['ebay_disable_nostock'] = $this->config->get('ebay_disable_nostock');
+        }
         if (isset($this->request->post['openbaypro_logging'])) {
             $this->data['openbaypro_logging'] = $this->request->post['openbaypro_logging'];
         } else {
