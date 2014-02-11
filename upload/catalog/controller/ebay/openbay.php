@@ -1,6 +1,7 @@
 <?php
 class ControllerEbayOpenbay extends Controller{
     public function inbound(){
+        
         $encrypted      = $this->request->post;
         $secret         = $this->config->get('openbaypro_secret'); 
         $active         = $this->config->get('openbay_status'); 
@@ -82,6 +83,7 @@ class ControllerEbayOpenbay extends Controller{
     }
 
     public function importItems(){
+        
         set_time_limit(0);
 
         $data   = $this->request->post;
@@ -142,6 +144,7 @@ class ControllerEbayOpenbay extends Controller{
     }
     
     public function autoSync(){
+        
         set_time_limit(0);
         if($this->request->post['process'] == 'categories'){
             $this->response->setOutput(json_encode($this->ebay->loadCategories()));

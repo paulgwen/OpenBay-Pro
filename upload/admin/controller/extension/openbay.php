@@ -295,17 +295,20 @@ class ControllerExtensionOpenbay extends Controller {
     }
 
     public function getNotifications() {
+        
         $this->load->model('openbay/openbay');
         $this->response->setOutput(json_encode($this->model_openbay_openbay->getNotifications()));
     }
 
     public function getVersion() {
+        
         sleep(1); // give the data some "feel" that its not in our system
         $this->load->model('openbay/openbay');
         $this->response->setOutput(json_encode($this->model_openbay_openbay->getVersion()));
     }
 
     public function runPatch() {
+        
         $this->load->model('ebay/patch');
         $this->load->model('amazon/patch');
         $this->load->model('amazonus/patch');
@@ -317,6 +320,7 @@ class ControllerExtensionOpenbay extends Controller {
     }
 
     public function faqGet(){
+        
         $this->load->model('openbay/openbay');
         $this->load->language('extension/openbay');
 
@@ -326,11 +330,13 @@ class ControllerExtensionOpenbay extends Controller {
     }
 
     public function faqDismiss(){
+        
         $this->load->model('openbay/openbay');
         $this->response->setOutput(json_encode($this->model_openbay_openbay->faqDismiss($this->request->get['qry_route'])));
     }
 
     public function faqClear(){
+        
         $this->load->model('openbay/openbay');
         $this->model_openbay_openbay->faqClear();
         sleep(1);

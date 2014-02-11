@@ -273,6 +273,7 @@ class ControllerAmazonusProduct extends Controller{
     }
     
     public function uploadSavedAjax() {
+        
         ob_start();
         $result = json_encode($this->uploadSaved());
         ob_clean();
@@ -333,6 +334,7 @@ class ControllerAmazonusProduct extends Controller{
     }
     
     public function parseTemplateAjax() {
+        
         ob_start();
         $this->load->model('tool/image');
         $this->load->library('log');
@@ -386,7 +388,7 @@ class ControllerAmazonusProduct extends Controller{
                 "fields" => $fieldsWithThumbs,
                 "tabs" => $tabs);
         }
-        $result = json_encode($result);
+        $result =  ($result);
         
         ob_clean();
         $this->response->setOutput($result);
