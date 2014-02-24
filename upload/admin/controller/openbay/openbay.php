@@ -503,7 +503,7 @@ class ControllerOpenbayOpenbay extends Controller {
 
 	public function setProductStock() {
         
-		$this->load->model('openbay/ebay');
+		$this->load->model('ebay/openbay');
 		$this->load->model('catalog/product');
 
 		$product = $this->model_catalog_product->getProduct($this->request->get['product_id']);
