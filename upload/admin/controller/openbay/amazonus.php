@@ -1,6 +1,5 @@
 <?php
 class ControllerOpenbayAmazonus extends Controller {
-    
     public function allUpdate() {
         $this->load->model('amazonus/amazonus');
         $this->load->model('catalog/product');
