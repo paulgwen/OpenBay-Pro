@@ -502,7 +502,6 @@ class ControllerOpenbayOpenbay extends Controller {
     }
 
 	public function setProductStock() {
-        
 		$this->load->model('ebay/openbay');
 		$this->load->model('catalog/product');
 
@@ -511,7 +510,7 @@ class ControllerOpenbayOpenbay extends Controller {
 		$json = array();
 
 		if ($product['subtract'] == 1) {
-			$this->openbay->ebay->productUpdateListen($this->request->get['product_id'], $product);
+			$this->ebay->productUpdateListen($this->request->get['product_id'], $product);
 
 			$json['error'] = false;
 			$json['msg'] = 'ok';
@@ -1225,13 +1224,13 @@ class ControllerOpenbayOpenbay extends Controller {
                 //load the settings from eBay
                 $setting = array();
 
-                $setting['dispatch_times'] = $this->openbay->ebay->getSetting('dispatch_time_max');
+                $setting['dispatch_times'] = $this->ebay->getSetting('dispatch_time_max');
                 if(is_array($setting['dispatch_times'])) { ksort($setting['dispatch_times']); }
 
-                $setting['countries'] = $this->openbay->ebay->getSetting('countries');
+                $setting['countries'] = $this->ebay->getSetting('countries');
                 if(is_array($setting['countries'])) { ksort($setting['countries']); }
 
-                $setting['returns'] = $this->openbay->ebay->getSetting('returns');
+                $setting['returns'] = $this->ebay->getSetting('returns');
 
                 if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
                     $this->session->data['warning'] = $this->language->get('lang_error_missing_settings');
@@ -1418,13 +1417,13 @@ class ControllerOpenbayOpenbay extends Controller {
                             //load the settings from eBay
                             $setting = array();
 
-                            $setting['dispatch_times'] = $this->openbay->ebay->getSetting('dispatch_time_max');
+                            $setting['dispatch_times'] = $this->ebay->getSetting('dispatch_time_max');
                             if(is_array($setting['dispatch_times'])) { ksort($setting['dispatch_times']); }
 
-                            $setting['countries'] = $this->openbay->ebay->getSetting('countries');
+                            $setting['countries'] = $this->ebay->getSetting('countries');
                             if(is_array($setting['countries'])) { ksort($setting['countries']); }
 
-                            $setting['returns'] = $this->openbay->ebay->getSetting('returns');
+                            $setting['returns'] = $this->ebay->getSetting('returns');
 
                             if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
                                 $this->session->data['warning'] = $this->language->get('lang_error_missing_settings');

@@ -130,9 +130,9 @@ class ControllerEbayProfile extends Controller {
         $this->data['types']                            = $this->model_ebay_profile->getTypes();
 
         $setting                                        = array();
-        $setting['dispatch_times']                      = $this->openbay->ebay->getSetting('dispatch_time_max');
-        $setting['countries']                           = $this->openbay->ebay->getSetting('countries');
-        $setting['returns']                             = $this->openbay->ebay->getSetting('returns');
+        $setting['dispatch_times']                      = $this->ebay->getSetting('dispatch_time_max');
+        $setting['countries']                           = $this->ebay->getSetting('countries');
+        $setting['returns']                             = $this->ebay->getSetting('returns');
 
         if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
             $this->session->data['warning'] = $this->language->get('lang_error_missing_settings');

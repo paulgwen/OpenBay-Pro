@@ -803,8 +803,8 @@ class ModelEbayOpenbay extends Model{
     }
 
     public function loadItemLinks(){
-        $local      = $this->openbay->ebay->getLiveListingArray();
-        $response   = $this->openbay->ebay->getEbayActiveListings();
+        $local      = $this->ebay->getLiveListingArray();
+        $response   = $this->ebay->getEbayActiveListings();
 
         $data = array(
             'unlinked'  => array(),
