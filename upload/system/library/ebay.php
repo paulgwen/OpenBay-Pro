@@ -1209,17 +1209,22 @@ final class Ebay
         }
     }
 
-    public function getProductId($ebay_item){
-        $this->log('getProductId() - Item: '.$ebay_item);
+	public function getProductId($ebay_item, $status = 0) {
+		$this->log('getProductId() - Item: '.$ebay_item);
 
-        $qry = $this->db->query("SELECT `product_id` FROM `" . DB_PREFIX . "ebay_listing` WHERE `ebay_item_id` = '".$ebay_item."' LIMIT 1");
+		$status_sql = '';
+		if($status == 1) {
+			$status_sql = ' AND `status` = 1';
+		}
 
-        if(!$qry->num_rows){
-            return false;
-        }else{
-            return $qry->row['product_id'];
-        }
-    }
+		$qry = $this->db->query("SELECT `product_id` FROM `" . DB_PREFIX . "ebay_listing` WHERE `ebay_item_id` = '".$ebay_item."'".$status_sql." LIMIT 1");
+
+		if(!$qry->num_rows) {
+			return false;
+		}else{
+			return $qry->row['product_id'];
+		}
+	}
 
     public function getProductIdFromKey($key){
         $qry = $this->db->query("SELECT `product_id` FROM `" . DB_PREFIX . "ebay_listing_pending` WHERE `key` = '".$key."' LIMIT 1");
