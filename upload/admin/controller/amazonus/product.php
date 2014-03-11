@@ -391,7 +391,7 @@ class ControllerAmazonusProduct extends Controller{
         $result =  ($result);
         
         ob_clean();
-        $this->response->setOutput($result);
+		$this->response->setOutput(json_encode($result));
     }
     
     private function fillDefaultValues($product_id, $fields_array, $var = '') {
