@@ -1693,9 +1693,9 @@ final class Ebay
         }
     }
 
-    public function getEbayItemList($limit = 100, $page = 1) {
+    public function getEbayItemList($limit = 100, $page = 1, $filter = array()) {
         $this->log('getEbayItemList() - Get active eBay items from API');
-        return $this->openbay_call('item/getItemListLimited/', array('page' => $page, 'limit' => $limit));
+        return $this->openbay_call('item/getItemListLimited/', array('page' => $page, 'limit' => $limit, 'filter' => $filter));
     }
 }
 ?>

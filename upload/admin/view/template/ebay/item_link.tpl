@@ -30,6 +30,32 @@
             <h2><?php echo $lang_unlinked_items; ?></h2>
             <p><?php echo $lang_text_unlinked_desc; ?></p>
 
+          <table class="list">
+            <thead>
+            <tr>
+              <td class="left" colspan="6">Filter results</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <td class="left" style="font-weight:bold;">Title</td>
+              <td class="left"><input type="text" size="35" value="" name="filter_title" id="filter_title"></td>
+              <td class="left" style="font-weight:bold;">Stock range</td>
+              <td class="left">
+                <input type="text" style="text-align: left;" value="" size="8" name="filter_qty_min" id="filter_qty_min"> -
+                <input type="text" style="text-align: left;" value="" size="8" name="filter_qty_max" id="filter_qty_max">
+              </td>
+              <td class="left" style="font-weight:bold;">Include variants</td>
+              <td class="left">
+                <select name="filter_variant" id="filter_variant">
+                  <option value="1">Yes</option>
+                  <option value="0">No</option>
+                </select>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+
             <table class="list" cellpadding="2">
                 <thead>
                 <tr>
@@ -298,12 +324,12 @@ function getProductStock(id, elementId){
 }
 
 function checkUnlinkedItems(){
-
     var unlinked_page = $('#unlinked_page').val();
 
     $.ajax({
         url: 'index.php?route=openbay/openbay/loadUnlinked&token=<?php echo $token; ?>&page='+unlinked_page,
-        type: 'get',
+        type: 'POST',
+        data: { 'filter_title' : $('#filter_title').val(), 'filter_qty_min' : $('#filter_qty_min').val(), 'filter_qty_max' : $('#filter_qty_max').val(), 'filter_variant' : $('#filter_variant').val() }
         dataType: 'json',
         beforeSend: function(){
             $('#checkUnlinkedItems').hide();

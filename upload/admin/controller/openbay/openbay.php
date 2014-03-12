@@ -948,7 +948,26 @@ class ControllerOpenbayOpenbay extends Controller {
         set_time_limit(0);
 
         $this->load->model('ebay/openbay');
-        $data = $this->model_ebay_openbay->loadUnlinked(100, $this->request->get['page']);
+
+		$filter = array();
+
+		if (isset($this->request->get['filter_variant']) && !empty($this->request->get['filter_variant'])) {
+			$filter['variants'] = (int)$this->request->get['filter_variant'];
+		}
+
+		if (isset($this->request->get['filter_title']) && !empty($this->request->get['filter_title'])) {
+			$filter['title'] = (string)$this->request->get['filter_title'];
+		}
+
+		if (isset($this->request->get['filter_qty_min']) && !empty($this->request->get['filter_qty_min'])) {
+			$filter['qty_min'] = (int)$this->request->get['filter_qty_min'];
+		}
+
+		if (isset($this->request->get['filter_qty_max']) && !empty($this->request->get['filter_qty_max'])) {
+			$filter['qty_max'] = (int)$this->request->get['filter_qty_max'];
+		}
+
+        $data = $this->model_ebay_openbay->loadUnlinked(100, $this->request->get['page'], $filter);
 
         if (!empty($data)) {
             $data['more_pages'] = 1;
