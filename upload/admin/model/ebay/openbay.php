@@ -763,9 +763,18 @@ class ModelEbayOpenbay extends Model{
 
         $unlinked = array();
 
+		$current = 1;
+		$stop_flag = 0;
+
         // - continue until no more pages or 10 or more found
 
         while(count($unlinked) < 5){
+			if ($current > 10) {
+				$stop_flag = 1;
+				break;
+			} else {
+				$current++;
+			}
 
             $this->ebay->log('Checking unlinked page: '.$page);
 
@@ -797,6 +806,7 @@ class ModelEbayOpenbay extends Model{
 
         return array(
             'items' => $unlinked,
+            'break' => $stop_flag,
             'next_page' => $response['page']+1,
             'max_page' => $response['max_page']
         );

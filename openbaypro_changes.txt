@@ -1,5 +1,6 @@
 Type: Enhancement, New Feature, Bug
 
+12-03-14 - Enhancement - Added filters to refine unlinked item searching and also thumbnail image to results.
 11-03-14 - Bug - Fixed manufacturer filter on manage items page.
 11-03-14 - Bug - Fixed advanced product listing. Form not loading when category selected.
 07-02-14 - Bug - Fixed row not hiding when remove link clicked in eBay item links.
