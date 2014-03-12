@@ -334,10 +334,11 @@ function checkUnlinkedItems(){
         dataType: 'json',
         beforeSend: function(){
             $('#checkUnlinkedItems').hide();
+            $('#fetchingEbayItems').hide();
             $('#checkUnlinkedItemsLoading').show();
+            $('.attention').remove();
         },
         success: function(json) {
-
             if(json.data.items === null){
                 $('#eBayListings').append('<tr><td colspan="7"><p><?php echo $lang_ajax_error_listings; ?></p></td></tr>');
             }else{
@@ -386,8 +387,8 @@ function checkUnlinkedItems(){
             if(json.data.more_pages == 1){
                 $('#checkUnlinkedItems').show();
             }
-            if (json.data.stop_flag == 1) {
-              $('#checkUnlinkedItems').before('<div class="attention">The maximum number of checks per request was reached, click the button to continue searching</div>');
+            if (json.data.break == 1) {
+              $('#checkUnlinkedItems').before('<div class="attention" style="margin-bottom:10px;"><?php echo $lang_limit_reached; ?></div>');
             }
             $('#checkUnlinkedItemsLoading').hide();
             $('#unlinked_page').val(json.data.next_page);

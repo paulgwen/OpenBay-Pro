@@ -759,17 +759,13 @@ class ModelEbayOpenbay extends Model{
         return $this->ebay->openbay_call('item/getItemsById/', array('item_ids' => $item_ids));
     }
 
-    public function loadUnlinked($limit = 100, $page = 1, $filter = array()){
-
+    public function loadUnlinked($limit = 200, $page = 1, $filter = array()){
         $unlinked = array();
-
 		$current = 1;
 		$stop_flag = 0;
 
-        // - continue until no more pages or 10 or more found
-
         while(count($unlinked) < 5){
-			if ($current > 10) {
+			if ($current > 5) {
 				$stop_flag = 1;
 				break;
 			} else {
@@ -778,14 +774,12 @@ class ModelEbayOpenbay extends Model{
 
             $this->ebay->log('Checking unlinked page: '.$page);
 
-            //some products from ebay (100)
             $response = $this->ebay->getEbayItemList($limit, $page, $filter);
 
             if($this->ebay->lasterror == true){
                 break;
             }
 
-            //loop over these and check if any are not in the db
             foreach($response['items'] as $itemId => $item){
                 if($this->ebay->getProductId($itemId, 1) == false){
                     //ebay item ID not in the db
@@ -795,8 +789,6 @@ class ModelEbayOpenbay extends Model{
 
             $this->ebay->log('Unlinked count: '.count($unlinked));
 
-            //if end of the loop and less than 10, request next page
-            //if the last page requested was the max page of results
             if($response['max_page'] == $page || count($unlinked) >= 5){
                 break;
             }else{
