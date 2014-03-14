@@ -782,7 +782,6 @@ class ModelEbayOpenbay extends Model{
 
             foreach($response['items'] as $itemId => $item){
                 if($this->ebay->getProductId($itemId, 1) == false){
-                    //ebay item ID not in the db
                     $unlinked[$itemId] = $item;
                 }
             }

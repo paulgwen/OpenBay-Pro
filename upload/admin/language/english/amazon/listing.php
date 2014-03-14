@@ -69,6 +69,7 @@ $_['error_amazon_price'] = 'Could not get the price from Amazon';
 $_['error_stock'] = 'You cannot list an item with less than 1 item in stock';
 $_['error_sku'] = 'You must enter an SKU for the item';
 $_['error_price'] = 'You must enter a price for the item';
+$_['error_not_searched'] = 'Search for matching items before you try to list. Items must be matched against an Amazon catalog item';
 
 $_['tab_required_info'] = 'Required info';
 $_['tab_additional_info'] = 'Additional options';
