@@ -1,16 +1,12 @@
 <?php echo $header; ?>
 <div id="content">
-
     <div class="breadcrumb">
         <?php foreach ($breadcrumbs as $breadcrumb) { ?>
         <?php echo $breadcrumb['separator']; ?><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a>
         <?php } ?>
     </div>
-
     <div class="warning displayNone" id="errorBox"></div>
-
     <div class="box mBottom130">
-
         <div class="heading">
             <h1><?php echo $lang_heading; ?></h1>
             <div class="buttons">
@@ -93,6 +89,7 @@
                     <td class="center"><?php echo $lang_column_itemId; ?></td>
                     <td class="center"><?php echo $lang_column_allocated; ?></td>
                     <td class="center"><?php echo $lang_column_stock_available; ?></td>
+                    <td class="center"><?php echo $lang_column_stock_reserve; ?></td>
                     <td class="center"><?php echo $lang_column_ebay_stock; ?></td>
                     <td class="center"><?php echo $lang_column_variants; ?></td>
                     <td class="center"><?php echo $lang_column_status; ?></td>
@@ -106,8 +103,9 @@
                 </tr>
                 <tbody style="display:none;" id="show_linked_items">
                 <?php foreach($linked_items as $id => $item) { ?>
-                <input type="hidden" class="refreshClear" name="ebay_qty_<?php echo $id; ?>" value="" id="ebay_qty_<?php echo $id; ?>" />
+                <input type="hidden" name="ebay_qty_<?php echo $id; ?>" value="" id="ebay_qty_<?php echo $id; ?>" />
                 <input type="hidden" name="store_qty_<?php echo $id; ?>" value="<?php echo $item['qty']; ?>" id="store_qty_<?php echo $id; ?>" />
+                <input type="hidden" name="reserve_qty_<?php echo $id; ?>" value="<?php echo $item['reserve']; ?>" id="reserve_qty_<?php echo $id; ?>" />
                 <input type="hidden" name="item_id[]" id="item_id_<?php echo $id; ?>" value="<?php echo $id; ?>" class="item_id"  />
                 <input type="hidden" name="product_id[]" id="product_id_<?php echo $id; ?>" value="<?php echo $item['product_id']; ?>" />
                 <input type="hidden" name="options" id="options_<?php echo $id; ?>" value="<?php echo (int)$item['options']; ?>" />
@@ -118,16 +116,17 @@
                     <?php if($item['options'] == 0){ ?>
                     <td class="center"><?php echo $item['allocated']; ?></td>
                     <td class="center"><?php echo $item['qty']; ?></td>
-                    <td id="text_qty_<?php echo $id; ?>" class="center refreshClear"></td>
+                    <td class="center"><?php echo $item['reserve']; ?></td>
+                    <td id="text_qty_<?php echo $id; ?>" class="center"></td>
                     <td class="center" align="center"><img title="" alt="" src="view/image/delete.png" style="margin-top:3px;"></td>
                     <?php }else{ ?>
                     <td class="center">-</td>
                     <td class="center"><?php foreach($item['options'] as $option){ echo $option['stock'] .' x ' . $option['combi'] . '<br />'; } ?></td>
-                    <td id="text_qty_<?php echo $id; ?>" class="center refreshClear"></td>
+                    <td id="text_qty_<?php echo $id; ?>" class="center"></td>
                     <td class="center" align="center"><img title="" alt="" src="view/image/success.png" style="margin-top:3px;"></td>
                     <?php } ?>
-                    <td class="center refreshClear" id="text_status_<?php echo $id; ?>"></td>
-                    <td class="center buttons refreshClear" id="text_buttons_<?php echo $id; ?>"></td>
+                    <td class="center" id="text_status_<?php echo $id; ?>"></td>
+                    <td class="center buttons" id="text_buttons_<?php echo $id; ?>"></td>
                 </tr>
                 <?php } ?>
                 </tbody>
@@ -160,22 +159,21 @@ function checkLinkedItems(){
                 $.each(json.data, function(key, val){
                     key                 = String(key);
                     var product_id      = $('#product_id_'+key).val();
-                    var storeQty        = $('#store_qty_'+key).val();
+                    var store_qty       = $('#store_qty_'+key).val();
+                    var reserve_qty     = $('#reserve_qty_'+key).val();
 
                     if(val.variants == 0){
                         $('#text_qty_'+key).text(val.qty);
                         $('#ebay_qty_'+key).val(val.qty);
 
                         if(val.status == 1){
-                            $('#item_id_'+key).removeClass('unprocessed');
-
-                            if($('#ebay_qty_'+key).val() == $('#store_qty_'+key).val()){
+                            if (val.qty == store_qty || val.qty == reserve_qty) {
                                 $('#text_status_'+key).text('OK');
                                 $('#row_'+key+' > td').css('background-color', '#E3FFC8');
                             }else{
                                 $('#text_status_'+key).text('Stock error');
                                 $('#row_'+key+' > td').css('background-color', '#FFD4D4');
-                                $('#text_buttons_'+key).html('<a onclick="updateLink('+key+','+val.qty+','+product_id+', '+storeQty+');" class="button"><span><?php echo $lang_btn_resync; ?></span></a>');
+                                $('#text_buttons_'+key).html('<a onclick="updateLink('+key+','+val.qty+','+product_id+', '+store_qty+', '+reserve_qty+');" class="button"><span><?php echo $lang_btn_resync; ?></span></a>');
                             }
                         }else{
                             $('#text_status_'+key).text('Listing ended');
@@ -200,8 +198,6 @@ function checkLinkedItems(){
                             $('#row_'+key+' > td').css('background-color', '#FFD4D4');
                             $('#text_buttons_'+key).html('<a onclick="removeLink('+product_id+', '+key+');" class="button"><span><?php echo $lang_btn_remove_link; ?></span></a>');
                         }
-
-                        $('#item_id_'+key).removeClass('unprocessed');
                     }
                 });
 
@@ -229,7 +225,7 @@ function removeLink(product_id, id) {
     });
 }
 
-function updateLink(itemid, qty, product_id, storeQty){
+function updateLink(itemid, qty, product_id, store_qty, reserve_qty){
     var r = confirm("<?php echo $lang_alert_stock_local; ?>");
     varBtnOld = $('#text_buttons_'+itemid).html();
 
@@ -243,12 +239,16 @@ function updateLink(itemid, qty, product_id, storeQty){
             success: function(json) {
               if(json.error == false){
                 $('#text_status_'+itemid).text('OK');
-                $('#text_buttons_'+itemid).html('<a href="<?php echo $edit_url; ?>'+product_id+'" class="button"><span><?php echo $lang_btn_edit; ?></span></a>');
+                $('#text_buttons_'+itemid).empty().html('<a href="<?php echo $edit_url; ?>'+product_id+'" class="button"><span><?php echo $lang_btn_edit; ?></span></a>');
                 $('#row_'+itemid+' > td').css('background-color', '#E3FFC8');
                 $('#l_'+itemid+'_qtyinput').val(qty);
                 $('#l_'+itemid+'_qty').val(qty);
-                $('#text_qty_'+itemid).text(storeQty);
-                $('#text_buttons_'+itemid).empty();
+                if (reserve_qty > 0) {
+                  $('#text_qty_'+item_id).text(reserve_qty);
+                } else {
+                  $('#text_qty_'+item_id).text(store_qty);
+                }
+                $('#reserve_qty-'+item_id).text(reserve_qty);
               }
 
               if(json.error == true) {

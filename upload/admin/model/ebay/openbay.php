@@ -712,10 +712,12 @@ class ModelEbayOpenbay extends Model{
 			`p`.`sku`,
 			`p`.`model`,
 			`p`.`quantity`,
-			`pd`.name
+			`pd`.name,
+			`esr`.`reserve`
         FROM `" . DB_PREFIX . "ebay_listing` `el`
         LEFT JOIN `" . DB_PREFIX . "product` `p` ON (`el`.`product_id` = `p`.`product_id`)
         LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`)
+        LEFT JOIN `" . DB_PREFIX . "ebay_stock_reserve` `esr` ON (`esr`.`product_id` = `p`.`product_id`)
         WHERE `el`.`status` = '1'
         AND `pd`.`language_id` = '" . (int)$this->config->get('config_language_id') . "'";
 
@@ -734,6 +736,7 @@ class ModelEbayOpenbay extends Model{
                     'name'          => $row['name'],
                     'link_edit'     => $this->url->link('catalog/product/update', 'token=' . $this->session->data['token'] . '&product_id='.$row['product_id'], 'SSL'),
                     'link_ebay'     => $this->config->get('openbaypro_ebay_itm_link').$row['ebay_item_id'],
+					'reserve'       => (int)$row['reserve'],
                 );
 
                 $data[$row['ebay_item_id']]['options'] = 0;
