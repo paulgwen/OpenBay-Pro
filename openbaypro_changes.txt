@@ -1,5 +1,6 @@
 Type: Enhancement, New Feature, Bug
 
+27-03-14 - Enhancement - Added Openstock support for creating a new item in sellers account for items already in the Amazon catalog.
 27-03-14 - Bug - Added reserve stock level column on eBay linked item page. Stock status now shows correctly for linked items using a reserve level.
 19-03-14 - Enhancement - Added check for supersize version of an image during the product import.
 14-03-14 - Enhancement - Added error message if users try to bulk list items without searching the Amazon catalog first.

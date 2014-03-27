@@ -1,5 +1,4 @@
 <?php
-
 class ModelAmazonAmazon extends Model {
     
     public function scheduleOrders($data) {

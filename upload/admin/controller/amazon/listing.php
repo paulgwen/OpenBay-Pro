@@ -64,10 +64,9 @@ class ControllerAmazonListing extends Controller{
         if (isset($this->request->get['page'])) {
             $url .= '&page=' . $this->request->get['page'];
         }
-        
+
         if ($this->request->post) {
 			$product = $this->request->post;
-			//get the item stock
 			if (isset($product['option_variant'])) {
 				$variant = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product_option_relation` WHERE `var` = '" . $this->db->escape((string)$product['option_variant']) . "' AND `product_id` = '".(int)$product['product_id']."' LIMIT 1")->row;
 				$product['var'] = $product['option_variant'];
@@ -79,7 +78,7 @@ class ControllerAmazonListing extends Controller{
 			}
 
             $result = $this->model_amazon_listing->simpleListing($product);
-            
+
             if($result['status'] === 1) {
                 $this->session->data['success'] = $this->language->get('text_product_sent');
                 $this->redirect($this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
@@ -88,7 +87,7 @@ class ControllerAmazonListing extends Controller{
                 $this->redirect($this->url->link('amazon/listing/create', 'token=' . $this->session->data['token'] . '&product_id=' . $this->request->post['product_id'] . $url, 'SSL'));
             }
         }
-        
+
         if (isset($this->request->get['product_id'])) {
             $product_info = $this->model_catalog_product->getProduct($this->request->get['product_id']);
 
@@ -98,6 +97,7 @@ class ControllerAmazonListing extends Controller{
 
 			if($this->amazon->addonLoad('openstock') == true) {
 				$this->load->model('openstock/openstock');
+				$this->load->model('tool/image');
 				$this->data['options'] = $this->model_openstock_openstock->getProductOptionStocks($this->request->get['product_id']);
 			} else {
 				$this->data['options'] = array();
@@ -113,7 +113,7 @@ class ControllerAmazonListing extends Controller{
         } else {
             $this->redirect($this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
         }
-        
+
         $this->document->setTitle($this->language->get('lang_title'));
         $this->document->addStyle('view/stylesheet/openbay.css');
         $this->document->addScript('view/javascript/openbay/faq.js');
@@ -124,15 +124,16 @@ class ControllerAmazonListing extends Controller{
             'common/header',
             'common/footer'
         );
-        
+
         if (isset($this->session->data['error'])) {
             $this->data['error_warning'] = $this->session->data['error'];
             unset($this->session->data['error']);
         }
-        
+
         $this->data['url_return']  = $this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL');
         $this->data['url_search']  = $this->url->link('amazon/listing/search', 'token=' . $this->session->data['token'], 'SSL');
         $this->data['url_advanced']  = $this->url->link('amazon/product', 'token=' . $this->session->data['token'] . '&product_id='.$this->request->get['product_id'] . $url, 'SSL');
+		$this->data['form_action'] = $this->url->link('amazon/listing/create', 'token=' . $this->session->data['token'], 'SSL');
 
         $this->data['button_search'] = $this->language->get('button_search');
         $this->data['button_new'] = $this->language->get('button_new');
@@ -158,6 +159,7 @@ class ControllerAmazonListing extends Controller{
         $this->data['entry_restock_date'] = $this->language->get('entry_restock_date');
         $this->data['entry_from'] = $this->language->get('entry_from');
         $this->data['entry_to'] = $this->language->get('entry_to');
+        $this->data['entry_option'] = $this->language->get('entry_option');
         $this->data['help_restock_date'] = $this->language->get('help_restock_date');
         $this->data['help_sku'] = $this->language->get('help_sku');
         $this->data['help_sale_price'] = $this->language->get('help_sale_price');
@@ -171,8 +173,6 @@ class ControllerAmazonListing extends Controller{
         $this->data['error_sku'] = $this->language->get('error_sku');
         $this->data['error_stock'] = $this->language->get('error_stock');
 
-        $this->data['form_action'] = $this->url->link('amazon/listing/create', 'token=' . $this->session->data['token'], 'SSL');
-        
         $this->data['sku'] = trim($product_info['sku']);
 
         if ($this->config->get('openbay_amazon_listing_tax_added')) {
@@ -180,7 +180,7 @@ class ControllerAmazonListing extends Controller{
         } else {
             $this->data['price'] = $product_info['price'];
         }
-        
+
         $this->data['listing_errors'] = array();
 
         if ($listing_status == 'error_quick') {
@@ -190,7 +190,7 @@ class ControllerAmazonListing extends Controller{
         $this->data['price'] = number_format($this->data['price'], 2);
         $this->data['quantity'] = $product_info['quantity'];
         $this->data['product_id'] = $product_info['product_id'];
-        
+
         $this->data['conditions'] = array(
             'New' => $this->language->get('text_new'),
             'UsedLikeNew' => $this->language->get('text_used_like_new'),
@@ -203,7 +203,7 @@ class ControllerAmazonListing extends Controller{
             'CollectibleAcceptable' => $this->language->get('text_collectible_acceptable'),
             'Refurbished' => $this->language->get('text_refurbished'),
         );
-        
+
         $this->data['marketplaces'] = array(
             'uk' => $this->language->get('text_united_kingdom'),
             'de' => $this->language->get('text_germany'),
@@ -211,10 +211,10 @@ class ControllerAmazonListing extends Controller{
             'it' => $this->language->get('text_italy'),
             'es' => $this->language->get('text_spain'),
         );
-        
+
         $this->data['default_marketplace'] = $this->config->get('openbay_amazon_default_listing_marketplace');
         $this->data['default_condition'] = $this->config->get('openbay_amazon_listing_default_condition');
-        
+
         $this->data['token'] = $this->session->data['token'];
 
         $this->data['breadcrumbs'] = array();
@@ -245,12 +245,12 @@ class ControllerAmazonListing extends Controller{
 
         $this->response->setOutput($this->render(TRUE), $this->config->get('config_compression'));
     }
-    
+
     public function edit() {
         $this->load->model('amazon/listing');
         $this->load->model('amazon/amazon');
         $this->load->language('amazon/listing');
-        
+
         $url = '';
 
         if (isset($this->request->get['filter_name'])) {
@@ -308,15 +308,15 @@ class ControllerAmazonListing extends Controller{
         if (isset($this->request->get['page'])) {
             $url .= '&page=' . $this->request->get['page'];
         }
-        
+
         if (isset($this->request->get['product_id'])) {
             $product_id = $this->request->get['product_id'];
         } else {
             $this->redirect($this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
         }
-        
+
         $status = $this->model_amazon_amazon->getProductStatus($product_id);
-        
+
         //If product was not submited/saved for Amazon
         if($status === false) {
             $this->redirect($this->url->link('amazon/listing/create', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id . $url, 'SSL'));
@@ -329,13 +329,13 @@ class ControllerAmazonListing extends Controller{
             $this->data['url_create_new']  = $this->url->link('amazon/listing/createNew', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id . $url, 'SSL');
             $this->data['url_delete_links']  = $this->url->link('amazon/listing/deleteLinks', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id . $url, 'SSL');
         }
-        
+
         if($status == 'saved') {
             $this->data['has_saved_listings'] = true;
         } else {
             $this->data['has_saved_listings'] = false;
         }
-        
+
         $this->data['url_saved_listings']  = $this->url->link('openbay/amazon/savedListings', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id, 'SSL');
 
 
@@ -366,12 +366,12 @@ class ControllerAmazonListing extends Controller{
             'text' => $this->language->get('text_edit_heading'),
             'separator' => ' :: '
         );
-        
+
         $this->data['text_edit_heading'] = $this->language->get('text_edit_heading');
         $this->data['text_product_links'] = $this->language->get('text_product_links');
-        
+
         $this->data['text_has_saved_listings'] = $this->language->get('text_has_saved_listings');
-        
+
         $this->data['button_create_new_listing'] = $this->language->get('button_create_new_listing');
         $this->data['button_remove_links'] = $this->language->get('button_remove_links');
         $this->data['button_return'] = $this->language->get('button_return');
@@ -384,8 +384,8 @@ class ControllerAmazonListing extends Controller{
         $this->data['column_amazon_sku'] = $this->language->get('column_amazon_sku');
         $this->data['button_create_new_listing'] = $this->language->get('button_create_new_listing');
         $this->data['button_create_new_listing'] = $this->language->get('button_create_new_listing');
-        
-        
+
+
         $this->template = 'amazon/listing_edit.tpl';
         $this->children = array(
             'common/header',
@@ -393,7 +393,7 @@ class ControllerAmazonListing extends Controller{
         );
         $this->response->setOutput($this->render());
     }
-    
+
     public function createNew() {
         $url = '';
 
@@ -452,7 +452,7 @@ class ControllerAmazonListing extends Controller{
         if (isset($this->request->get['page'])) {
             $url .= '&page=' . $this->request->get['page'];
         }
-        
+
         if (isset($this->request->get['product_id'])) {
             $product_id = $this->request->get['product_id'];
         } else {
@@ -462,7 +462,7 @@ class ControllerAmazonListing extends Controller{
         $this->model_amazon_amazon->deleteProduct($product_id);
         $this->redirect($this->url->link('amazon/listing/create', 'token=' . $this->session->data['token'] . '&product_id=' . $product_id . $url, 'SSL'));
     }
-    
+
     public function deleteLinks() {
         $url = '';
 
@@ -521,14 +521,14 @@ class ControllerAmazonListing extends Controller{
         if (isset($this->request->get['page'])) {
             $url .= '&page=' . $this->request->get['page'];
         }
-        
+
         if (isset($this->request->get['product_id'])) {
             $product_id = $this->request->get['product_id'];
         } else {
             $this->redirect($this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
         }
         $this->load->model('amazon/amazon');
-        
+
         $links = $this->model_amazon_amazon->getProductLinks($product_id);
         foreach ($links as $link) {
             $this->model_amazon_amazon->removeProductLink($link['amazon_sku']);
@@ -538,23 +538,22 @@ class ControllerAmazonListing extends Controller{
 
         $this->redirect($this->url->link('extension/openbay/itemList', 'token=' . $this->session->data['token'] . $url, 'SSL'));
     }
-    
+
     public function search(){
-        
         $this->load->model('amazon/listing');
         $this->load->language('amazon/listing');
 
         $error = '';
-        
-        
+
+
         if (empty($this->request->post['search_string'])) {
             $error = $this->language->get('error_text_missing');
         }
-        
+
         if (empty($this->request->post['marketplace'])) {
             $error = $this->language->get('error_marketplace_missing');
         }
-        
+
         if ($error) {
             $response = array(
                 'data' => '',
@@ -566,30 +565,30 @@ class ControllerAmazonListing extends Controller{
                 'error' => '',
             );
         }
-        
+
         $this->response->setOutput(json_encode($response));
     }
-    
+
     public function bestPrice() {
-        
+
         $this->load->model('amazon/listing');
         $this->load->language('amazon/listing');
 
         $error = '';
-        
-        
+
+
         if (empty($this->request->post['asin'])) {
             $error = $this->language->get('error_missing_asin');
         }
-        
+
         if (empty($this->request->post['marketplace'])) {
             $error = $this->language->get('error_marketplace_missing');
         }
-        
+
         if (empty($this->request->post['condition'])) {
             $error = $this->language->get('error_condition_missing');
         }
-        
+
         if ($error) {
             $response = array(
                 'data' => '',
@@ -597,7 +596,7 @@ class ControllerAmazonListing extends Controller{
             );
         } else {
             $bestPrice = $this->model_amazon_listing->getBestPrice($this->request->post['asin'], $this->request->post['condition'], $this->request->post['marketplace']);
-            
+
             if ($bestPrice) {
                 $response = array(
                     'data' => $bestPrice,
@@ -610,12 +609,12 @@ class ControllerAmazonListing extends Controller{
                 );
             }
         }
-        
+
         $this->response->setOutput(json_encode($response));
     }
 
     public function getProductByAsin(){
-        
+
         $this->load->model('amazon/listing');
 
         $data = $this->model_amazon_listing->getProductByAsin($this->request->post['asin'], $this->request->post['market']);

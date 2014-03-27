@@ -102,7 +102,6 @@ class ModelAmazonListing extends Model {
             'condition_note' => $data['condition_note'],
             'start_selling' => $data['start_selling'],
             'restock_date' => $data['restock_date'],
-            
             'marketplace' => $data['marketplace'],
             'response_url' => HTTPS_CATALOG . 'index.php?route=amazon/listing',
             'product_id' => $data['product_id'],
@@ -121,14 +120,7 @@ class ModelAmazonListing extends Model {
         $response = (array)$response;
         
         if($response['status'] === 1) {
-            $this->db->query("
-                REPLACE INTO `" . DB_PREFIX . "amazon_product`
-                SET `product_id` = " . (int) $data['product_id'] . ",
-                    `status` = 'uploaded',
-                    `marketplaces` = '" . $this->db->escape($data['marketplace']) . "',
-                    `version` = 3,
-                    `var` = ''
-                ");
+            $this->db->query("REPLACE INTO `" . DB_PREFIX . "amazon_product` SET `product_id` = " . (int)$data['product_id'] . ", `status` = 'uploaded', `marketplaces` = '" . $this->db->escape($data['marketplace']) . "', `version` = 3, `var` = '" . isset($data['var']) ? $this->db->escape($data['var']) : '' . "'");
         }
         
         return $response;

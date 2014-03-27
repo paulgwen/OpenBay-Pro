@@ -1,7 +1,5 @@
 <?php
-
 final class Openbay {
-
     private $registry;
 
     public function __construct($registry) {
