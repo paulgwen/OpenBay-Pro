@@ -96,6 +96,19 @@
 
                     <div id="required-info">
                         <table class="form">
+                          <?php if (!empty($options)) { ?>
+                            <tr>
+                              <td><label for="openstock_selector"><?php echo $entry_quantity; ?></label></td>
+                              <td>
+                                <select id="openstock_selector" name="option_variant">
+                                  <option></option>
+                                  <?php foreach($options as $option) { ?>
+                                    <option value="<?php echo  $option['var']?>" <?php if (in_array($option['var'], $options_active)) { ' disabled' } ?>><?php echo $option['combi']?></option>
+                                  <?php } ?>
+                                </select>
+                              </td>
+                            </tr>
+                          <?php }?>
                             <tr>
                                 <td><label for="quantity"><?php echo $entry_quantity; ?></label></td>
                                 <td>
@@ -249,7 +262,6 @@ function getProduct(asin){
             $('#chosen_product_preview').empty();
         },
         success: function(data) {
-
             var html = '';
 
             if(data.img != ''){
