@@ -77,7 +77,7 @@ class ControllerAmazonusListing extends Controller{
 				$product['quantity'] = $product_info['quantity'];
 			}
 
-            $result = $this->model_amazonus_listing->simpleListing($this->request->post);
+            $result = $this->model_amazonus_listing->simpleListing($product);
             
             if($result['status'] === 1) {
                 $this->session->data['success'] = $this->language->get('text_product_sent');

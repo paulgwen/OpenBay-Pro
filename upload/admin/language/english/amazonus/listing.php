@@ -65,7 +65,6 @@ $_['error_marketplace_missing'] = 'Please select a marketplace';
 $_['error_condition_missing'] = "Please select condition";
 $_['error_fetch'] = 'Could not get the data';
 $_['error_amazonus_price'] = 'Could not get the price from Amazon US';
-$_['error_stock'] = 'You cannot list an item with less than 1 item in stock';
 $_['error_sku'] = 'You must enter an SKU for the item';
 $_['error_price'] = 'You must enter a price for the item';
 

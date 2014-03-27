@@ -316,11 +316,6 @@ function listProduct(asin) {
 function validateQuickListing(){
     var error = false;
 
-    if($('#quantity').val() < 1){
-        alert('<?php echo $error_stock; ?>');
-        error = true;
-    }
-
     if($('#price').val() == '' || $('#price').val() == 0){
         alert('<?php echo $error_price; ?>');
         error = true;
