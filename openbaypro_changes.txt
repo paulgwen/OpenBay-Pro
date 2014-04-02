@@ -1,5 +1,6 @@
 Type: Enhancement, New Feature, Bug
 
+02-03-14 - Bug - Fixed eBay display module to have settings for the site ID. This resolves the eBay updates where it needs to match the seller country.
 27-03-14 - Enhancement - Added Openstock support for creating a new item in sellers account for items already in the Amazon catalog.
 27-03-14 - Bug - Added reserve stock level column on eBay linked item page. Stock status now shows correctly for linked items using a reserve level.
 19-03-14 - Enhancement - Added check for supersize version of an image during the product import.

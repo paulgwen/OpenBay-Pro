@@ -303,13 +303,13 @@ class ModelEbayProduct extends Model{
     }
 
     public function getDisplayProducts(){
-
         $data = array();
         $data['search_keyword'] = $this->config->get('ebaydisplay_module_keywords');
         $data['seller_id']      = $this->config->get('ebaydisplay_module_username');
         $data['limit']          = $this->config->get('ebaydisplay_module_limit');
         $data['sort']           = $this->config->get('ebaydisplay_module_sort');
         $data['search_desc']    = $this->config->get('ebaydisplay_module_description');
+		$data['site_id'] = $this->config->get('ebaydisplay_module_site');
 
         return $this->ebay->openbay_call('item/searchListingsForDisplay', $data);
     }
