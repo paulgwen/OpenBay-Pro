@@ -251,6 +251,15 @@
             <add><![CDATA[ $this->openbay->deleteOrder($order_id); ]]></add>
         </operation>
     </file>
+    <file name="catalog/model/sale/order.php">
+        <operation error="skip">
+            <search position="before"><![CDATA[// Update order total]]></search>
+            <add><![CDATA[
+                // Notify OpenBay Pro
+                $this->openbay->orderNew((int)$order_id);
+            ]]></add>
+        </operation>
+    </file>
     <!-- product page market link status -->
     <file name="admin/view/template/catalog/product_form.tpl">
         <operation>
