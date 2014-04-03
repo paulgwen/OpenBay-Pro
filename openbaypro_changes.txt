@@ -1,5 +1,6 @@
 Type: Enhancement, New Feature, Bug
 
+<!--- RELEASE 2332 ---!>
 03-04-14 - Enhancement - Added marketplave notifier when new order is added through the admin area to handle stock changes
 02-04-14 - Bug - Fixed eBay display module to have settings for the site ID. This resolves the eBay updates where it needs to match the seller country.
 27-03-14 - Enhancement - Added Openstock support for creating a new item in sellers account for items already in the Amazon catalog.
