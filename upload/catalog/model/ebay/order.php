@@ -588,6 +588,8 @@ class ModelEbayOrder extends Model{
     }
 
     public function delete($order_id){
+
+
         $this->db->query("DELETE FROM `" . DB_PREFIX . "order` WHERE `order_id` = '".(int)$order_id."' LIMIT 1");
         $this->db->query("DELETE FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = '".(int)$order_id."'");
         $this->db->query("DELETE FROM `" . DB_PREFIX . "order_option` WHERE `order_id` = '".(int)$order_id."'");
