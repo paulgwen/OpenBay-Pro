@@ -1631,8 +1631,8 @@ class ControllerOpenbayOpenbay extends Controller {
 				$data['qty'][0]             = (int)$post['qty'];
 				$data['product_id']         = (int)$post['product_id'];
 
-				$data['feat']           	= $post['feat'];
-				$data['featother']          = $post['featother'];
+				$data['feat']           	= !empty($post['feat']) ? $post['feat'] : array();
+				$data['featother']          = !empty($post['featother']) ? $post['featother'] : array();
 
 				if(!empty($product_info['sku'])){
 					$data['sku'] = $product_info['sku'];
@@ -1809,8 +1809,6 @@ class ControllerOpenbayOpenbay extends Controller {
 	}
 
 	public function listItemBulk() {
-
-
 		$this->load->model('openbay/ebay_profile');
 		$this->load->model('openbay/ebay');
 		$this->load->model('openbay/ebay_template');
@@ -1844,8 +1842,8 @@ class ControllerOpenbayOpenbay extends Controller {
 				$data['qty'][0]             = $post['qty'];
 				$data['product_id']         = $post['product_id'];
 
-				$data['feat']           	= $post['feat'];
-				$data['featother']          = $post['featother'];
+				$data['feat']           	= !empty($post['feat']) ? $post['feat'] : array();
+				$data['featother']          = !empty($post['featother']) ? $post['featother'] : array();
 
 				if(!empty($product_info['sku'])){
 					$data['sku'] = $product_info['sku'];
