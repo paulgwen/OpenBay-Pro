@@ -37,21 +37,21 @@ class ModelOpenbayAmazonusOrder extends Model {
 		return '';
 	}
 
-	public function decreaseProductQuantity($productId, $delta, $var = '') {
-		if($productId == 0) {
+	public function decreaseProductQuantity($product_id, $delta, $var = '') {
+		if($product_id == 0) {
 			return;
 		}
 		if($var == '') {
 			$this->db->query("
 				UPDATE `" . DB_PREFIX . "product`
 				SET `quantity` = GREATEST(`quantity` - '" . (int)$delta . "', 0)
-				WHERE `product_id` = '" . (int)$productId . "'");
+				WHERE `product_id` = '" . (int)$product_id . "'");
 		} else {
 			//@TODO: do something about subtract column?
 			$this->db->query("
 				UPDATE `" . DB_PREFIX . "product_option_relation`
 				SET `stock` = GREATEST(`stock` - '" . (int)$delta . "', 0)
-				WHERE `product_id` = '" . (int)$productId . "' AND `var` = '" . $this->db->escape($var) . "'");
+				WHERE `product_id` = '" . (int)$product_id . "' AND `var` = '" . $this->db->escape($var) . "'");
 		}
 	}
 
