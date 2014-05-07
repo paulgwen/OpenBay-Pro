@@ -64,15 +64,15 @@ class Amazon {
 		}
 	}
 
-	public function productUpdateListen($productId, $data) {
+	public function productUpdateListen($product_id, $data) {
 		$logger = new Log('amazon_stocks.log');
-		$logger->write('productUpdateListen called for product id: ' . $productId);
+		$logger->write('productUpdateListen called for product id: ' . $product_id);
 
 		if ($this->openbay->addonLoad('openstock') && (isset($data['has_option']) && $data['has_option'] == 1)) {
 			$logger->write('openStock found installed and product has options.');
 			$quantityData = array();
 			foreach($data['product_option_stock'] as $optStock) {
-				$amazonSkuRows = $this->getLinkedSkus($productId, $optStock['var']);
+				$amazonSkuRows = $this->getLinkedSkus($product_id, $optStock['var']);
 				foreach($amazonSkuRows as $amazonSkuRow) {
 					$quantityData[$amazonSkuRow['amazon_sku']] = $optStock['stock'];
 				}
@@ -85,7 +85,7 @@ class Amazon {
 			}
 
 		} else {
-			$this->putStockUpdateBulk(array($productId));
+			$this->putStockUpdateBulk(array($product_id));
 		}
 		$logger->write('productUpdateListen() exiting');
 	}
@@ -354,16 +354,16 @@ class Amazon {
 		return $this->server;
 	}
 
-	public function putStockUpdateBulk($productIdArray, $endInactive = false){
+	public function putStockUpdateBulk($product_id_array, $endInactive = false){
 		$this->load->library('log');
 		$logger = new Log('amazon_stocks.log');
 		$logger->write('Updating stock using putStockUpdateBulk()');
 		$quantityData = array();
-		foreach($productIdArray as $productId) {
-			$amazonRows = $this->getLinkedSkus($productId);
+		foreach($product_id_array as $product_id) {
+			$amazonRows = $this->getLinkedSkus($product_id);
 			foreach($amazonRows as $amazonRow) {
 				$productRow = $this->db->query("SELECT quantity, status FROM `" . DB_PREFIX . "product`
-					WHERE `product_id` = '" . (int)$productId . "'")->row;
+					WHERE `product_id` = '" . (int)$product_id . "'")->row;
 
 				if(!empty($productRow)) {
 					if($endInactive && $productRow['status'] == '0') {
@@ -383,8 +383,8 @@ class Amazon {
 		}
 	}
 
-	public function getLinkedSkus($productId, $var='') {
-		return $this->db->query("SELECT `amazon_sku` FROM `" . DB_PREFIX . "amazon_product_link` WHERE `product_id` = '" . (int)$productId . "' AND `var` = '" . $this->db->escape($var) . "'")->rows;
+	public function getLinkedSkus($product_id, $var='') {
+		return $this->db->query("SELECT `amazon_sku` FROM `" . DB_PREFIX . "amazon_product_link` WHERE `product_id` = '" . (int)$product_id . "' AND `var` = '" . $this->db->escape($var) . "'")->rows;
 	}
 
 	public function getOrderdProducts($orderId) {
