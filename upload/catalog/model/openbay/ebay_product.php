@@ -37,6 +37,8 @@ class ModelOpenbayEbayProduct extends Model {
 		$newData        = base64_decode($data['data']);
 		$options		= json_decode($data['options'], 1);
 
+		$this->openbay->ebay->log('Options: '.$data['options']);
+
 		unset($data['data']);
 
 		$this->openbay->ebay->log('Decoded data');
@@ -46,7 +48,7 @@ class ModelOpenbayEbayProduct extends Model {
 
 		$this->openbay->ebay->log('Data unserialized');
 
-		if ($options['cat'] == 1) {
+		if ($options['cat'] == 1 || !isset($options['cat'])) {
 			$itemCountLoop = 0;
 			foreach($newData1 as $item) {
 				$itemCountLoop++;
@@ -293,7 +295,7 @@ class ModelOpenbayEbayProduct extends Model {
 				}
 
 				$this->db->query("INSERT INTO `" . DB_PREFIX . "product_description` SET `product_id` = '".(int)$product_id."', `language_id` = '".(int)$this->config->get('config_language_id')."', `name` = '".$this->db->escape(htmlspecialchars(base64_decode($item['Title']), ENT_COMPAT, 'UTF-8'))."', `description` = '".$this->db->escape(htmlspecialchars(utf8_encode($item['Description']), ENT_COMPAT, 'UTF-8'))."'");
-				
+
 				$this->openbay->ebay->log('Product description done');
 
 				//Insert product store link
@@ -331,7 +333,7 @@ class ModelOpenbayEbayProduct extends Model {
 				$this->openbay->ebay->createLink($product_id, $item['ItemID'], $variant);
 
 				//Insert product/category link
-				if ($options['cat'] == 1) {
+				if ($options['cat'] == 1 || !isset($options['cat'])) {
 					$this->createCategoryLink($product_id, $category_link[$item['CategoryName']]);
 				}
 
