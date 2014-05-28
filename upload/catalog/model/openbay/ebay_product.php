@@ -96,6 +96,14 @@ class ModelOpenbayEbayProduct extends Model {
 						}
 					}
 				}
+
+				if(isset($parts[6])) {
+					if(!isset($categories[base64_encode($parts[0])][base64_encode($parts[1])][base64_encode($parts[2])][base64_encode($parts[3])][base64_encode($parts[4])][base64_encode($parts[5])][base64_encode($parts[6])])) {
+						if(!empty($parts[5])) {
+							$categories[base64_encode($parts[0])][base64_encode($parts[1])][base64_encode($parts[2])][base64_encode($parts[3])][base64_encode($parts[4])][base64_encode($parts[5])][base64_encode($parts[6])] = array();
+						}
+					}
+				}
 			}
 
 
@@ -153,7 +161,24 @@ class ModelOpenbayEbayProduct extends Model {
 												$this->db->query("INSERT INTO `" . DB_PREFIX . "category_to_store` SET `category_id` = '".$this->db->escape($id4)."', `store_id` = '0'");
 											}
 
-											$category_link[base64_encode(base64_decode($key1).':'.base64_decode($key2).':'.base64_decode($key3).':'.base64_decode($key4).':'.base64_decode($key5))] = $id4;
+											if(!empty($cat5)) {
+												foreach($cat5 as $key6 => $cat6) {
+													$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "category`, `" . DB_PREFIX . "category_description` WHERE `" . DB_PREFIX . "category`.`parent_id` = '".$this->db->escape($id4)."' AND `" . DB_PREFIX . "category_description`.`name` = '".$this->db->escape(htmlspecialchars(base64_decode($key6), ENT_COMPAT, 'UTF-8'))."' LIMIT 1");
+
+													if($qry->num_rows != 0) {
+														$id5 = $qry->row['category_id'];
+													}else{
+														$this->db->query("INSERT INTO `" . DB_PREFIX . "category` SET `parent_id` = '".$this->db->escape($id4)."', `status` = '1', `top` = '1'");
+														$id5 = $this->db->getLastId();
+														$this->db->query("INSERT INTO `" . DB_PREFIX . "category_description` SET `name` = '".$this->db->escape(htmlspecialchars(base64_decode($key6), ENT_COMPAT, 'UTF-8'))."', `language_id` = '".(int)$this->config->get('config_language_id')."', `category_id` = '".$this->db->escape($id5)."'");
+														$this->db->query("INSERT INTO `" . DB_PREFIX . "category_to_store` SET `category_id` = '".$this->db->escape($id5)."', `store_id` = '0'");
+													}
+
+													$category_link[base64_encode(base64_decode($key1).':'.base64_decode($key2).':'.base64_decode($key3).':'.base64_decode($key4).':'.base64_decode($key5).':'.base64_decode($key6))] = $id5;
+												}
+											}else{
+												$category_link[base64_encode(base64_decode($key1).':'.base64_decode($key2).':'.base64_decode($key3).':'.base64_decode($key4).':'.base64_decode($key5))] = $id4;
+											}
 										}
 									}else{
 										$category_link[base64_encode(base64_decode($key1).':'.base64_decode($key2).':'.base64_decode($key3).':'.base64_decode($key4))] = $id3;
