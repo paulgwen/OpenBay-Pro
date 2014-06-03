@@ -64,7 +64,7 @@
                         }
                       }
 
-                      if($order['channel'] == 'Amazon'){
+                      if($order['channel'] == 'Amazon EU'){
                         //shipping info
                         if($this->request->post['change_order_status_id'] == $this->config->get('openbay_amazon_order_status_shipped')){
 ?>
@@ -89,7 +89,7 @@
                         }
                       }
                       
-                      if($order['channel'] == 'Amazonus'){
+                      if($order['channel'] == 'Amazon US'){
                         //shipping info
                         if($this->request->post['change_order_status_id'] == $this->config->get('openbay_amazonus_order_status_shipped')){
 ?>
