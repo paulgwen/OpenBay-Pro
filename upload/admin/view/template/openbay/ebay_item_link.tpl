@@ -203,14 +203,16 @@ function checkLinkedItems(){
 
 function removeLink(product_id, id) {
     $.ajax({
-        type: 'GET',
-        url: 'index.php?route=openbay/openbay/removeItemLink&token=<?php echo $token; ?>&product_id='+product_id,
-        dataType: 'json',
-        success: function(json) {
-            $('#row_'+id).fadeOut('slow');
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      type: 'GET',
+      url: 'index.php?route=openbay/openbay/removeItemLink&token=<?php echo $token; ?>&product_id='+product_id,
+      dataType: 'json',
+      success: function(json) {
+          $('#row_'+id).fadeOut('slow');
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        if (xhr.status != 0) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
       }
     });
 }
@@ -273,19 +275,21 @@ function saveListingLink(id){
     }
 
     $.ajax({
-        url: 'index.php?route=openbay/openbay/saveItemLink&token=<?php echo $token; ?>&pid='+product_id+'&itemId='+id+'&qty='+qty+'&ebayqty='+ebayqty+'&variants='+variants,
-        type: 'post',
-        dataType: 'json',
-        beforeSend: function(){
-            $('#l_'+id+'_saveBtn').hide();
-            $('#l_'+id+'_saveLoading').show();
-        },
-        success: function(json) {
-            $('#row'+id).fadeOut('slow');
-            $('#l_'+id+'_saveLoading').hide();
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+      url: 'index.php?route=openbay/openbay/saveItemLink&token=<?php echo $token; ?>&pid='+product_id+'&itemId='+id+'&qty='+qty+'&ebayqty='+ebayqty+'&variants='+variants,
+      type: 'post',
+      dataType: 'json',
+      beforeSend: function(){
+          $('#l_'+id+'_saveBtn').hide();
+          $('#l_'+id+'_saveLoading').show();
+      },
+      success: function(json) {
+          $('#row'+id).fadeOut('slow');
+          $('#l_'+id+'_saveLoading').hide();
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        if (xhr.status != 0) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
       }
     });
 }
@@ -402,23 +406,25 @@ $(".localName:not(.ui-autocomplete-input)").live("focus", function (event) {
     $(this).autocomplete({
         delay: 0,
         source: function(request, response) {
-            $.ajax({
-                url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
-                dataType: 'json',
-                type: 'POST',
-                data: 'filter_name=' +  encodeURIComponent(request.term),
-                success: function(json) {
-                    response($.map(json, function(item) {
-                        return {
-                            label: item.name,
-                            value: item.product_id
-                        }
-                    }));
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
+          $.ajax({
+            url: 'index.php?route=catalog/product/autocomplete&token=<?php echo $token; ?>&filter_name=' +  encodeURIComponent(request.term),
+            dataType: 'json',
+            type: 'POST',
+            data: 'filter_name=' +  encodeURIComponent(request.term),
+            success: function(json) {
+                response($.map(json, function(item) {
+                    return {
+                        label: item.name,
+                        value: item.product_id
+                    }
+                }));
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+              if (xhr.status != 0) {
                 alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
               }
-            });
+            }
+          });
         },
         select: function(event, ui) {
             $(this).val(ui.item.label);
