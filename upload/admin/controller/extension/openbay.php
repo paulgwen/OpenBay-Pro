@@ -23,9 +23,6 @@ class ControllerExtensionOpenbay extends Controller {
 			'separator' => ' :: '
 		);
 
-		$this->data['mcrypt']           = $this->model_openbay_openbay->checkMcrypt();
-		$this->data['mbstring']         = $this->model_openbay_openbay->checkMbstings();
-		$this->data['ftpenabled']       = $this->model_openbay_openbay->checkFtpenabled();
 		$this->data['manage_link']  = $this->url->link('extension/openbay/manage', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['success']      = '';
@@ -34,9 +31,10 @@ class ControllerExtensionOpenbay extends Controller {
 			unset($this->session->data['success']);
 		}
 
-		$this->data['error']        = '';
+		$this->data['error'] = $this->model_openbay_openbay->requirementTest();
+
 		if (isset($this->session->data['error'])) {
-			$this->data['error'] = $this->session->data['error'];
+			$this->data['error'][] = $this->session->data['error'];
 			unset($this->session->data['error']);
 		}
 
@@ -299,8 +297,6 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function ftpTestConnection() {
-
-
 		$this->load->model('openbay/openbay');
 
 		$data = $this->model_openbay_openbay->ftpTestConnection();
@@ -309,8 +305,6 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function ftpUpdateModule() {
-
-
 		$this->load->model('openbay/openbay');
 
 		$data = $this->model_openbay_openbay->ftpUpdateModule();
@@ -319,14 +313,11 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function getNotifications() {
-
-
 		$this->load->model('openbay/openbay');
 		$this->response->setOutput(json_encode($this->model_openbay_openbay->getNotifications()));
 	}
 
 	public function getVersion() {
-
 		sleep(1);
 
 		$this->load->model('openbay/openbay');
@@ -334,8 +325,6 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function runPatch() {
-
-
 		$this->load->model('openbay/ebay_patch');
 		$this->load->model('openbay/amazon_patch');
 		$this->load->model('openbay/amazonus_patch');
@@ -370,8 +359,6 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function faqGet(){
-
-
 		$this->load->model('openbay/openbay');
 		$this->load->language('extension/openbay');
 
@@ -381,17 +368,14 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function faqDismiss(){
-
-
 		$this->load->model('openbay/openbay');
 		$this->response->setOutput(json_encode($this->model_openbay_openbay->faqDismiss($this->request->get['qry_route'])));
 	}
 
 	public function faqClear(){
-
-
 		$this->load->model('openbay/openbay');
 		$this->model_openbay_openbay->faqClear();
+
 		sleep(1);
 
 		$json = array();
@@ -805,7 +789,6 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function orderListUpdate(){
-
 		$this->data = array_merge($this->data, $this->load->language('extension/openbay_order'));
 		$this->document->setTitle($this->language->get('lang_title_order_update'));
 

@@ -295,6 +295,14 @@ class ModelOpenbayOpenbay extends Model {
 		}
 	}
 
+	private function ftpDir($file, $connection) {
+		if (ftp_size($connection, $file) == '-1') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public function getNotifications() {
 		$data = $this->call('update/getNotifications/');
 		return $data;
@@ -342,36 +350,22 @@ class ModelOpenbayOpenbay extends Model {
 		}
 	}
 
-	private function ftpDir($file, $connection) {
-		if (ftp_size($connection, $file) == '-1') {
-			return true;
-		} else {
-			return false;
-		}
-	}
+	public function requirementTest() {
+		$error = array();
 
-	public function checkMcrypt() {
-		if (function_exists('mcrypt_encrypt')) {
-			return true;
-		} else {
-			return false;
+		if (!function_exists('mcrypt_encrypt')) {
+			$error[] = $this->language->get('lang_mcrypt_text_false');
 		}
-	}
 
-	public function checkMbstings() {
-		if (function_exists('mb_detect_encoding')) {
-			return true;
-		} else {
-			return false;
+		if (!function_exists('mb_detect_encoding')) {
+			$error[] = $this->language->get('lang_mb_text_false');
 		}
-	}
 
-	public function checkFtpenabled() {
-		if (function_exists('ftp_connect')) {
-			return true;
-		} else {
-			return false;
+		if (!function_exists('ftp_connect')) {
+			$error[] = $this->language->get('lang_ftp_text_false');
 		}
+
+		return $error;
 	}
 
 	private function call($call, array $post = null, array $options = array(), $content_type = 'json') {
@@ -686,7 +680,7 @@ class ModelOpenbayOpenbay extends Model {
 		}
 
 		if (isset($data['filter_manufacturer']) && !is_null($data['filter_manufacturer'])) {
-			$sql .= " AND p.manufacturer_id = '" . (int)$data['filter_manufacturer'] . "'";
+			$sql .= " AND p.manufacturer = '" . (int)$data['filter_manufacturer'] . "'";
 		}
 
 		$sql .= " GROUP BY p.product_id";
