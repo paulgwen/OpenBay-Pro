@@ -188,9 +188,9 @@ class ModelOpenbayOpenbay extends Model
 
         if ($data['filter_market_name'] == 'ebay') {
             if($data['filter_market_id'] == 0){
-                $sql .= " AND ebay.ebay_listing_id IS NULL OR ebay2.listing_status = 0";
+                $sql .= " AND (ebay.ebay_listing_id IS NULL OR ebay2.listing_status = 0)";
             }else{
-                $sql .= " AND ebay.ebay_listing_id IS NOT NULL AND ebay.status = 1";
+                $sql .= " AND (ebay.ebay_listing_id IS NOT NULL AND ebay.status = 1)";
             }
         }
         
@@ -320,9 +320,9 @@ class ModelOpenbayOpenbay extends Model
 
         if ($data['filter_market_name'] == 'ebay') {
             if($data['filter_market_id'] == 0){
-                $sql .= " AND ebay.ebay_listing_id IS NULL OR ebay2.listing_status = 0";
+                $sql .= " AND (ebay.ebay_listing_id IS NULL OR ebay2.listing_status = 0)";
             }else{
-                $sql .= " AND ebay.ebay_listing_id IS NOT NULL AND ebay.status = 1";
+                $sql .= " AND (ebay.ebay_listing_id IS NOT NULL AND ebay.status = 1)";
             }
         }
         
