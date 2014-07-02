@@ -521,14 +521,16 @@ class ModelEbayOpenbay extends Model{
             'value'         => number_format((double)$shippingNet, 4,'.',''),
             'sort_order'    => '3'
         );
-        
-        $data['totals'][2] = array(
-            'code'          => 'credit',
-            'title'         => $totals_language['lang_discount'],
-            'text'          => $this->db->escape($currency['symbol_left']).number_format($discountNet, $currency['decimal_place'],'.','').$this->db->escape($currency['symbol_right']),
-            'value'         => number_format((double)$discountNet, 4,'.',''),
-            'sort_order'    => '4'
-        );
+
+		if ($discountNet != 0.00) {
+			$data['totals'][2] = array(
+				'code'          => 'coupon',
+				'title'         => $totals_language['lang_discount'],
+				'text'          => $this->db->escape($currency['symbol_left']).number_format($discountNet, $currency['decimal_place'],'.','').$this->db->escape($currency['symbol_right']),
+				'value'         => number_format((double)$discountNet, 4,'.',''),
+				'sort_order'    => '4'
+			);
+		}
 
         $data['totals'][3] = array(
             'code'          => 'tax',
