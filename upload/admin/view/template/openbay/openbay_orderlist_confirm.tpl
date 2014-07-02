@@ -70,6 +70,7 @@
                         <p>
                             <span style="display:block; width:80px; font-weight:bold;"><?php echo $lang_carrier; ?>:</span>
                             <select name="carrier[<?php echo $order['order_id']; ?>]" class="amazon_carrier" id="amazon_carrier_<?php echo $order['order_id']; ?>">
+                                <option></option>
                                 <?php foreach($market_options['amazon']['carriers'] as $courier){ ?>
                                     <?php echo '<option'.($courier == $market_options['amazon']['default_carrier'] ? ' selected' : '').'>'.$courier.'</option>'; ?>
                                 <?php } ?>
