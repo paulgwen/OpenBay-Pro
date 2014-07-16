@@ -1265,7 +1265,7 @@ final class Ebay {
 							`InternationalService`      = '" . $this->db->escape($service['InternationalService']) . "',
 							`ShippingService`           = '" . $this->db->escape((string)$service['ShippingService']) . "' ,
 							`ShippingServiceID`         = '" . (int)$service['ShippingServiceID'] . "',
-							`ServiceType`               = '" . $this->db->escape((string)$service['ServiceType']) . "' ,
+							`ServiceType`               = '" . $this->db->escape(strtolower(implode(',', $service['ServiceType']))) . "' ,
 							`ValidForSellingFlow`       = '" . $this->db->escape((string)$service['ValidForSellingFlow']) . "',
 							`ShippingCategory`          = '" . $this->db->escape((string)$service['ShippingCategory']) . "' ,
 							`ShippingTimeMin`           = '" . $min . "',

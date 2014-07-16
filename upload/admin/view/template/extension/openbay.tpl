@@ -6,16 +6,14 @@
   </div>
   <?php if ($success) { ?>
   <div class="success"><?php echo $success; ?></div>
-  <?php } ?><?php if ($error) { ?>
-  <div class="warning"><?php echo $error; ?></div>
   <?php } ?>
 
   <?php
-  if($this->data['mcrypt'] != 1){ echo'<div class="warning">'.$lang_mcrypt_text_false.'</div>';}
-
-  if($this->data['mbstring'] != 1){ echo'<div class="warning">'.$lang_mb_text_false.'</div>';}
-
-  if($this->data['ftpenabled'] != 1){ echo'<div class="warning">'.$lang_ftp_text_false.'</div>';}
+    if (!empty($error)) {
+      foreach ($error as $error) {
+        echo '<div class="warning">'.$error.'</div>';
+      }
+    }
   ?>
 
   <div class="box">
@@ -109,7 +107,9 @@ function getOpenbayVersion() {
         $('#openbay_version').html('<?php echo $lang_error_retry; ?><strong><span onclick="getOpenbayVersion();"><?php echo $lang_btn_retry; ?></span></strong>');
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        if (xhr.status != 0) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
       }
     });
   }, 500);
@@ -138,7 +138,9 @@ function getOpenbayNotifications() {
         $('#openbay_notification').html(html);
       },
       error: function (xhr, ajaxOptions, thrownError) {
-        alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        if (xhr.status != 0) {
+          alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
       }
     });
   }, 500);
