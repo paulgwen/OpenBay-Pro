@@ -6,10 +6,12 @@ final class DBMySQLi {
 		$this->link = new mysqli($hostname, $username, $password, $database);
 
 		if (mysqli_connect_error()) {
-			throw new ErrorException('Error: Could not make a database link (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+			trigger_error('Error: Could not make a database link (' . $this->link->connect_errno . ') ' . $this->link->connect_error);
+			exit();
 		}
 
 		$this->link->set_charset("utf8");
+		$this->link->query("SET SQL_MODE = ''");
 	}
 
 	public function query($sql) {
@@ -37,7 +39,7 @@ final class DBMySQLi {
 				return true;
 			}
 		} else {
-			throw new ErrorException('Error: ' . $this->link->error . '<br />Error No: ' . $this->link->errno . '<br />' . $sql);
+			trigger_error('Error: ' . $this->link->error . '<br />Error No: ' . $this->link->errno . '<br />' . $sql);
 			exit();
 		}
 	}

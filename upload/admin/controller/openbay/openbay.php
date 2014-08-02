@@ -1312,25 +1312,39 @@ class ControllerOpenbayOpenbay extends Controller {
 				$product_info['product_images'] = array();
 
 				if (!empty($product_info['image'])) {
+					list($width, $height, $type, $attr) = getimagesize(HTTPS_CATALOG . 'image/' . $product_info['image']);
+
+					$size_valid = false;
+
+					if ($width >= 500 || $height >= 500) {
+						$size_valid = true;
+					}
+
 					$product_info['product_images'][] = array(
 						'image' => $product_info['image'],
 						'preview' => $this->model_tool_image->resize($product_info['image'], 100, 100),
-						'full' => HTTPS_CATALOG . 'image/' . $product_info['image']
+						'full' => HTTPS_CATALOG . 'image/' . $product_info['image'],
+						'size_valid' => $size_valid
 					);
 				}
 
 				foreach ($product_images as $product_image) {
 					if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-						$image = $product_image['image'];
-					} else {
-						$image = 'no_image.jpg';
-					}
+						list($width, $height, $type, $attr) = getimagesize(HTTPS_CATALOG . 'image/' . $product_info['image']);
 
-					$product_info['product_images'][] = array(
-						'image' => $image,
-						'preview' => $this->model_tool_image->resize($image, 100, 100),
-						'full' => HTTPS_CATALOG . 'image/' . $image
-					);
+						$size_valid = false;
+
+						if ($width >= 500 || $height >= 500) {
+							$size_valid = true;
+						}
+
+						$product_info['product_images'][] = array(
+							'image' => $product_image['image'],
+							'preview' => $this->model_tool_image->resize($product_image['image'], 100, 100),
+							'full' => HTTPS_CATALOG . 'image/' . $product_image['image'],
+							'size_valid' => $size_valid
+						);
+					}
 				}
 
 				$product_info['manufacturers']                      = $this->model_catalog_manufacturer->getManufacturers();
