@@ -35,7 +35,7 @@ $_['lang_ajax_error_stock']         = 'You must have stock of an item to list it
 $_['lang_ajax_error_duration']      = 'Select a listing duration, select category to load these options';
 $_['lang_ajax_image_size']          = 'Ensure that you have a gallery and thumb image size';
 $_['lang_ajax_duration']            = 'Select a listing duration';
-$_['lang_ajax_noimages']            = 'Are you sure that you do not want to add any eBay images?';
+$_['lang_ajax_noimages']            = 'Due to eBay policy - you must have 1 image';
 $_['lang_ajax_mainimage']           = 'You need to choose a main eBay image from your selection of eBay images';
 
 //Tabs

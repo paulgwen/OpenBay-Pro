@@ -7,15 +7,15 @@
     <?php } ?>
 
     <div class="box">
-      
+
     <div class="heading">
         <h1><img src="view/image/information.png" alt="" /> <?php echo $lang_page_title; ?></h1>
         <div class="buttons"><a onclick="confirmAction('<?php echo $cancel; ?>');" class="button" id="cancel_button"><span><?php echo $lang_cancel; ?></span></a></div>
     </div>
-      
+
     <div class="content" id="mainForm">
-        
-        <div id="tabs" class="htabs"> 
+
+        <div id="tabs" class="htabs">
             <a href="#tab-listing-general"><?php echo $lang_tab_general; ?></a>
             <a href="#tab-listing-feature"><?php echo $lang_tab_feature; ?></a>
             <a href="#tab-listing-catalog"><?php echo $lang_tab_ebay_catalog; ?></a>
@@ -26,7 +26,7 @@
             <a href="#tab-listing-shipping"><?php echo $lang_tab_shipping; ?></a>
             <a href="#tab-listing-returns"><?php echo $lang_tab_returns; ?></a>
         </div>
-        
+
         <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 
             <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>" />
@@ -307,7 +307,7 @@
                 </table>
             <?php } ?>
         </div>
-        
+
             <div id="tab-listing-price">
                 <table class="form">
                     <tr>
@@ -637,7 +637,7 @@
 
                 </table>
             </div>
-        
+
         <table class="form">
             <tr>
                 <td align="right" colspan="2">
@@ -646,7 +646,7 @@
                 </td>
             </tr>
         </table>
-        
+
     </form>
     </div>
 
@@ -903,7 +903,7 @@
 
     function getCategoryFeatures(cat){
         itemFeatures(cat);
-        
+
         $('#durationRow').hide();
         $('#durationLoading').show();
         $('#durationContainer').show();
@@ -965,7 +965,7 @@
         }
 
         var html = '';
-        
+
         $.ajax({
             url: 'index.php?route=openbay/openbay/searchEbayCatalog&token=<?php echo $token; ?>',
             type: 'POST',
@@ -987,7 +987,7 @@
                         $.each(data.data.productSearchResult.products, function(key, val){
                             processCatalogItem(val);
                         });
-                        
+
                         $('#showCatalogDiv').prepend('<div style="clear:both;"></div>').append('<div style="clear:both;"></div>');
                     }
                 }else{
@@ -1006,7 +1006,7 @@
           }
         });
     }
-    
+
     function processCatalogItem(val){
         html = '';
         html += '<div style="float:left; display:inline; width:365px; height:100px; padding:5px; margin-right:10px; margin-bottom:10px;" class="border">';
@@ -1061,7 +1061,7 @@
             type: 'GET',
             dataType: 'json',
             beforeSend: function(){
-                $('#featureRow').show();        
+                $('#featureRow').show();
                 $('#featLoading').show();
                 $('#showFeatureDiv').show();
                 $('#showFeatureDivPreload').hide();
@@ -1191,7 +1191,7 @@
 
                     html += '<p class="shipping_' + id + '_' + count + '"><label><?php echo $lang_shipping_first; ?></label><input type="text" name="price_' + id + '[' + count + ']" style="width:50px;" value="0.00" />';
                     html += '&nbsp;&nbsp;<label><?php echo $lang_shipping_add; ?></label><input type="text" name="priceadditional_' + id + '[' + count + ']" style="width:50px;" value="0.00" />&nbsp;&nbsp;<a onclick="removeShipping(\'' + id + '\',\'' + count + '\');" class="button"><span><?php echo $lang_btn_remove; ?></span></a></p>';
-                    html += '<div style="clear:both;" class="shipping_' + id + '_' + count + '"></div>';    
+                    html += '<div style="clear:both;" class="shipping_' + id + '_' + count + '"></div>';
                     $('#'+id+'Btn').append(html);
                 },
                 error: function (xhr, ajaxOptions, thrownError) {
@@ -1234,10 +1234,9 @@
                 return;
             }
         }else{
-            if (!confirm('<?php echo $lang_ajax_noimages; ?>')){
-                err = 1;
-                return;
-            }
+            err = 1;
+            alert('<?php echo $lang_ajax_noimages; ?>');
+            return;
         }
 
         if($('#finalCat').val() == ''){
@@ -1576,12 +1575,12 @@
     function profileShippingUpdate(){
         if($('#profile_shipping').val() != 'def'){
             $('#profileShippingLoading').show();
-            
+
             $.ajax({
                 type:'GET',
                 dataType: 'json',
                 url: 'index.php?route=openbay/ebay_profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_shipping').val(),
-                success: function(data){ 
+                success: function(data){
                     setTimeout(function(){
                         $('#location').val(data.data.location);
                         $('#postcode').val(data.data.postcode);
@@ -1624,7 +1623,7 @@
                 type:'GET',
                 dataType: 'json',
                 url: 'index.php?route=openbay/ebay_profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_return').val(),
-                success: function(data){ 
+                success: function(data){
                     setTimeout(function(){
                         if($('#returns_accepted').length){
                             $('#returns_accepted').val(data.data.returns_accepted);
@@ -1756,7 +1755,7 @@
 
         image_upload('option_image_input_'+grp_id+'_'+id+'_'+count, 'option_image_img_'+grp_id+'_'+id+'_'+count,'option_image_'+grp_id+'_'+id+'_'+count,'option_image_input_'+grp_id+'_'+id+'_'+count);
     }
-    
+
     function confirmAction(url){
 	if (confirm("<?php echo $lang_confirm_action; ?>")){
             window.location = url;
@@ -1817,12 +1816,12 @@
         <?php } ?>
 
         <?php if($product['profiles_shipping_def'] > 0){ ?>
-            $('#profile_shipping').val(<?php echo $product['profiles_shipping_def']; ?>); 
+            $('#profile_shipping').val(<?php echo $product['profiles_shipping_def']; ?>);
             profileShippingUpdate();
         <?php } ?>
 
         <?php if($product['profiles_theme_def'] > 0){ ?>
-            $('#profile_theme').val(<?php echo $product['profiles_theme_def']; ?>); 
+            $('#profile_theme').val(<?php echo $product['profiles_theme_def']; ?>);
             profileThemeUpdate();
         <?php } ?>
     });
