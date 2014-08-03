@@ -217,45 +217,55 @@
                             <input type="checkbox" name="gallery_plus" value="1" id="gallery_plus" />
                         </td>
                     </tr>
-                    <tr>
-                        <td><?php echo $lang_gallery_select_all; ?></td>
-                        <td>
-                            <p><input type="checkbox" name="allTemplateImages" value="1" id="allTemplateImages" style="margin-top:2px;" /> <?php echo $lang_template_images; ?></p>
-                            <p><input type="checkbox" name="allEbayImages" value="1" id="allEbayImages" style="margin-top:2px;" /> <?php echo $lang_ebay_images; ?></p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-
-                            <p>* <?php echo $lang_images_text_1; ?></p>
-                            <p>* <?php echo $lang_images_text_2; ?></p>
-
-    <?php
-                            if(!empty($product['product_images'])){
-                                $i = 0;
-                                foreach($product['product_images'] as $img){
-    ?>
-                                    <div class="border p10 mBottom10 width120 left floatLeft mRight10">
-                                    <img src="<?php echo $img['preview']; ?>" />
-                                    <p><input type="checkbox" id="imgUrl<?php echo $i; ?>" name="img_tpl[<?php echo $i; ?>]" value="<?php echo $img['image']; ?>" class="checkboxTemplateImage" /> <?php echo $lang_template_image; ?></p>
-                                    <p>
-                                        <input type="hidden" name="img[<?php echo $i; ?>]" value="null" />
-                                        <input type="checkbox" class="checkboxEbayImage" onchange="toggleRad(<?php echo $i; ?>)" id="imgChk<?php echo $i; ?>" name="img[<?php echo $i; ?>]" value="<?php echo $img['image']; ?>" <?php echo ( ($i == 0) ? 'checked="checked" ' : ''); ?> /> <?php echo $lang_image_ebay; ?>
-                                    </p>
+                  <tr>
+                    <td colspan="2">
+                      <p>* <?php echo $lang_images_text_2; ?></p>
+                      <table id="discount" class="list">
+                        <thead>
+                        <tr>
+                          <td class="center" width="120"></td>
+                          <td class="center"><?php echo $lang_image_size; ?></td>
+                          <td class="center"><?php echo $lang_ebay_images; ?></td>
+                          <td class="center"><?php echo $lang_template_images; ?></td>
+                        </tr>
+                        <tr class="filter">
+                          <td></td>
+                          <td></td>
+                          <td class="center"><input type="checkbox" name="allEbayImages" value="1" id="allEbayImages" style="margin-top:2px;" /></td>
+                          <td class="center"><input type="checkbox" name="allTemplateImages" value="1" id="allTemplateImages" style="margin-top:2px;" /></td>
+                        </tr>
+                        </thead>
+                        <?php if(!empty($product['product_images'])) { ?>
+                          <?php $i = 0; ?>
+                            <?php foreach($product['product_images'] as $img) { ?>
+                              <tbody>
+                                <tr>
+                                  <td class="center"><img src="<?php echo $img['preview']; ?>" /></td>
+                                  <td class="center" style="width:200px;">
+                                    <?php echo $img['width']; ?> x <?php echo $img['height']; ?>
+                                    <?php if ($img['width'] < 500 && $img['height'] < 500) { ?>
+                                      <p><div class="warning" style="width:180px;"><?php echo $lang_ebay_imagesize; ?></div></p>
+                                    <?php } ?>
+                                  </td>
+                                  <td class="center">
+                                    <input type="hidden" name="img[<?php echo $i; ?>]" value="null" />
+                                    <input type="checkbox" class="checkboxEbayImage" onchange="toggleRad(<?php echo $i; ?>)" id="imgChk<?php echo $i; ?>" name="img[<?php echo $i; ?>]" value="<?php echo $img['image']; ?>" <?php echo ( ($i == 0) ? 'checked="checked" ' : ''); ?> />
                                     <p id="imgRad<?php echo $i; ?>"<?php echo ( ($i == 0) ? '' : ' class="displayNone"'); ?>><input type="radio" name="main_image"<?php echo (($i == 0) ? ' checked' : ''); ?> value="<?php echo $i; ?>" /> <?php echo $lang_main_image_ebay; ?></p>
-                                    </div>
-    <?php
-                                    $i++;
-                                }
-                            }else{
-                                echo'<p>'.$lang_images_none.'</p>';
-                            }
-    ?>
-                        </td>
-                    </tr>
+                                  </td>
+                                  <td class="center"><input type="checkbox" id="imgUrl<?php echo $i; ?>" name="img_tpl[<?php echo $i; ?>]" value="<?php echo $img['image']; ?>" class="checkboxTemplateImage" /></td>
+                                </tr>
+                              </tbody>
+                              <?php $i++; ?>
+                            <?php } ?>
+                          <?php }else{ ?>
+                            <p><?php echo $lang_images_none; ?></p>
+                          <?php } ?>
+                      </table>
+                    </td>
+                  </tr>
                 </table>
 
-                <?php if(!empty($addon['openstock']) && $addon['openstock'] == true && !empty($product['options'])){ ?>
+                <?php if(!empty($addon['openstock']) && $addon['openstock'] == true && !empty($product['options'])) { ?>
 
                 <h2><?php echo $lang_option_images; ?></h2>
                 <p><?php echo $lang_option_description; ?></p>

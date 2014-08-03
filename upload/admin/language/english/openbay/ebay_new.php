@@ -68,16 +68,15 @@ $_['lang_template_link']            = 'Need a custom theme?';
 $_['lang_description']              = 'Description';
 
 //Images
-$_['lang_images_text_1']            = 'eBay images will be uploaded to eBay.<br />Supersize and Gallery plus are also listing enhancements that may cost more to list.';
 $_['lang_images_text_2']            = 'Template images will be added to your listing description and hosted from your web site, these are free. (Your listing template must have the {gallery} tag)';
 $_['lang_image_gallery']            = 'Gallery image size';
 $_['lang_image_thumb']              = 'Thumb image size';
-$_['lang_template_image']           = 'Template image';
-$_['lang_main_image_ebay']          = 'Main eBay image';
-$_['lang_image_ebay']               = 'eBay image';
+$_['lang_main_image_ebay']          = 'Main image';
+$_['lang_image_size']          		= 'Image size';
 $_['lang_images_none']              = 'You have no images for this product';
 $_['lang_images_supersize']         = 'Supersize images<span class="help">Extra large pictures</span>';
 $_['lang_images_gallery_plus']      = 'Gallery plus<span class="help">Large picture in search results</span>';
+$_['lang_ebay_imagesize']      		= 'Minimum eBay image size must be 500px on 1 side';
 
 //Price and details
 $_['lang_listing_condition']        = 'Item condition';
@@ -155,7 +154,6 @@ $_['lang_failed_li1']               = 'If you are a new eBay seller (or have not
 $_['lang_failed_li2']               = 'You may have not subscribed to Selling Manager Pro on eBay - this is a requirement.';
 $_['lang_failed_li3']               = 'Your OpenBay Pro account is suspended, please check via your module admin area under the "My Account" tab';
 $_['lang_failed_contact']           = 'If this error continues, please contact support after you have ensured the issue is none of the above.';
-$_['lang_gallery_select_all']       = 'Select all<span class="help">Tick the box to select all of your images at once.</span>';
 $_['lang_template_images']          = 'Template images';
 $_['lang_ebay_images']              = 'eBay images';
 $_['lang_shipping_in_description']  = 'Freight info in description<span class="help">US,UK,AU & CA only</span>';

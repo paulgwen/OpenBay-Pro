@@ -1312,37 +1312,27 @@ class ControllerOpenbayOpenbay extends Controller {
 				$product_info['product_images'] = array();
 
 				if (!empty($product_info['image'])) {
-					list($width, $height, $type, $attr) = getimagesize(HTTPS_CATALOG . 'image/' . $product_info['image']);
-
-					$size_valid = false;
-
-					if ($width >= 500 || $height >= 500) {
-						$size_valid = true;
-					}
+					$img_info = getimagesize(HTTPS_CATALOG . 'image/' . $product_info['image']);
 
 					$product_info['product_images'][] = array(
 						'image' => $product_info['image'],
 						'preview' => $this->model_tool_image->resize($product_info['image'], 100, 100),
 						'full' => HTTPS_CATALOG . 'image/' . $product_info['image'],
-						'size_valid' => $size_valid
+						'width' => $img_info[0],
+						'height' => $img_info[1],
 					);
 				}
 
 				foreach ($product_images as $product_image) {
 					if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-						list($width, $height, $type, $attr) = getimagesize(HTTPS_CATALOG . 'image/' . $product_info['image']);
-
-						$size_valid = false;
-
-						if ($width >= 500 || $height >= 500) {
-							$size_valid = true;
-						}
+						$img_info = getimagesize(HTTPS_CATALOG . 'image/' . $product_image['image']);
 
 						$product_info['product_images'][] = array(
 							'image' => $product_image['image'],
 							'preview' => $this->model_tool_image->resize($product_image['image'], 100, 100),
 							'full' => HTTPS_CATALOG . 'image/' . $product_image['image'],
-							'size_valid' => $size_valid
+							'width' => $img_info[0],
+							'height' => $img_info[1],
 						);
 					}
 				}
