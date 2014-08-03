@@ -76,7 +76,7 @@ $_['lang_image_size']          		= 'Image size';
 $_['lang_images_none']              = 'You have no images for this product';
 $_['lang_images_supersize']         = 'Supersize images<span class="help">Extra large pictures</span>';
 $_['lang_images_gallery_plus']      = 'Gallery plus<span class="help">Large picture in search results</span>';
-$_['lang_ebay_imagesize']      		= 'Minimum eBay image size must be 500px on 1 side';
+$_['lang_ebay_imagesize']      		= 'Image must be at least 500px on 1 side to use on eBay';
 
 //Price and details
 $_['lang_listing_condition']        = 'Item condition';
