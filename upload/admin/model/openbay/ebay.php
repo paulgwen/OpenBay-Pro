@@ -781,7 +781,7 @@ class ModelOpenbayEbay extends Model{
 
 				$varData['opt'][$k]['sku']     = $opt['sku'];
 				$varData['opt'][$k]['qty']     = $stock['quantity'];
-				$varData['opt'][$k]['price']   = number_format($opt['price'], 2);
+				$varData['opt'][$k]['price']   = number_format($opt['price'], 2, '.', '');
 				$varData['opt'][$k]['active']  = $opt['active'];
 			}
 
