@@ -55,7 +55,7 @@ class ControllerPlayOrder extends Controller{
                                 if($order['sale-value-gbp'] != ''){
                                     $currency   = $this->model_play_order->getCurrency('GBP');
                                     $total      = (double)$order['sale-value-gbp'];
-                                    $tax        = number_format(($total / 100) * $taxRate, 3);
+                                    $tax        = number_format(($total / 100) * $taxRate, 3, '.', '');
                                     $price      = $total - $tax;
                                     $totalNet   = $price;
                                     $gbp        = $total;
@@ -65,7 +65,7 @@ class ControllerPlayOrder extends Controller{
                                 if($order['sale-value-euro'] != ''){
                                     $currency   = $this->model_play_order->getCurrency('EUR');
                                     $total      = (double)$order['sale-value-euro'];
-                                    $tax        = number_format(($total / 100) * $taxRate, 3);
+                                    $tax        = number_format(($total / 100) * $taxRate, 3, '.', '');
                                     $price      = $total - $tax;
                                     $totalNet   = $price;
                                     $gbp        = '';
@@ -79,14 +79,14 @@ class ControllerPlayOrder extends Controller{
                                     'code' => 'sub_total',
                                     'title' => 'Sub-Total:',
                                     'text' => $this->db->escape($currency['symbol_left']).number_format($totalNet, $currency['decimal_place']).$this->db->escape($currency['symbol_right']),
-                                    'value' => number_format($totalNet, 2),
+                                    'value' => number_format($totalNet, 2, '.', ''),
                                     'sort_order' => '1'
                                 );
                                 $data['totals'][1] = array(
                                     'code' => 'tax',
                                     'title' => 'Tax:',
                                     'text' => $this->db->escape($currency['symbol_left']).number_format($tax, $currency['decimal_place']).$this->db->escape($currency['symbol_right']),
-                                    'value' => number_format($tax, 3),
+                                    'value' => number_format($tax, 3, '.', ''),
                                     'sort_order' => '5'
                                 );
 
@@ -94,7 +94,7 @@ class ControllerPlayOrder extends Controller{
                                     'code' => 'total',
                                     'title' => 'Total:',
                                     'text' => $this->db->escape($currency['symbol_left']).number_format($total, $currency['decimal_place']).$this->db->escape($currency['symbol_right']),
-                                    'value' => number_format($total, 2),
+                                    'value' => number_format($total, 3, '.', ''),
                                     'sort_order' => '6'
                                 );
 
