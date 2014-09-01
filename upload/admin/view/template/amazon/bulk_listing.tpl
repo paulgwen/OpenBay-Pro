@@ -98,7 +98,7 @@
                     <tbody>
                         <?php foreach ($products as $product) { ?>
                             <tr>
-                                <td class="center"><input type="checkbox" name="product_ids[]" value="<?php echo $product['product_id'] ?>" /></td>
+                                <td class="center"><input class="amazon-listing" type="checkbox" name="product_ids[]" value="<?php echo $product['product_id'] ?>" /></td>
                                 <td class="center"><img src="<?php echo $product['image'] ?>" /></td>
                                 <td class="left"><a href="<?php echo $product['href'] ?>" target="_blank"><?php echo $product['name'] ?></a></td>
                                 <td class="right"><?php echo $product['model'] ?></td>
