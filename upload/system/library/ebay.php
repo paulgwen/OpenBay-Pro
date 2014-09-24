@@ -18,7 +18,7 @@ final class Ebay
         $this->load->library('log');
         $this->logger = new Log('ebaylog.log');
     }
-    
+
     public function __get($name) {
         return $this->registry->get($name);
     }
@@ -29,7 +29,7 @@ final class Ebay
                 $pId = getmypid();
                 $data = $pId.' - '.$data;
             }
-            
+
             if($write == true){
                 $this->logger->write($data);
             }
@@ -65,13 +65,13 @@ final class Ebay
             }
 
             $data = array(
-                'token'             => $this->token, 
-                'language'          => $this->config->get('openbay_language'), 
-                'secret'            => $this->secret, 
-                'server'            => $this->server, 
-                'domain'            => $domain, 
+                'token'             => $this->token,
+                'language'          => $this->config->get('openbay_language'),
+                'secret'            => $this->secret,
+                'server'            => $this->server,
+                'domain'            => $domain,
                 'openbay_version'   => (int)$this->config->get('openbay_version'),
-                'data'              => $post, 
+                'data'              => $post,
                 'content_type'      => $content_type
             );
 
@@ -100,15 +100,15 @@ final class Ebay
             if(!in_array($call, $this->noLog)){
                 $this->log('openbay_call() - Result of : "'.$result.'"');
             }
-            
+
             /* JSON RESPONSE */
             if($content_type == 'json'){
                 $encoding = mb_detect_encoding($result);
 
                 /* some json data may have BOM due to php not handling types correctly */
                 if($encoding == 'UTF-8') {
-                  $result = preg_replace('/[^(\x20-\x7F)]*/','', $result);    
-                } 
+                  $result = preg_replace('/[^(\x20-\x7F)]*/','', $result);
+                }
 
                 $result             = json_decode($result, 1);
                 $this->lasterror    = $result['error'];
@@ -156,16 +156,16 @@ final class Ebay
             }else{
                 $domain = HTTPS_SERVER;
             }
-            
+
             $data = array('token' => $this->token, 'secret' => $this->secret, 'server' => $this->server, 'domain' => $domain, 'openbay_version' => (int)$this->config->get('openbay_version'), 'data' => $post, 'content_type' => $content_type, 'language' => $this->config->get('openbay_language'));
 
             $useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.1) Gecko/20061204 Firefox/2.0.0.1";
 
-            $defaults = array( 
+            $defaults = array(
                 CURLOPT_POST            => 1,
                 CURLOPT_HEADER          => 0,
                 CURLOPT_URL             => $this->url.$call,
-                CURLOPT_USERAGENT       => $useragent, 
+                CURLOPT_USERAGENT       => $useragent,
                 CURLOPT_FRESH_CONNECT   => 1,
                 CURLOPT_RETURNTRANSFER  => 0,
                 CURLOPT_FORBID_REUSE    => 1,
@@ -188,7 +188,7 @@ final class Ebay
 
     public function getSetting($key){
         $qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_setting_option` WHERE `key` = '".$key."' LIMIT 1");
-        
+
         if($qry->num_rows > 0){
             return unserialize($qry->row['data']);
         }else{
@@ -208,7 +208,7 @@ final class Ebay
         $this->log('getEbayItemId() - Product ID: '.$product_id);
 
         $qry = $this->db->query("SELECT `ebay_item_id` FROM `" . DB_PREFIX . "ebay_listing` WHERE `product_id` = '".$product_id."' AND `status` = '1' LIMIT 1");
-        
+
         if(!$qry->num_rows){
             $this->log('No link found - getEbayItemId()');
             return false;
@@ -342,24 +342,24 @@ final class Ebay
      * returns full array data about live items.
      */
         $qry = $this->db->query("
-        SELECT `el`.`ebay_item_id`, `p`.*, `pd`.name 
-        FROM `" . DB_PREFIX . "ebay_listing` `el` 
-        LEFT JOIN `" . DB_PREFIX . "product` `p` ON (`el`.`product_id` = `p`.`product_id`) 
-        LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`) 
-        WHERE `el`.`status` = '1' 
+        SELECT `el`.`ebay_item_id`, `p`.*, `pd`.name
+        FROM `" . DB_PREFIX . "ebay_listing` `el`
+        LEFT JOIN `" . DB_PREFIX . "product` `p` ON (`el`.`product_id` = `p`.`product_id`)
+        LEFT JOIN `" . DB_PREFIX . "product_description` `pd` ON (`p`.`product_id` = `pd`.`product_id`)
+        WHERE `el`.`status` = '1'
         AND `pd`.`language_id` = '" . (int)$this->config->get('config_language_id') . "'");
 
         $data = array();
         if($qry->num_rows){
             foreach($qry->rows as $row){
                 $data[$row['ebay_item_id']] = array(
-                    'product_id'    => $row['product_id'], 
-                    'sku'           => $row['sku'], 
-                    'model'         => $row['model'], 
+                    'product_id'    => $row['product_id'],
+                    'sku'           => $row['sku'],
+                    'model'         => $row['model'],
                     'qty'           => $row['quantity'],
                     'name'          => $row['name']
                 );
-                
+
                 if(isset($row['has_option']) && $row['has_option'] == 1){
                     if($this->addonLoad('openstock') == true){
                         $this->load->model('openstock/openstock');
@@ -384,7 +384,7 @@ final class Ebay
         return $data;
     }
 
-    public function endItem($item_id){  
+    public function endItem($item_id){
         $this->log('endItem() - ID "'.$item_id);
 
         if($this->config->get('openbaypro_enditems') == 1){
@@ -400,11 +400,11 @@ final class Ebay
         }else{
             $this->removeItemByItemId($item_id);
             $this->log('endItem() - config disables ending items');
-            
+
             $message = "An item has gone out of stock but your settings are not set to end eBay items automatically.\r\n\r\n";
             $message.= "You need to ensure you have stock left of this item or end your eBay listing manually.\r\n\r\n";
             $message.= "eBay item ID: $item_id";
-            
+
             $this->notifyAdmin('eBay item not ended: '.$item_id, $message);
 
             return array('error' => true, 'msg' => 'Settings do not allow you to end items, but the link has been removed.');
@@ -454,7 +454,7 @@ final class Ebay
         $mail->password     = $this->config->get('config_smtp_password');
         $mail->port         = $this->config->get('config_smtp_port');
         $mail->timeout      = $this->config->get('config_smtp_timeout');
-        
+
         $mail->setTo($this->config->get('config_email'));
         $mail->setFrom($this->config->get('config_email'));
         $mail->setSender($this->config->get('config_name'));
@@ -476,22 +476,22 @@ final class Ebay
      */
         if (!$td = mcrypt_module_open('rijndael-256', '', 'ctr', '')){ return false; }
 
-        $msg = serialize($msg);			
-        $iv  = mcrypt_create_iv(32, MCRYPT_RAND);		
+        $msg = serialize($msg);
+        $iv  = mcrypt_create_iv(32, MCRYPT_RAND);
 
         if(mcrypt_generic_init($td, $k, $iv) !== 0 ){ return false; }
 
-        $msg  = mcrypt_generic($td, $msg);			
-        $msg  = $iv . $msg;							
-        $mac  = $this->pbkdf2($msg, $k, 1000, 32);	
-        $msg .= $mac;									
+        $msg  = mcrypt_generic($td, $msg);
+        $msg  = $iv . $msg;
+        $mac  = $this->pbkdf2($msg, $k, 1000, 32);
+        $msg .= $mac;
 
-        mcrypt_generic_deinit($td);						
-        mcrypt_module_close($td);					
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
 
-        if ($base64){ $msg = base64_encode($msg); }	
+        if ($base64){ $msg = base64_encode($msg); }
 
-        return $msg;								
+        return $msg;
     }
 
     public function decrypt($msg,$k,$base64 = false){
@@ -506,15 +506,15 @@ final class Ebay
      * @return bool|mixed
      */
         if ( $base64 ){ $msg = base64_decode($msg); }
-        
+
         if ( ! $td = mcrypt_module_open('rijndael-256', '', 'ctr', '') ){
             $this->log('decrypt() - Failed to open cipher');
             return false;
         }
-        
-        $iv  = substr($msg, 0, 32);						
-        $mo  = strlen($msg) - 32;						
-        $em  = substr($msg, $mo);			
+
+        $iv  = substr($msg, 0, 32);
+        $mo  = strlen($msg) - 32;
+        $em  = substr($msg, $mo);
         $msg = substr($msg, 32, strlen($msg)-64);
         $mac = $this->pbkdf2($iv . $msg, $k, 1000, 32);
 
@@ -522,19 +522,19 @@ final class Ebay
             $this->log('decrypt() - Mac authenticate failed');
             return false;
         }
-        
+
         if ( mcrypt_generic_init($td, $k, $iv) !== 0 ){
             $this->log('decrypt() - Buffer init failed');
             return false;
         }
-        
-        $msg = mdecrypt_generic($td, $msg);					
-        $msg = unserialize($msg);							
 
-        mcrypt_generic_deinit($td);							
-        mcrypt_module_close($td);							
+        $msg = mdecrypt_generic($td, $msg);
+        $msg = unserialize($msg);
 
-        return $msg;										
+        mcrypt_generic_deinit($td);
+        mcrypt_module_close($td);
+
+        return $msg;
     }
 
     public function pbkdf2( $p, $s, $c, $kl, $a = 'sha256' ) {
@@ -550,9 +550,9 @@ final class Ebay
      * @param string $a
      * @return string
      */
-        $hl = strlen(hash($a, null, true));	
-        $kb = ceil($kl / $hl);			
-        $dk = '';					
+        $hl = strlen(hash($a, null, true));
+        $kb = ceil($kl / $hl);
+        $dk = '';
 
         for ($block = 1; $block <= $kb; $block ++){
             $ib = $b = hash_hmac($a, $s . pack('N', $block), $p, true);
@@ -560,7 +560,7 @@ final class Ebay
             for ( $i = 1; $i < $c; $i ++ ){
                     $ib ^= ($b = hash_hmac($a, $b, $p, true));
             }
-            $dk .= $ib; 
+            $dk .= $ib;
         }
 
         return substr($dk, 0, $kl);
@@ -576,14 +576,14 @@ final class Ebay
      * @return mixed
      */
         $data = (string)$data;
-        
+
         $encoding = mb_detect_encoding($data);
         /* some json data may have BOM due to php not handling types correctly */
         if($encoding == 'UTF-8') {
-          $data = preg_replace('/[^(\x20-\x7F)]*/','', $data);    
-          $data = preg_replace('#\\\\x[0-9a-fA-F]{2,2}#', '', $data);    
+          $data = preg_replace('/[^(\x20-\x7F)]*/','', $data);
+          $data = preg_replace('#\\\\x[0-9a-fA-F]{2,2}#', '', $data);
         }
-        
+
         $data = json_decode($data);
 
         if (function_exists( 'json_last_error' )){
@@ -613,7 +613,7 @@ final class Ebay
         }else{
             $this->log('validateJsonDecode() - json_last_error PHP function does not exist');
         }
-        
+
         return $data;
     }
 
@@ -628,7 +628,7 @@ final class Ebay
         $this->log('addonList() - Getting list of addons');
 
         $addons = array();
-        
+
         if($myDirectory = opendir(DIR_SYSTEM."ebay_addon/")){
             while (false !== ($file = readdir($myDirectory))) {
                 if ($file != "." && $file != ".." && $file != ".svn") {
@@ -655,14 +655,14 @@ final class Ebay
         $addon = (string)$addon; //ensure the addon name is a string value.
 
         $this->log('addonLoad() - Testing for addon: '.$addon);
-        
+
         if(file_exists(DIR_SYSTEM."ebay_addon/".$addon.".php")){
             include_once(DIR_SYSTEM."ebay_addon/".$addon.".php");
-            
+
             if(empty($this->addon) || !is_object($this->addon)){
                 $this->addon = new stdClass();
             }
-        
+
             $this->addon->$addon = new $addon;
             $this->log('addonLoad() - Addon found: '.$addon);
             return true;
@@ -679,7 +679,7 @@ final class Ebay
 
     private function eBayPaymentStatus($item, $txn, $status){
         $this->log('eBayPaymentStatus() - Updates order payment status (Item: '.$item.',Txn: '.$txn.',Status:'.$status.')');
-        return $this->openbay_call('order/paymentStatus/', array('item' => $item, 'txn' => $txn, 'status' => $status));	
+        return $this->openbay_call('order/paymentStatus/', array('item' => $item, 'txn' => $txn, 'status' => $status));
     }
 
     private function getSaleRecord($saleId){
@@ -711,8 +711,8 @@ final class Ebay
                 $os_array = $this->osProducts($order_id);
 
                 foreach($os_array as $pass){
-                    $this->ebaySaleStockReduce((int)$pass['pid'], (string)$pass['var']); 
-                }								
+                    $this->ebaySaleStockReduce((int)$pass['pid'], (string)$pass['var']);
+                }
             }else{
                 $order_product_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order_product` WHERE `order_id` = '" . (int)$order_id . "'");
 
@@ -846,6 +846,17 @@ final class Ebay
             }
         }else{
             $this->removeItemByItemId($item_id);
+
+			if($sku == null) {
+				if ($stock <= 0 && $this->config->get('ebay_disable_nostock') == 1) {
+					$this->disableProduct($product_id);
+				}
+			} else {
+				if ($stock <= 0 && $this->config->get('ebay_disable_nostock') == 1) {
+					$this->disableVariant($product_id, $sku);
+				}
+			}
+
             $this->log('putStockUpdate() - Listing not active, item id: '. $item_id .', status returned: '.$listing['statusActual']);
         }
     }
@@ -1235,7 +1246,7 @@ final class Ebay
             return $qry->row['product_id'];
         }
     }
-    
+
     public function validate(){
         if($this->config->get('openbay_status') != 0 &&
             $this->config->get('openbaypro_token') != '' &&
@@ -1252,11 +1263,11 @@ final class Ebay
         $qry = $this->db->query("SELECT SUM(`qty`) AS `total` FROM `" . DB_PREFIX . "ebay_transaction` WHERE `product_id` = '".$product_id."' AND `order_id` = '0' LIMIT 1");
         return (int)$qry->row['total'];
     }
-    
+
     public function getImages(){
         $this->log('getImages() - Getting product images.');
         $qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_image_import`");
-        
+
         if($qry->num_rows){
             foreach ($qry->rows as $img) {
                 $this->log('Image: '.$img['name']);
@@ -1278,7 +1289,7 @@ final class Ebay
 				}
 
 				$handle = @fopen($img_used,'r');
-                
+
                 if($handle !== false){
                     if(!@copy($img_used, $img['image_new'])){
                         $this->log('getImages() - FAILED COPY: '.$img_used);
@@ -1288,7 +1299,7 @@ final class Ebay
                 }else{
                     $this->log('getImages() - URL not found : '.$img_used);
                 }
-            
+
                 if($img['imgcount'] == 0){
                     //add to main product table
                     $this->db->query("UPDATE `" . DB_PREFIX . "product` SET `image` = 'data/".$img['name']."' WHERE `product_id` = '".$img['product_id']."' LIMIT 1");
@@ -1301,12 +1312,12 @@ final class Ebay
                             `sort_order`            = '".$img['imgcount']."'
                     ");
                 }
-                
+
                 $this->db->query("DELETE FROM `" . DB_PREFIX . "ebay_image_import` WHERE `id` = '".$img['id']."' LIMIT 1");
             }
         }
     }
-    
+
     public function getEbayListing($itemId){
         $this->log('getEbayListing()');
         return $this->openbay_call('item/getItem/', array('itemId' => $itemId));
@@ -1444,10 +1455,10 @@ final class Ebay
             return false;
         }
     }
-    
+
     public function loadCategories(){
-        $cat_array = $this->openbay_call('setup/getEbayCategories/', array(), array(), 'json', true);	
-        
+        $cat_array = $this->openbay_call('setup/getEbayCategories/', array(), array(), 'json', true);
+
         if($this->lasterror != true){
             $this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "ebay_category`");
 
@@ -1468,7 +1479,7 @@ final class Ebay
                 }
             }
         }
-        
+
         return array('msg' => $this->lastmsg, 'error' => $this->lasterror);
     }
 
@@ -1638,10 +1649,10 @@ final class Ebay
 
         return array('msg' => $this->lastmsg, 'error' => $this->lasterror);
     }
-    
+
     public function loadSellerStore(){
         $store = $this->openbay_call('setup/getSellerStore/', array(), array(), 'json', true);
-        
+
         if($this->lasterror != true){
             if($store['store'] == true){
                 $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_store_category`;");
@@ -1683,10 +1694,10 @@ final class Ebay
                 }
             }
         }
-        
+
         return array('msg' => $this->lastmsg, 'error' => $this->lasterror);
     }
-    
+
     public function editSetting($group, $data, $store_id = 0) {
             $this->db->query("DELETE FROM " . DB_PREFIX . "setting WHERE store_id = '" . (int)$store_id . "' AND `group` = '" . $this->db->escape($group) . "'");
 
