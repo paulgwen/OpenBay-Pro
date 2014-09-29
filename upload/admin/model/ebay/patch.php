@@ -34,7 +34,7 @@ class ModelEbayPatch extends Model{
             $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."ebay_order_lock` (`smp_id` INT(11) NOT NULL,PRIMARY KEY (`smp_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
 
             $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."ebay_template` (`template_id` INT(11) NOT NULL AUTO_INCREMENT,`name` VARCHAR(100) NOT NULL,`html` MEDIUMTEXT NOT NULL,PRIMARY KEY (`template_id`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
-            
+
             //check profile table for default column
             $res = $this->db->query("SHOW COLUMNS FROM `".DB_PREFIX."ebay_listing` LIKE 'status'");
             if($res->num_rows == 0){
@@ -51,6 +51,12 @@ class ModelEbayPatch extends Model{
                 $this->db->query("ALTER TABLE `".DB_PREFIX."ebay_order` ADD `tracking_no` VARCHAR(100) NOT NULL");
                 $this->db->query("ALTER TABLE `".DB_PREFIX."ebay_order` ADD `carrier_id` VARCHAR(100) NOT NULL");
             }
+
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_listing` ADD INDEX(`product_id`)");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_listing_pending` ADD INDEX(`product_id`)");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_transaction` ADD INDEX(`product_id`, `order_id`, `smp_id`)");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_order` ADD INDEX(`order_id`, `smp_id`, `parent_ebay_order_id`)");
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_stock_reserve` ADD INDEX(`product_id`)");
 
             if(!isset($settings['openbaypro_relistitems']) || $settings['openbaypro_relistitems'] == '0')              		{ $settings['openbaypro_stock_allocate'] = 0; }
             if(!isset($settings['openbaypro_stock_allocate']) || $settings['openbaypro_stock_allocate'] == '')              { $settings['openbaypro_stock_allocate'] = 0; }
@@ -82,5 +88,5 @@ class ModelEbayPatch extends Model{
         }
 
         return true;
-    } 
+    }
 }
