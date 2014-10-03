@@ -88,7 +88,7 @@
                 </tr>
                 </thead>
                 <tr>
-                    <td class="left" colspan="8" id="checking_linked_items">
+                    <td class="left" colspan="9" id="checking_linked_items">
                         <img src="view/image/loading.gif" alt="Loading" /> <?php echo $lang_text_loading_items; ?>
                     </td>
                 </tr>
@@ -112,6 +112,7 @@
                     <?php }else{ ?>
                     <td class="center">-</td>
                     <td class="center"><?php foreach($item['options'] as $option){ echo $option['stock'] .' x ' . $option['combi'] . '<br />'; } ?></td>
+                    <td></td>
                     <td id="text_qty_<?php echo $id; ?>" class="center"></td>
                     <td class="center" align="center"><img title="" alt="" src="view/image/success.png" style="margin-top:3px;"></td>
                     <?php } ?>
