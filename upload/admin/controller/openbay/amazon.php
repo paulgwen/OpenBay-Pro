@@ -722,8 +722,6 @@ class ControllerOpenbayAmazon extends Controller {
 	}
 
 	public function doBulkSearch() {
-
-
 		$this->load->model('catalog/product');
 		$this->load->model('openbay/amazon_listing');
 		$this->load->language('openbay/amazon_bulk');
@@ -741,9 +739,11 @@ class ControllerOpenbayAmazon extends Controller {
 					);
 				}
 
+				$product['SellerSKU'] = $product['sku'];
+
 				$key = '';
 
-				$id_types = array('isbn', 'upc', 'ean', 'jan');
+				$id_types = array('isbn', 'upc', 'ean', 'jan', 'SellerSKU');
 
 				foreach ($id_types as $id_type) {
 					if (!empty($product[$id_type])) {
