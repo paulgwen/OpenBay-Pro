@@ -739,8 +739,6 @@ class ControllerOpenbayAmazon extends Controller {
 					);
 				}
 
-				$product['SellerSKU'] = $product['sku'];
-
 				$key = '';
 
 				$id_types = array('isbn', 'upc', 'ean', 'jan', 'sku');
