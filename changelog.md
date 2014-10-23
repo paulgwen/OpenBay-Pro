@@ -5,11 +5,23 @@
 * Updated SQL in admin/model/sale/order.php to fix date_modified filter. Fixes #1371
 * Change settitle to setTitle in error/not_found.php
 * Fixed issue in Amazon Payments where tax lines where passed as products if cart had different tax rates.
+* Fixed the implementation of captchas.
+* Incorrect file type when uploading on Windows Machines REF: #1550
+* Corrected 404 response headers REF: #1620
+* Trigger JS change on page load to ensure that option choices are hidden/shown when editing an option.
+* Fixed hyphen problem with PayPal Express checkout url
+* Changed PayPal cardissue to issuenumber variabe for PayPal Pro
+* Used correct admin setting to check if product count should be done on a category REF: #1828
+* Changed response message to hide sensitive DB connection data on failure. REF: 3fff5226d9c48f8f4c948bc2c27a5c91f8dba1a2
+* Fixed category count to be called only when count is turned on
 
 #### Changes
 * Removed duplicate DELETE SQL query for product attributes REF: #1379
 * Small coding standard improvement (spacing on if and else if statements) in Amazon Payments FE template
 * Updated link to download location for Amazon Payments adjustment file as it was removed from the source.
+* Added missing semi-colon to echo statements in Amazon Checkout REF: #1565
+* Removed old subversion file read from admin/controller/footer - redundant code.
+* Added speed improvement for the product count check in the category module if it is disabled. Part of the totals calculation were still being done.
 
 #### Added
 * Authorize.net solution ID to payment gateway

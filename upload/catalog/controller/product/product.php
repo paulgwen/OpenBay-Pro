@@ -539,7 +539,7 @@ class ControllerProductProduct extends Controller {
 
 			$this->data['continue'] = $this->url->link('common/home');
 
-			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . '/1.1 404 Not Found');
+			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
 				$this->template = $this->config->get('config_template') . '/template/error/not_found.tpl';
@@ -693,6 +693,8 @@ class ControllerProductProduct extends Controller {
 			}
 
 			if (!isset($json['error'])) {
+				unset($this->session->data['captcha']);
+				
 				$this->model_catalog_review->addReview($this->request->get['product_id'], $this->request->post);
 
 				$json['success'] = $this->language->get('text_success');
@@ -727,7 +729,7 @@ class ControllerProductProduct extends Controller {
 			// Allowed file extension types
 			$allowed = array();
 
-			$filetypes = explode("\n", $this->config->get('config_file_extension_allowed'));
+			$filetypes = explode("\n", str_replace(array("\r\n", "\r"), "\n", $this->config->get('config_file_extension_allowed')));
 
 			foreach ($filetypes as $filetype) {
 				$allowed[] = trim($filetype);
@@ -740,7 +742,7 @@ class ControllerProductProduct extends Controller {
 			// Allowed file mime types
 			$allowed = array();
 
-			$filetypes = explode("\n", $this->config->get('config_file_mime_allowed'));
+			$filetypes = explode("\n", str_replace(array("\r\n", "\r"), "\n", $this->config->get('config_file_mime_allowed')));
 
 			foreach ($filetypes as $filetype) {
 				$allowed[] = trim($filetype);
