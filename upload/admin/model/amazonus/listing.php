@@ -56,7 +56,7 @@ class ModelAmazonusListing extends Model {
         $bestPrice = '';
 
         $result = json_decode($this->amazonus->callWithResponse('productv3/getPrice', $search_params), 1);
-        
+
         if (isset($result['Price']['Amount']) && $result['Price']['Currency'] && $this->currency->has($result['Price']['Currency'])) {
             $bestPrice['amount'] = number_format($this->currency->convert($result['Price']['Amount'], $result['Price']['Currency'], $this->config->get('config_currency')), 2, '.', '');
             $bestPrice['shipping'] = number_format($this->currency->convert($result['Price']['Shipping'], $result['Price']['Currency'], $this->config->get('config_currency')), 2, '.', '');
@@ -65,7 +65,7 @@ class ModelAmazonusListing extends Model {
 
         return $bestPrice;
     }
-    
+
     public function simpleListing($data) {
         $request = array(
             'asin' => $data['asin'],
@@ -85,7 +85,7 @@ class ModelAmazonusListing extends Model {
             'product_id' => $data['product_id'],
         );
 
-        $response = $this->amazonus->callWithResponse('productv3/simpleListing', $request); 
+        $response = $this->amazonus->callWithResponse('productv3/simpleListing', $request);
         $response = json_decode($response);
         if (empty($response)) {
             return array(
@@ -105,5 +105,4 @@ class ModelAmazonusListing extends Model {
     public function getBrowseNodes($request){
         return $this->amazonus->callWithResponse('productv3/getBrowseNodes', $request);
     }
-
 }
