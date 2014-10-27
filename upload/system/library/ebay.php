@@ -22,7 +22,7 @@ final class Ebay {
 		return $this->registry->get($name);
 	}
 
-	public function log($data, $write = true) {
+	public function log($data, $write = true) { 
 		if($this->logging == 1) {
 			if(function_exists('getmypid')) {
 				$pId = getmypid();
