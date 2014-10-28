@@ -1315,9 +1315,9 @@ class ControllerPaymentPPExpress extends Controller {
 		$this->session->data['paypal']['token'] = $result['TOKEN'];
 
 		if ($this->config->get('pp_express_test') == 1) {
-			header('Location: https://www.sandbox.paypal.com/cgiâ€‘bin/webscr?cmd=_express-checkout&token=' . $result['TOKEN'].'&useraction=commit');
+			header('Location: https://www.sandbox.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $result['TOKEN'].'&useraction=commit');
 		} else {
-			header('Location: https://www.paypal.com/cgiâ€‘bin/webscr?cmd=_express-checkout&token=' . $result['TOKEN'].'&useraction=commit');
+			header('Location: https://www.paypal.com/cgi-bin/webscr?cmd=_express-checkout&token=' . $result['TOKEN'].'&useraction=commit');
 		}
 	}
 
@@ -1539,7 +1539,7 @@ class ControllerPaymentPPExpress extends Controller {
 
 			unset($this->session->data['success']);
 
-			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . '/1.1 404 Not Found');
+			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
 				$this->template = $this->config->get('config_template') . '/template/error/not_found.tpl';

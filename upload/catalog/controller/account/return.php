@@ -277,7 +277,7 @@ class ControllerAccountReturn extends Controller {
 
 			$this->data['continue'] = $this->url->link('account/return', '', 'SSL');
 
-			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . '/1.1 404 Not Found');
+			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
 
 			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
 				$this->template = $this->config->get('config_template') . '/template/error/not_found.tpl';
@@ -304,6 +304,8 @@ class ControllerAccountReturn extends Controller {
 		$this->load->model('account/return');
 
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+			unset($this->session->data['captcha']);
+			
 			$this->model_account_return->addReturn($this->request->post);
 
 			$this->redirect($this->url->link('account/return/success', '', 'SSL'));
