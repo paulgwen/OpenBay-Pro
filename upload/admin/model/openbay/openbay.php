@@ -247,7 +247,7 @@ class ModelOpenbayOpenbay extends Model {
 		} else {
 			$settings = $this->model_setting_setting->getSetting('openbaymanager');
 			$settings['openbay_version'] = $data['version'];
-			$this->model_setting_setting->editSetting('openbay', $settings);
+			$this->model_setting_setting->editSetting('openbaymanager', $settings);
 			return array('error' => 0, 'response' => $data['version'], 'percent_complete' => 100, 'status_message' => $this->language->get('text_updated_ok') . $data['version']);
 		}
 	}
