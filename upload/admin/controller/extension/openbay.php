@@ -265,6 +265,7 @@ class ControllerExtensionOpenbay extends Controller {
 
 		$this->data['action'] = HTTPS_SERVER . 'index.php?route=extension/openbay/manage&token=' . $this->session->data['token'];
 		$this->data['cancel'] = HTTPS_SERVER . 'index.php?route=extension/openbay&token=' . $this->session->data['token'];
+		$this->data['token'] = $this->session->data['token'];
 
 		$this->data['breadcrumbs'] = array();
 
@@ -296,6 +297,93 @@ class ControllerExtensionOpenbay extends Controller {
 		$this->response->setOutput($this->render());
 	}
 
+	public function updateV2() {
+		$this->load->model('openbay/openbay');
+		$this->load->language('extension/openbay');
+
+		// set base var
+		$web_root = preg_replace('/system\/$/', '', DIR_SYSTEM);
+
+		if (!isset($this->request->get['stage'])) {
+			$stage = 'check_server';
+		} else {
+			$stage = $this->request->get['stage'];
+		}
+
+		if (!isset($this->request->get['beta']) || $this->request->get['beta'] == 0) {
+			$beta = 0;
+		} else {
+			$beta = 1;
+		}
+
+		switch ($stage) {
+			case 'check_server': // step 1
+				$response = $this->model_openbay_openbay->updateV2Test();
+
+				sleep(1);
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			case 'check_version': // step 2
+				$response = $this->model_openbay_openbay->updateV2CheckVersion($beta);
+
+				sleep(1);
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			case 'download': // step 3
+				$response = $this->model_openbay_openbay->updateV2Download($beta);
+
+				sleep(1);
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			case 'extract': // step 4
+				$response = $this->model_openbay_openbay->updateV2Extract();
+
+				sleep(1);
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			case 'remove': // step 5 - remove any files no longer needed
+				$response = $this->model_openbay_openbay->updateV2Remove();
+
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			case 'run_patch': // step 6 - run any db updates or other patch files
+				if ($this->config->get('openbay_status') == 1) {
+					$this->load->model('openbay/ebay');
+					$this->model_openbay_ebay->patch(false);
+				}
+
+				if ($this->config->get('amazon_status') == 1) {
+					$this->load->model('openbay/amazon');
+					$this->model_openbay_amazon->patch(false);
+				}
+
+				if ($this->config->get('amazonus_status') == 1) {
+					$this->load->model('openbay/amazonus');
+					$this->model_openbay_amazonus->patch(false);
+				}
+
+				$response = array('error' => 0, 'response' => '', 'percent_complete' => 90, 'status_message' => 'Running patch files');
+
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			case 'update_version': // step 7 - update the version number
+				$this->load->model('setting/setting');
+
+				$response = $this->model_openbay_openbay->updateV2UpdateVersion($beta);
+
+				$this->response->addHeader('Content-Type: application/json');
+				$this->response->setOutput(json_encode($response));
+				break;
+			default;
+		}
+	}
+
 	public function ftpTestConnection() {
 		$this->load->model('openbay/openbay');
 
@@ -325,17 +413,17 @@ class ControllerExtensionOpenbay extends Controller {
 	}
 
 	public function runPatch() {
-		$this->load->model('openbay/ebay_patch');
-		$this->load->model('openbay/amazon_patch');
-		$this->load->model('openbay/amazonus_patch');
+		$this->load->model('openbay/ebay');
+		$this->load->model('openbay/amazon');
+		$this->load->model('openbay/amazonus');
 		$this->load->model('setting/extension');
 		$this->load->model('setting/setting');
 		$this->load->model('user/user_group');
 		$this->load->model('openbay/version');
 
-		$this->model_openbay_ebay_patch->runPatch();
-		$this->model_openbay_amazon_patch->runPatch();
-		$this->model_openbay_amazonus_patch->runPatch();
+		$this->model_openbay_ebay->patch();
+		$this->model_openbay_amazon->patch();
+		$this->model_openbay_amazonus->patch();
 
 		$openbaymanager = $this->model_setting_setting->getSetting('openbaymanager');
 		$openbaymanager['openbay_version'] = (int)$this->model_openbay_version->getVersion();
@@ -619,7 +707,7 @@ class ControllerExtensionOpenbay extends Controller {
 					'href' => $this->url->link('sale/order/update', 'token=' . $this->session->data['token'] . '&order_id=' . $result['order_id'] . $url, 'SSL')
 				);
 			}
-			
+
 			$channel = $this->language->get('text_' . $result['channel']);
 
 			$this->data['orders'][] = array(
@@ -632,7 +720,7 @@ class ControllerExtensionOpenbay extends Controller {
 				'channel'       => $channel,
 			);
 		}
-		
+
 		$this->data['channels'] = array();
 
 		$this->data['channels'][] = array(
@@ -867,7 +955,7 @@ class ControllerExtensionOpenbay extends Controller {
 				'text' => $this->data['lang_title_order_update'],
 				'separator' => ' :: '
 			);
-			
+
 			$url = '';
 
 			if (isset($this->request->get['filter_order_id'])) {
@@ -901,7 +989,7 @@ class ControllerExtensionOpenbay extends Controller {
 			if (isset($this->request->get['page'])) {
 				$url .= '&page=' . $this->request->get['page'];
 			}
-			
+
 			$this->data['cancel'] = $this->url->link('extension/openbay/orderList', 'token=' . $this->session->data['token'] . $url, 'SSL');
 			$this->data['button_cancel'] = $this->language->get('button_cancel');
 
@@ -965,7 +1053,7 @@ class ControllerExtensionOpenbay extends Controller {
 					}
 				}
 			}
-			
+
 			if ($orders) {
 				$this->openbay->amazon->bulkUpdateOrders($orders);
 			}
