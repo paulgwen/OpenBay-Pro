@@ -16,7 +16,7 @@ class ModelOpenbayAmazonusPatch extends Model {
 				) DEFAULT COLLATE=utf8_general_ci;");
 
 			$this->db->query("
-				CREATE TABLE IF NOT EXISTS`" . DB_PREFIX . "amazonus_listing_report` (
+				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "amazonus_listing_report` (
 					`sku` varchar(255) NOT NULL,
 					`quantity` int(10) unsigned NOT NULL,
 					`asin` varchar(255) NOT NULL,
