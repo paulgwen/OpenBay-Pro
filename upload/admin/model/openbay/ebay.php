@@ -252,11 +252,59 @@ class ModelOpenbayEbay extends Model{
 	public function patch($manual = true) {
 		$this->load->model('setting/setting');
 
-		$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_listing` ADD INDEX(`product_id`)");
-		$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_listing_pending` ADD INDEX(`product_id`)");
-		$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_transaction` ADD INDEX(`product_id`, `order_id`, `smp_id`)");
-		$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_order` ADD INDEX(`order_id`, `smp_id`, `parent_ebay_order_id`)");
-		$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_stock_reserve` ADD INDEX(`product_id`)");
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_listing` WHERE Key_name = 'product_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_listing` ADD INDEX(`product_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_listing_pending` WHERE Key_name = 'product_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_listing_pending` ADD INDEX(`product_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_stock_reserve` WHERE Key_name = 'product_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_stock_reserve` ADD INDEX(`product_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_transaction` WHERE Key_name = 'product_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_transaction` ADD INDEX(`product_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_transaction` WHERE Key_name = 'order_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_transaction` ADD INDEX(`order_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_transaction` WHERE Key_name = 'smp_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_transaction` ADD INDEX(`smp_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_order` WHERE Key_name = 'order_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_order` ADD INDEX(`order_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_order` WHERE Key_name = 'smp_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_order` ADD INDEX(`smp_id`)");
+		}
+
+		$query = $this->db->query("SHOW KEYS FROM `" . DB_PREFIX . "ebay_order` WHERE Key_name = 'parent_ebay_order_id'");
+
+		if ($query->num_rows == 0) {
+			$this->db->query("ALTER TABLE `" . DB_PREFIX . "ebay_order` ADD INDEX(`parent_ebay_order_id`)");
+		}
 
 		$this->openbay->ebay->loadSettings();
 
