@@ -99,8 +99,8 @@ class ControllerExtensionOpenbay extends Controller {
 			$this->data['openbay_version'] = $settings['openbay_version'];
 		} else {
 			$this->load->model('openbay/version');
-			$this->data['openbay_version']  = $this->model_openbay_version->getVersion();
-			$settings['openbay_version']    = $this->model_openbay_version->getVersion();
+			$this->data['openbay_version']  = $this->model_openbay_version->version();
+			$settings['openbay_version']    = $this->model_openbay_version->version();
 			$this->model_setting_setting->editSetting('openbaymanager', $settings);
 		}
 
@@ -183,8 +183,8 @@ class ControllerExtensionOpenbay extends Controller {
 				$this->data['openbay_version'] = $settings['openbay_version'];
 			} else {
 				$this->load->model('openbay/version');
-				$settings['openbay_version'] = $this->model_openbay_version->getVersion();
-				$this->data['openbay_version'] = $this->model_openbay_version->getVersion();
+				$settings['openbay_version'] = $this->model_openbay_version->version();
+				$this->data['openbay_version'] = $this->model_openbay_version->version();
 				$this->model_setting_setting->editSetting('openbaymanager', $settings);
 			}
 		}
@@ -405,11 +405,11 @@ class ControllerExtensionOpenbay extends Controller {
 		$this->response->setOutput(json_encode($this->model_openbay_openbay->getNotifications()));
 	}
 
-	public function getVersion() {
+	public function version() {
 		sleep(1);
 
 		$this->load->model('openbay/openbay');
-		$this->response->setOutput(json_encode($this->model_openbay_openbay->getVersion()));
+		$this->response->setOutput(json_encode($this->model_openbay_openbay->version()));
 	}
 
 	public function runPatch() {
@@ -426,7 +426,7 @@ class ControllerExtensionOpenbay extends Controller {
 		$this->model_openbay_amazonus->patch();
 
 		$openbaymanager = $this->model_setting_setting->getSetting('openbaymanager');
-		$openbaymanager['openbay_version'] = (int)$this->model_openbay_version->getVersion();
+		$openbaymanager['openbay_version'] = (int)$this->model_openbay_version->version();
 		$openbaymanager['openbaymanager_show_menu'] = 1;
 		$this->model_setting_setting->editSetting('openbaymanager', $openbaymanager);
 

@@ -558,7 +558,7 @@ class ModelOpenbayOpenbay extends Model {
 		return $data;
 	}
 
-	public function getVersion() {
+	public function version() {
 		$data = $this->call('update/getStableVersion/');
 		return $data;
 	}
