@@ -98,7 +98,7 @@
 
             $.ajax({
                 type: 'GET',
-                url: 'index.php?route=extension/openbay/getVersion&token='+token,
+                url: 'index.php?route=extension/openbay/version&token='+token,
                 dataType: 'json',
                 success: function(json) {
 

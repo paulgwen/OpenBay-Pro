@@ -98,8 +98,8 @@ class ControllerExtensionOpenbay extends Controller {
             $this->data['openbay_version'] = $settings['openbay_version'];
         } else {
             $this->load->model('openbay/version');
-            $this->data['openbay_version']  = $this->model_openbay_version->getVersion();
-            $settings['openbay_version']    = $this->model_openbay_version->getVersion();
+            $this->data['openbay_version']  = $this->model_openbay_version->version();
+            $settings['openbay_version']    = $this->model_openbay_version->version();
             $this->model_setting_setting->editSetting('openbaymanager', $settings);
         }
 
@@ -182,8 +182,8 @@ class ControllerExtensionOpenbay extends Controller {
                 $this->data['openbay_version'] = $settings['openbay_version'];
             } else {
                 $this->load->model('openbay/version');
-                $settings['openbay_version'] = $this->model_openbay_version->getVersion();
-                $this->data['openbay_version'] = $this->model_openbay_version->getVersion();
+                $settings['openbay_version'] = $this->model_openbay_version->version();
+                $this->data['openbay_version'] = $this->model_openbay_version->version();
                 $this->model_setting_setting->editSetting('openbaymanager', $settings);
             }
         }
@@ -300,11 +300,11 @@ class ControllerExtensionOpenbay extends Controller {
         $this->response->setOutput(json_encode($this->model_openbay_openbay->getNotifications()));
     }
 
-    public function getVersion() {
+    public function version() {
 
         sleep(1); // give the data some "feel" that its not in our system
         $this->load->model('openbay/openbay');
-        $this->response->setOutput(json_encode($this->model_openbay_openbay->getVersion()));
+        $this->response->setOutput(json_encode($this->model_openbay_openbay->version()));
     }
 
     public function runPatch() {

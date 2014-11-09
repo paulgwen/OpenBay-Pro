@@ -83,7 +83,7 @@ class ModelEbayPatch extends Model{
             //run the manual upload patch
             if($manual == true){
                 $this->load->model('openbay/version');
-                $this->db->query("UPDATE `" . DB_PREFIX . "setting` SET `value` =  '".(int)$this->model_openbay_version->getVersion()."' WHERE  `key` = 'openbay_version' AND `group` = 'openbaymanager' LIMIT 1");
+                $this->db->query("UPDATE `" . DB_PREFIX . "setting` SET `value` =  '".(int)$this->model_openbay_version->version()."' WHERE  `key` = 'openbay_version' AND `group` = 'openbaymanager' LIMIT 1");
             }
         }
 

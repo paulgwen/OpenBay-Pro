@@ -12,7 +12,7 @@ class ModelOpenbayOpenbay extends Model
         return $data;
     }
 
-    public function getVersion() {
+    public function version() {
         $data = $this->call('update/getStableVersion/');
         return $data;
     }
@@ -53,7 +53,7 @@ class ModelOpenbayOpenbay extends Model
             $this->db->query("CREATE TABLE IF NOT EXISTS `".DB_PREFIX."openbay_faq` (`id` int(11) NOT NULL AUTO_INCREMENT,`route` text NOT NULL, PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
         }
     }
-    
+
     public function checkMcrypt(){
         if(function_exists('mcrypt_encrypt')){
             return true;
@@ -61,7 +61,7 @@ class ModelOpenbayOpenbay extends Model
             return false;
         }
     }
-    
+
     public function checkMbstings(){
         if(function_exists('mb_detect_encoding')){
             return true;
@@ -69,7 +69,7 @@ class ModelOpenbayOpenbay extends Model
             return false;
         }
     }
-    
+
     private function call($call, array $post = NULL, array $options = array(), $content_type = 'json'){
         if(defined("HTTP_CATALOG")){
             $domain = HTTP_CATALOG;
@@ -78,13 +78,13 @@ class ModelOpenbayOpenbay extends Model
         }
 
         $data = array(
-            'token'             => '', 
-            'language'          => $this->config->get('openbay_language'), 
-            'secret'            => '', 
-            'server'            => 1, 
-            'domain'            => $domain, 
+            'token'             => '',
+            'language'          => $this->config->get('openbay_language'),
+            'secret'            => '',
+            'server'            => 1,
+            'domain'            => $domain,
             'openbay_version'   => (int)$this->config->get('openbay_version'),
-            'data'              => $post, 
+            'data'              => $post,
             'content_type'      => $content_type,
             'ocversion'         => VERSION
         );
@@ -95,7 +95,7 @@ class ModelOpenbayOpenbay extends Model
             CURLOPT_POST            => 1,
             CURLOPT_HEADER          => 0,
             CURLOPT_URL             => $this->url.$call,
-            CURLOPT_USERAGENT       => $useragent, 
+            CURLOPT_USERAGENT       => $useragent,
             CURLOPT_FRESH_CONNECT   => 1,
             CURLOPT_RETURNTRANSFER  => 1,
             CURLOPT_FORBID_REUSE    => 1,
@@ -115,8 +115,8 @@ class ModelOpenbayOpenbay extends Model
 
             /* some json data may have BOM due to php not handling types correctly */
             if($encoding == 'UTF-8') {
-              $result = preg_replace('/[^(\x20-\x7F)]*/','', $result);    
-            } 
+              $result = preg_replace('/[^(\x20-\x7F)]*/','', $result);
+            }
 
             $result             = json_decode($result, 1);
             $this->lasterror    = $result['error'];
@@ -154,14 +154,14 @@ class ModelOpenbayOpenbay extends Model
                 $sql .= " LEFT JOIN (SELECT product_id, IF( SUM( `status` ) = 0, 0, 1 ) AS 'listing_status' FROM " . DB_PREFIX . "ebay_listing GROUP BY product_id ) ebay2 ON (p.product_id = ebay2.product_id)";
             }
         }
-        
+
         if ($data['filter_market_name'] == 'amazon') {
             if($data['filter_market_id'] <= 4) {
                 $sql .= " LEFT JOIN " . DB_PREFIX . "amazon_product ap ON p.product_id = ap.product_id";
             } else {
                 $sql .= " LEFT JOIN " . DB_PREFIX . "amazon_product_link apl ON p.product_id = apl.product_id";
             }
-            
+
             $amazon_status = array(
                 1 => 'saved',
                 2 => 'uploaded',
@@ -193,13 +193,13 @@ class ModelOpenbayOpenbay extends Model
                 $sql .= " AND (ebay.ebay_listing_id IS NOT NULL AND ebay.status = 1)";
             }
         }
-        
+
         if ($data['filter_market_name'] == 'amazon') {
             if ($data['filter_market_id'] == 0) {
                 $sql .= " AND ap.product_id IS NULL ";
-            } elseif($data['filter_market_id'] == 5) { 
+            } elseif($data['filter_market_id'] == 5) {
                 $sql .= " AND apl.id IS NOT NULL";
-            } elseif($data['filter_market_id'] == 6) { 
+            } elseif($data['filter_market_id'] == 6) {
                 $sql .= " AND apl.id IS NULL";
             } else {
                 $sql .= " AND FIND_IN_SET('" . $this->db->escape($amazon_status[$data['filter_market_id']]) . "', ap.`status`) != 0";
@@ -280,7 +280,7 @@ class ModelOpenbayOpenbay extends Model
             } elseif($data['filter_market_id'] <= 6) {
                 $sql .= " LEFT JOIN " . DB_PREFIX . "amazon_product_link apl ON p.product_id = apl.product_id";
             }
-            
+
             $amazon_status = array(
                 1 => 'saved',
                 2 => 'uploaded',
@@ -288,14 +288,14 @@ class ModelOpenbayOpenbay extends Model
                 4 => 'error',
             );
         }
-        
+
         if ($data['filter_market_name'] == 'amazonus') {
             if($data['filter_market_id'] <= 4) {
                 $sql .= " LEFT JOIN " . DB_PREFIX . "amazonus_product ap ON p.product_id = ap.product_id";
             } elseif($data['filter_market_id'] <= 6) {
                 $sql .= " LEFT JOIN " . DB_PREFIX . "amazonus_product_link apl ON p.product_id = apl.product_id";
             }
-            
+
             $amazonus_status = array(
                 1 => 'saved',
                 2 => 'uploaded',
@@ -303,7 +303,7 @@ class ModelOpenbayOpenbay extends Model
                 4 => 'error',
             );
         }
-        
+
         if ($data['filter_market_name'] == 'play') {
             $sql .= " LEFT JOIN `" . DB_PREFIX . "play_product_insert` `play` ON (`p`.`product_id` = `play`.`product_id`)";
         }
@@ -325,25 +325,25 @@ class ModelOpenbayOpenbay extends Model
                 $sql .= " AND (ebay.ebay_listing_id IS NOT NULL AND ebay.status = 1)";
             }
         }
-        
+
         if ($data['filter_market_name'] == 'amazon') {
             if ($data['filter_market_id'] == 0) {
                 $sql .= " AND ap.product_id IS NULL ";
-            } elseif($data['filter_market_id'] == 5) { 
-                $sql .= " AND apl.id IS NOT NULL"; 
-            } elseif($data['filter_market_id'] == 6) { 
+            } elseif($data['filter_market_id'] == 5) {
+                $sql .= " AND apl.id IS NOT NULL";
+            } elseif($data['filter_market_id'] == 6) {
                 $sql .= " AND apl.id IS NULL";
             } else {
                 $sql .= " AND FIND_IN_SET('" . $this->db->escape($amazon_status[$data['filter_market_id']]) . "', ap.`status`) != 0";
             }
         }
-        
+
         if ($data['filter_market_name'] == 'amazonus') {
             if ($data['filter_market_id'] == 0) {
                 $sql .= " AND ap.product_id IS NULL ";
-            } elseif($data['filter_market_id'] == 5) { 
-                $sql .= " AND apl.id IS NOT NULL"; 
-            } elseif($data['filter_market_id'] == 6) { 
+            } elseif($data['filter_market_id'] == 5) {
+                $sql .= " AND apl.id IS NOT NULL";
+            } elseif($data['filter_market_id'] == 6) {
                 $sql .= " AND apl.id IS NULL";
             } else {
                 $sql .= " AND FIND_IN_SET('" . $this->db->escape($amazonus_status[$data['filter_market_id']]) . "', ap.`status`) != 0";
