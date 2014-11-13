@@ -1327,7 +1327,7 @@ class ControllerOpenbayOpenbay extends Controller {
 
 				foreach ($product_images as $product_image) {
 					if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-						$img_info = getimagesize(HTTPS_CATALOG . 'image/' . $product_image['image']);
+						$img_info = getimagesize(DIR_IMAGE . $product_image['image']);
 
 						$product_info['product_images'][] = array(
 							'image' => $product_image['image'],
