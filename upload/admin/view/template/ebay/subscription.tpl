@@ -1,14 +1,14 @@
 <?php echo $header; ?>
 <div id="content">
     <div class="breadcrumb">
-<?php 
+<?php
         foreach ($breadcrumbs as $breadcrumb) {
             echo $breadcrumb['separator'] .'<a href="'.$breadcrumb['href'].'">'.$breadcrumb['text'].'</a>';
-        } 
+        }
 ?>
     </div>
 
-    <div class="box mBottom130"> 
+    <div class="box mBottom130">
         <div class="heading">
             <h1><?php echo $lang_heading; ?></h1>
             <div class="buttons">
@@ -23,14 +23,13 @@
         <?php if($validation == true) { ?>
             <h2><?php echo $lang_usage_title; ?> <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" id="imageLoadUsage" class="displayNone" /></h2>
             <div id="usageTable" class="displayNone"></div>
-            
+
             <h2 class="mTop10"><?php echo $lang_subscription_current; ?> <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" class="imageLoadAccount" class="displayNone" /></h2>
             <table width="100%" cellspacing="0" cellpadding="5" border="0" id="myopenbayplan" class="displayNone border borderNoBottom"></table>
-            
+
             <h2 class="mTop10"><?php echo $lang_subscription_avail; ?> <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" class="imageLoadAccount" class="displayNone" /></h2>
             <p><?php echo $lang_subscription_avail1; ?></p>
-            <p><?php echo $lang_subscription_avail2; ?></p>
-            
+
             <table width="100%" cellspacing="0" cellpadding="5" border="0" id="openbayplans" class="displayNone border borderNoBottom"></table>
 
         <?php }else{ ?>
@@ -41,7 +40,7 @@
 
 <script type="text/javascript"><!--
     function loadAccount(){
-	$.ajax({ 
+	$.ajax({
             url: 'index.php?route=openbay/openbay/getMyPlan&token=<?php echo $token; ?>',
             type: 'post',
             dataType: 'json',
@@ -79,8 +78,8 @@
                 $('#myopenbayplan').append(htmlInj);
             }
 	});
-        
-	$.ajax({ 
+
+	$.ajax({
             url: 'index.php?route=openbay/openbay/getPlans&token=<?php echo $token; ?>',
             type: 'post',
             dataType: 'json',
@@ -140,9 +139,9 @@
             }
 	});
     }
-    
+
     function loadUsage(){
-	$.ajax({ 
+	$.ajax({
             url: 'index.php?route=openbay/openbay/getUsage&token=<?php echo $token; ?>',
             type: 'post',
             dataType: 'json',
@@ -167,11 +166,11 @@
             }
 	});
     }
-//--></script> 
+//--></script>
 
 <?php if($validation == true) {
     echo '<script type="text/javascript"><!--
-            $(document).ready(function() { loadAccount(); loadUsage(); }); 
-          //--></script>'; } 
+            $(document).ready(function() { loadAccount(); loadUsage(); });
+          //--></script>'; }
 ?>
 <?php echo $footer; ?>
