@@ -1039,7 +1039,9 @@
                 html += '<input type="radio" name="catalog_epid" value="'+val.productIdentifier.ePID+'" />';
             html += '</div>';
             html += '<div style="float:left; display:inline; width:100px; height:100px; overflow:hidden; text-align: center;">';
-                html += '<img src="'+val.stockPhotoURL.thumbnail.value+'" />';
+                if (val.stockPhotoURL) {
+                  html += '<img src="'+val.stockPhotoURL.thumbnail.value+'" />';
+                }
             html += '</div>';
             html += '<div style="float:left; display:inline; width:210px;">';
                 html += '<p style="line-height:24px;">'+val.productDetails.value.text.value+'</p>';
