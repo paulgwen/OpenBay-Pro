@@ -351,9 +351,9 @@ class ControllerOpenbayOpenbay extends Controller {
 			$data['ebay_measurement'] = $this->config->get('ebay_measurement');
 		}
 
-		$data['measurement_types'] 		= $this->openbay->ebay->getSetting('measurement_types');
-		$this->data['api_server']       = $this->openbay->ebay->getApiServer();
-		$this->data['order_statuses']   = $this->model_localisation_order_status->getOrderStatuses();
+		$this->data['measurement_types']	= $this->openbay->ebay->getSetting('measurement_types');
+		$this->data['api_server']       	= $this->openbay->ebay->getApiServer();
+		$this->data['order_statuses']   	= $this->model_localisation_order_status->getOrderStatuses();
 
 		$this->template = 'openbay/ebay_settings.tpl';
 		$this->children = array(
