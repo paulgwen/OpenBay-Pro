@@ -1258,6 +1258,8 @@ class ControllerOpenbayOpenbay extends Controller {
 
 				$setting['returns'] = $this->openbay->ebay->getSetting('returns');
 
+				$setting['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
+
 				if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
 					$this->session->data['warning'] = $this->language->get('lang_error_missing_settings');
 					$this->redirect($this->url->link('openbay/openbay/viewSync&token=' . $this->session->data['token'], 'SSL'));
