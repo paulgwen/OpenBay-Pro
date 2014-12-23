@@ -464,6 +464,18 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <td><label><?php echo $entry_measurement; ?></td>
+                            <td>
+                              <select name="ebay_measurement" id="entry-measurement" class="form-control">
+                                <?php if (!empty($measurement_types)) { ?>
+                                <?php foreach ($measurement_types as $key => $type) { ?>
+                                <?php echo'<option value="'.$key.'"'.($key == $ebay_measurement ? ' selected=selected' : '').'>'.$type.'</option>'; ?>
+                                <?php } ?>
+                                <?php } ?>
+                              </select>
+                            </td>
+                        </tr>
 
                     </table>
 

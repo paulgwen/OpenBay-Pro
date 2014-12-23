@@ -562,6 +562,72 @@
                             <a class="button" onclick="addShipping('international');"><span><?php echo $lang_add; ?></span></a>
                         </td>
                     </tr>
+                  <tr>
+                    <td><?php echo $text_unit; ?></td>
+                    <td>
+                      <select name="package[unit]" id="measure-unit">
+                        <?php foreach ($setting['measurement_types'] as $measurement_key => $measurement_value) { ?>
+                        <?php echo '<option value="' . $measurement_key . '"'.($product['defaults']['ebay_measurement'] == $measurement_key ? ' selected="selected"' : '').'>' . $measurement_value . '</option>'; ?>
+                        <?php } ?>
+                      </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><?php echo $text_weight_major; ?></td>
+                    <td>
+                      <input type="text" name="package[weight_major]" class="form-control" value="<?php echo $product['weight_major']; ?>">
+                      <span class="input-group-addon" id="weight-major-text"></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><?php echo $text_weight_minor; ?></td>
+                    <td>
+                      <input type="text" name="package[weight_minor]" class="form-control" value="<?php echo $product['weight_minor']; ?>">
+                      <span class="input-group-addon" id="weight-minor-text"></span>
+                    </td>
+                  </tr>
+                  <?php if (!empty($setting['package_type'])) { ?>
+                  <tr>
+                    <td><?php echo $text_package; ?></td>
+                    <td>
+                      <select name="package[package]" class="form-control">
+                        <?php foreach ($setting['package_type'] as $package) { ?>
+                        <?php echo '<option value="' . $package['code'] . '"'.($package['default'] == 1 ? ' selected="selected"' : '').'>' . $package['description'] . '</option>'; ?>
+                        <?php } ?>
+                      </select>
+                    </td>
+                  </tr>
+                  <?php } ?>
+                  <tr>
+                    <td><?php echo $text_depth; ?></td>
+                    <td>
+                      <input type="text" name="package[depth]" class="form-control" value="<?php echo $product['height']; ?>">
+                      <span class="input-group-addon size-unit-text"></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><?php echo $text_length; ?></td>
+                    <td>
+                      <input type="text" name="package[length]" class="form-control" value="<?php echo $product['length']; ?>">
+                      <span class="input-group-addon size-unit-text"></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><?php echo $text_width; ?></td>
+                    <td>
+                      <input type="text" name="package[width]" class="form-control" value="<?php echo $product['width']; ?>">
+                      <span class="input-group-addon size-unit-text"></span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><?php echo $text_shape; ?></td>
+                    <td>
+                      <select name="package[irregular]" class="form-control">
+                        <option value="0"><?php echo $text_no; ?></option>
+                        <option value="1"><?php echo $text_yes; ?></option>
+                      </select>
+                    </td>
+                  </tr>
                 </table>
             </div>
 
@@ -1849,6 +1915,7 @@
         getSuggestedCategories();
         updatePrice();
         updateVarPrice();
+        updateUnit();
 
         <?php if ($product['profiles_returns_def'] > 0) { ?>
             $('#profile_return').val(<?php echo $product['profiles_returns_def']; ?>);
@@ -1870,6 +1937,24 @@
             profileThemeUpdate();
         <?php } ?>
     });
+
+    $('#measure-unit').bind('change', function() {
+      updateUnit();
+    });
+
+    function updateUnit() {
+      var unit_type = $('#measure-unit').val();
+
+      if (unit_type == 'English') {
+        $('.size-unit-text').text('inches');
+        $('#weight-major-text').text('Lbs');
+        $('#weight-minor-text').text('Oz');
+      } else {
+        $('.size-unit-text').text('cm');
+        $('#weight-major-text').text('Kgs');
+        $('#weight-minor-text').text('Grams');
+      }
+    }
 //--></script>
 
 <?php echo $footer; ?>
