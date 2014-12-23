@@ -1,32 +1,32 @@
 <?php
-class Amazon { 
+class Amazon {
 
     private $token;
     private $encPass;
     private $encSalt;
 
-    private $server = 'http://uk-amazon.openbaypro.com/'; 
-    
+    private $server = 'http://uk-amazon.openbaypro.com/';
+
     private $registry;
-    
+
     public function __construct($registry) {
         $this->registry = $registry;
-        
+
         $this->token   = $registry->get('config')->get('openbay_amazon_token');
         $this->encPass = $registry->get('config')->get('openbay_amazon_enc_string1');
         $this->encSalt = $registry->get('config')->get('openbay_amazon_enc_string2');
-        
+
     }
-    
+
     public function __get($name) {
         return $this->registry->get($name);
     }
-    
+
     public function orderNew($orderId) {
         if ($this->config->get('amazon_status') != 1) {
             return;
         }
-        
+
         /* Is called from front-end? */
         if (!defined('HTTPS_CATALOG')) {
             $this->load->model('amazon/order');
@@ -44,7 +44,7 @@ class Amazon {
                 $logger->write(print_r($osProducts, true));
                 $quantityData = array();
                 foreach ($osProducts as $osProduct) {
-                    $amazonSkuRows = $this->getLinkedSkus($osProduct['pid'], $osProduct['var']); 
+                    $amazonSkuRows = $this->getLinkedSkus($osProduct['pid'], $osProduct['var']);
                     foreach($amazonSkuRows as $amazonSkuRow) {
                         $quantityData[$amazonSkuRow['amazon_sku']] = $osProduct['qty_left'];
                     }
@@ -66,17 +66,17 @@ class Amazon {
             $logger->write('orderNew() exiting');
         }
     }
-    
-    
+
+
     public function productUpdateListen($productId, $data) {
         $logger = new Log('amazon_stocks.log');
         $logger->write('productUpdateListen called for product id: ' . $productId);
-        
+
         if($this->addonLoad('openstock') == true && (isset($data['has_option']) && $data['has_option'] == 1)) {
             $logger->write('openStock found installed and product has options.');
             $quantityData = array();
             foreach($data['product_option_stock'] as $optStock) {
-                $amazonSkuRows = $this->getLinkedSkus($productId, $optStock['var']); 
+                $amazonSkuRows = $this->getLinkedSkus($productId, $optStock['var']);
                 foreach($amazonSkuRows as $amazonSkuRow) {
                     $quantityData[$amazonSkuRow['amazon_sku']] = $optStock['stock'];
                 }
@@ -87,7 +87,7 @@ class Amazon {
             } else {
                 $logger->write('No quantity data need to be posted.');
             }
-            
+
         } else {
             $this->putStockUpdateBulk(array($productId));
         }
@@ -147,67 +147,67 @@ class Amazon {
 		$log->write('order/bulkUpdate response: ' . $response);
 	}
 
-	public function updateOrder($orderId, $orderStatusString, $courier_id = '', $courierFromList = true, $tracking_no = '') {   
-        
+	public function updateOrder($orderId, $orderStatusString, $courier_id = '', $courierFromList = true, $tracking_no = '') {
+
         if ($this->config->get('amazon_status') != 1) {
             return;
         }
-        
+
         /* Is called from admin? */
         if (!defined('HTTPS_CATALOG')) {
             return;
         }
-        
+
         $amazonOrder = $this->getOrder($orderId);
-        
+
         if(!$amazonOrder) {
             return;
         }
-        
+
         $amazonOrderId = $amazonOrder['amazon_order_id'];
 
-        
+
         $log = new Log('amazon.log');
         $log->write("Order's $amazonOrderId status changed to $orderStatusString");
-        
-        
+
+
         $this->load->model('amazon/amazon');
         $amazonOrderProducts = $this->model_amazon_amazon->getAmazonOrderedProducts($orderId);
-        
-        
+
+
         $requestNode = new SimpleXMLElement('<Request/>');
-        
+
         $requestNode->addChild('AmazonOrderId', $amazonOrderId);
         $requestNode->addChild('Status', $orderStatusString);
-       
+
         if(!empty($courier_id)) {
             if($courierFromList) {
                 $requestNode->addChild('CourierId', $courier_id);
             } else {
                 $requestNode->addChild('CourierOther', $courier_id);
             }
-            $requestNode->addChild('TrackingNo', $tracking_no);   
+            $requestNode->addChild('TrackingNo', $tracking_no);
         }
-        
+
         $orderItemsNode = $requestNode->addChild('OrderItems');
-        
+
         foreach ($amazonOrderProducts as $product) {
             $newOrderItem = $orderItemsNode->addChild('OrderItem');
             $newOrderItem->addChild('ItemId', htmlspecialchars($product['amazon_order_item_id']));
             $newOrderItem->addChild('Quantity', (int) $product['quantity']);
         }
-        
+
         $doc = new DOMDocument('1.0');
         $doc->preserveWhiteSpace = false;
         $doc->loadXML($requestNode->asXML());
         $doc->formatOutput = true;
 
         $this->model_amazon_amazon->updateAmazonOrderTracking($orderId, $courier_id, $courierFromList, !empty($courier_id) ? $tracking_no : '');
-        $log->write('Request: ' . $doc->saveXML());        
+        $log->write('Request: ' . $doc->saveXML());
         $response = $this->callWithResponse('order/update2', $doc->saveXML(), false);
         $log->write("Response for Order's status update: $response");
     }
-    
+
     public function getCategoryTemplates() {
         $result = $this->callWithResponse("productv2/RequestTemplateList");
         if(isset($result)) {
@@ -216,7 +216,7 @@ class Amazon {
             return array();
         }
     }
-    
+
     public function registerInsertion($data) {
         $result = $this->callWithResponse("productv2/RegisterInsertionRequest", $data);
         if(isset($result)) {
@@ -225,7 +225,7 @@ class Amazon {
             return array();
         }
     }
-    
+
     public function insertProduct($data) {
         $result = $this->callWithResponse("productv2/InsertProductRequest", $data);
         if(isset($result)) {
@@ -234,40 +234,40 @@ class Amazon {
             return array();
         }
     }
-    
+
     public function updateQuantities($data) {
         $result = $this->callWithResponse("product/UpdateQuantityRequest", $data);
         if(isset($result)) {
             return (array)json_decode($result);
         } else {
             return array();
-        }    
+        }
     }
-    
+
      public function getStockUpdatesStatus($data) {
         $result = $this->callWithResponse("status/StockUpdates", $data);
         if(isset($result)) {
             return $result;
         } else {
             return false;
-        }    
+        }
     }
-    
+
     public function callNoResponse($method, $data = array(), $isJson = true) {
         if  ($isJson) {
             $argString = json_encode($data);
         } else {
             $argString = $data;
         }
-        
+
         $token = $this->pbkdf2($this->encPass, $this->encSalt, 1000, 32);
         $crypt = $this->encrypt($argString, $token, true);
-        
+
         $defaults = array(
             CURLOPT_POST => 1,
             CURLOPT_HEADER => 0,
             CURLOPT_URL => $this->server . $method,
-            CURLOPT_USERAGENT => 'OpenBay Pro for Amazon/Opencart', 
+            CURLOPT_USERAGENT => 'OpenBay Pro for Amazon/Opencart',
             CURLOPT_FRESH_CONNECT => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_FORBID_REUSE => 1,
@@ -279,27 +279,27 @@ class Amazon {
         $ch = curl_init();
 
         curl_setopt_array($ch, $defaults);
-        
+
         curl_exec($ch);
-        
+
         curl_close($ch);
     }
-    
+
     public function callWithResponse($method, $data = array(), $isJson = true) {
         if  ($isJson) {
             $argString = json_encode($data);
         } else {
             $argString = $data;
         }
-        
+
         $token = $this->pbkdf2($this->encPass, $this->encSalt, 1000, 32);
         $crypt = $this->encrypt($argString, $token, true);
-        
+
         $defaults = array(
             CURLOPT_POST            => 1,
             CURLOPT_HEADER          => 0,
             CURLOPT_URL             => $this->server . $method,
-            CURLOPT_USERAGENT       => 'OpenBay Pro for Amazon/Opencart', 
+            CURLOPT_USERAGENT       => 'OpenBay Pro for Amazon/Opencart',
             CURLOPT_FRESH_CONNECT   => 1,
             CURLOPT_RETURNTRANSFER  => 1,
             CURLOPT_FORBID_REUSE    => 1,
@@ -311,14 +311,14 @@ class Amazon {
         $ch = curl_init();
 
         curl_setopt_array($ch, $defaults);
-        
+
         $response = curl_exec($ch);
-        
+
         curl_close($ch);
-        
+
         return $response;
     }
-    
+
     public function decryptArgs($crypt, $isBase64 = true) {
         if ($isBase64) {
             $crypt = base64_decode($crypt, true);
@@ -326,10 +326,10 @@ class Amazon {
                 return false;
             }
         }
-        
+
         $token = $this->pbkdf2($this->encPass, $this->encSalt, 1000, 32);
-        $data = $this->decrypt($crypt, $token);        
-        
+        $data = $this->decrypt($crypt, $token);
+
         return $data;
     }
 
@@ -406,7 +406,7 @@ class Amazon {
 
         return substr($dk, 0, $kl);
     }
-    
+
     public function getServer() {
         return $this->server;
     }
@@ -427,7 +427,7 @@ class Amazon {
             foreach($amazonRows as $amazonRow) {
                 $productRow = $this->db->query("SELECT quantity, status FROM `" . DB_PREFIX . "product`
                     WHERE `product_id` = '" . (int) $productId . "'")->row;
-                
+
                 if(!empty($productRow)) {
                     if($endInactive && $productRow['status'] == '0') {
                         $quantityData[$amazonRow['amazon_sku']] = 0;
@@ -445,7 +445,7 @@ class Amazon {
             $logger->write('No quantity data need to be posted.');
         }
     }
-    
+
     /*
      * stock control
      */
@@ -459,10 +459,10 @@ class Amazon {
      public function getOrderdProducts($orderId) {
          return $this->db->query("SELECT `op`.`product_id`, `p`.`quantity` as `quantity_left`
             FROM `" . DB_PREFIX . "order_product` as `op`
-            LEFT JOIN `" . DB_PREFIX . "product` as `p` 
+            LEFT JOIN `" . DB_PREFIX . "product` as `p`
             ON `p`.`product_id` = `op`.`product_id`
             WHERE `op`.`order_id` = '" . (int) $orderId . "'
-            ")->rows; 
+            ")->rows;
     }
 
     public function osProducts($order_id){
@@ -506,7 +506,7 @@ class Amazon {
 
         return $passArray;
     }
-    
+
     /*
      * addonLoad (copy from ebay library)
      *
@@ -528,14 +528,14 @@ class Amazon {
                     return false;
                 }
             }
-            
+
             include_once(DIR_SYSTEM."ebay_addon/".$addon.".php");
-            
+
             if(empty($this->addon) || !is_object($this->addon))
             {
                 $this->addon = new stdClass();
             }
-        
+
             $this->addon->$addon = new $addon;
             return true;
         }else{
@@ -552,8 +552,8 @@ class Amazon {
         }else{
             return false;
         }
-    }    
-    
+    }
+
     public function deleteProduct($product_id){
         $this->db->query("DELETE FROM `" . DB_PREFIX . "amazon_product_link` WHERE `product_id` = '" . $this->db->escape($product_id) . "'");
     }
@@ -563,7 +563,7 @@ class Amazon {
          * @todo
          */
     }
-    
+
     public function getOrder($orderId) {
         $qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "amazon_order` WHERE `order_id` = '".(int)$orderId."' LIMIT 1");
 
@@ -576,32 +576,55 @@ class Amazon {
 
     public function getCarriers(){
         return array(
-            "Blue Package",
-            "Canada Post",
-            "City Link",
-            "DHL",
-            "DHL Global Mail",
-            "Fastway",
+            "USPS",
+            "UPS",
+            "UPSMI",
             "FedEx",
-            "FedEx SmartPost",
+            "DHL",
+            "Fastway",
             "GLS",
             "GO!",
             "Hermes Logistik Gruppe",
-            "Newgistics",
-            "NipponExpress",
-            "OSM",
-            "OnTrac",
-            "Parcelforce",
             "Royal Mail",
-            "SagawaExpress",
-            "Streamlite",
+            "Parcelforce",
+            "City Link",
             "TNT",
             "Target",
-            "UPS",
-            "UPS Mail Innovations",
-            "USPS",
+            "SagawaExpress",
+            "NipponExpress",
             "YamatoTransport",
+            "DHL Global Mail",
+            "UPS Mail Innovations",
+            "FedEx SmartPost",
+            "OSM",
+            "OnTrac",
+            "Streamlite",
+            "Newgistics",
+            "Canada Post",
+            "Blue Package",
+            "Chronopost",
+            "Deutsche Post",
+            "DPD",
+            "La Poste",
+            "Parcelnet",
+            "Poste Italiane",
+            "SDA",
+            "Smartmail",
+            "FEDEX_JP",
+            "JP_EXPRESS",
+            "NITTSU",
+            "SAGAWA",
+            "YAMATO",
+            "BlueDart",
+            "AFL/Fedex",
+            "Aramex",
+            "India Post",
+            "Professional",
+            "DTDC",
+            "Overnite Express",
+            "First Flight",
+            "Delhivery",
+            "Lasership",
         );
     }
-    
 }
