@@ -96,7 +96,7 @@
                 <?php foreach($linked_items as $id => $item) { ?>
                 <input type="hidden" name="ebay_qty_<?php echo $id; ?>" value="" id="ebay_qty_<?php echo $id; ?>" />
                 <input type="hidden" name="store_qty_<?php echo $id; ?>" value="<?php echo $item['qty']; ?>" id="store_qty_<?php echo $id; ?>" />
-                <input type="hidden" name="reserve_qty_<?php echo $id; ?>" value="<?php echo $item['qty']; ?>" id="reserve_qty_<?php echo $id; ?>" />
+                <input type="hidden" name="reserve_qty_<?php echo $id; ?>" value="<?php echo $item['reserve']; ?>" id="reserve_qty_<?php echo $id; ?>" />
                 <input type="hidden" name="item_id[]" id="item_id_<?php echo $id; ?>" value="<?php echo $id; ?>" class="item_id"  />
                 <input type="hidden" name="product_id[]" id="product_id_<?php echo $id; ?>" value="<?php echo $item['product_id']; ?>" />
                 <input type="hidden" name="options" id="options_<?php echo $id; ?>" value="<?php echo (int)$item['options']; ?>" />

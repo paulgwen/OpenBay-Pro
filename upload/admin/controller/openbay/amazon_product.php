@@ -355,8 +355,6 @@ class ControllerOpenbayAmazonProduct extends Controller {
 	}
 
 	public function parseTemplateAjax() {
-
-
 		$this->load->model('tool/image');
 		$this->load->library('amazon');
 		$this->load->library('log');
