@@ -615,6 +615,10 @@ class ModelOpenbayOpenbay extends Model {
 			$error[] = $this->language->get('lang_error_ftpconnect');
 		}
 
+		if (!ini_get('allow_url_fopen')) {
+			$error[] = $this->language->get('lang_error_fopen');
+		}
+
 		$root_directory = preg_replace('/catalog\/$/', '', DIR_CATALOG);
 
 		if (file_exists($root_directory.'/vqmod/xml/ebay.xml') || file_exists($root_directory.'/vqmod/xml/amazon.xml') || file_exists($root_directory.'/vqmod/xml/amazonus.xml') || file_exists($root_directory.'/vqmod/xml/play.xml') || file_exists($root_directory.'/vqmod/xml/openbay.xml')) {

@@ -97,6 +97,7 @@ $_['lang_error_mcrypt']            		= 'PHP function "mcrypt_encrypt" is not ena
 $_['lang_error_mbstring']               = 'PHP library "mb strings" is not enabled. Contact your hosting provider.';
 $_['lang_error_ftpconnect']             = 'PHP FTP functions are not enabled. Contact your hosting provider.';
 $_['lang_error_oc_version']             = 'Your version of OpenCart is not tested to work with this module. You may experience problems.';
+$_['lang_error_fopen']             		= 'PHP function fopen is disabled by your host - you will be unable to import images when importing products';
 $_['lang_error_vqmod']             		= 'You have VQMOD files for OpenBay Pro installed, this version does not require them. Have you installed the wrong version?';
 $_['lang_patch_applied']                = 'Patch applied';
 $_['faqbtn']                            = 'View FAQ';
