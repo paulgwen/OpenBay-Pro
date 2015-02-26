@@ -392,8 +392,6 @@ class ControllerOpenbayOpenbay extends Controller {
 	}
 
 	public function getCategories() {
-
-
 		$this->load->model('openbay/ebay');
 
 		$json = $this->model_openbay_ebay->getCategory($this->request->get['parent']);
@@ -432,8 +430,6 @@ class ControllerOpenbayOpenbay extends Controller {
 	}
 
 	public function getCategoryFeatures() {
-
-
 		$this->load->model('openbay/ebay');
 
 		$json = $this->model_openbay_ebay->getCategoryFeatures($this->request->get['category']);
@@ -1300,7 +1296,7 @@ class ControllerOpenbayOpenbay extends Controller {
 				$product_info['profiles_returns'] = $this->model_openbay_ebay_profile->getAll(1);
 				//get default returns profile
 				$product_info['profiles_returns_def'] = $this->model_openbay_ebay_profile->getDefault(1);
-				$this->data['data']['shipping_international_zones']     = $this->model_openbay_ebay->getShippingLocations();
+				$this->data['data']['shipping_international_zones'] = $this->model_openbay_ebay->getShippingLocations();
 
 				//get theme profiles
 				$product_info['profiles_theme'] = $this->model_openbay_ebay_profile->getAll(2);
