@@ -22,6 +22,7 @@ $_['text_listing_7day']             		= '7 days';
 $_['text_listing_10day']            		= '10 days';
 $_['text_listing_30day']            		= '30 days';
 $_['text_listing_gtc']              		= 'GTC- Good till cancelled';
+$_['text_success']              			= 'Your bulk listings have now been sent for processing, check your email for results';
 
 // Entry
 $_['entry_category']              			= 'eBay category';
@@ -43,3 +44,4 @@ $_['error_title_length']                  	= 'Product name is too long';
 $_['error_existing_item']                  	= 'Item is already linked to an active listing';
 $_['error_ajax_noload']              		= 'Sorry, could not connect';
 $_['error_category_sync']              		= 'You must sync / import the eBay category settings first';
+$_['error_select_ebay_category']       		= 'You must choose an eBay category for the products';
