@@ -34,6 +34,9 @@ $_['entry_profile_returns']         		= 'Returns profile';
 $_['entry_profile_theme']         			= 'Theme profile';
 $_['entry_profile_generic']         		= 'Generic profile';
 
+// Button
+$_['button_continue']         				= 'Continue';
+
 // Errors
 $_['error_select_category']                 = 'You must select at least 1 category';
 $_['error_no_products']                 	= 'There are no products available to list, press back please choose another category';
@@ -45,3 +48,4 @@ $_['error_existing_item']                  	= 'Item is already linked to an acti
 $_['error_ajax_noload']              		= 'Sorry, could not connect';
 $_['error_category_sync']              		= 'You must sync / import the eBay category settings first';
 $_['error_select_ebay_category']       		= 'You must choose an eBay category for the products';
+$_['error_upload_fail']       				= 'Unable to send the data to the API, please contact support';

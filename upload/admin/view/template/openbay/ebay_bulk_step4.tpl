@@ -13,7 +13,11 @@
       </div>
     </div>
     <div class="content">
-      <div class="success"><?php echo $text_success; ?></div>
+      <?php if (isset($response->Ack) && $response->Ack == 'Success') { ?>
+        <div class="success"><?php echo $text_success; ?></div>
+      <?php } else { ?>
+        <div class="warning"><?php echo $error_upload_fail; ?></div>
+      <?php } ?>
     </div>
   </div>
 </div>

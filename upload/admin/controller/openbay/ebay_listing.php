@@ -32,8 +32,8 @@ class ControllerOpenbayEbayListing extends Controller {
 		$this->data['url_return']  = $this->url->link('openbay/ebay/dashboard', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['form_action'] = $this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL');
 
-		$this->data['button_submit'] = $this->language->get('button_submit');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
+		$this->data['button_continue'] = $this->language->get('button_continue');
 		$this->data['heading_title'] = $this->language->get('heading_title');
 		$this->data['error_select_category'] = $this->language->get('error_select_category');
 		$this->data['text_category'] = $this->language->get('text_category');
@@ -106,7 +106,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		$this->data['url_back']  = $this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL');
 		$this->data['form_action'] = $this->url->link('openbay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL');
 
-		$this->data['button_submit'] = $this->language->get('button_submit');
+		$this->data['button_continue'] = $this->language->get('button_continue');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
 		$this->data['button_back'] = $this->language->get('button_back');
 		$this->data['heading_title'] = $this->language->get('heading_title');
@@ -326,46 +326,192 @@ class ControllerOpenbayEbayListing extends Controller {
 		$this->load->language('openbay/ebay_listing');
 		$this->load->model('openbay/ebay');
 		$this->load->model('openbay/ebay_profile');
+		$this->load->model('openbay/ebay_template');
+		$this->load->model('catalog/product');
+		$this->load->model('tool/image');
 
-		$this->document->setTitle($this->language->get('heading_title'));
-		$this->document->addStyle('view/stylesheet/openbay.css');
-		$this->document->addScript('view/javascript/openbay/faq.js');
+		if (isset($this->session->data['bulk_category_list']['ebay_data'])) {
+			$bulk_data = array();
 
-		$this->template = 'openbay/ebay_bulk_step4.tpl';
+			//load all of the listing defaults and assign to correct variable names
+			$profile_shipping = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_shipping']);
+			$profile_return = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_returns']);
+			$profile_template = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_theme']);
+			$profile_generic = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_generic']);
+			$payments = $this->model_openbay_ebay->getPaymentTypes();
+			$payments_accepted = $this->config->get('ebay_payment_types');
 
-		$this->children = array(
-			'common/header',
-			'common/footer'
-		);
+			foreach($this->session->data['bulk_category_list']['products'] as $product_id) {
+				$product_data = array();
 
-		$this->data['url_return']  = $this->url->link('openbay/ebay/dashboard', 'token=' . $this->session->data['token'], 'SSL');
+				$product_info = $this->model_catalog_product->getProduct($product_id);
 
-		$this->data['heading_title'] = $this->language->get('heading_title');
-		$this->data['button_cancel'] = $this->language->get('button_cancel');
-		$this->data['text_success'] = $this->language->get('text_success');
+				$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$product_id . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
 
-		$this->data['token'] = $this->session->data['token'];
+				$product_data['product_info'] 		= $query->row;
 
-		$this->data['breadcrumbs'] = array();
+				$product_data['description'] 		= $product_info['description'];
+				$product_data['name'] 				= $product_info['name'];
+				$product_data['sub_name'] 			= '';
+				$product_data['bestoffer'] 			= 0;
+				$product_data['finalCat'] 			= $this->session->data['bulk_category_list']['ebay_data']['category_id'];
+				$product_data['price'][0] 			= $product_info['price'];
+				$product_data['qty'][0] 			= (int)$product_info['quantity'];
+				$product_data['product_id'] 		= (int)$product_id;
+				$product_data['feat'] 				= !empty($this->session->data['bulk_category_list']['ebay_data']['feat']) ? $this->session->data['bulk_category_list']['ebay_data']['feat'] : array();
+				$product_data['featother'] 			= !empty($this->session->data['bulk_category_list']['ebay_data']['featother']) ? $this->session->data['bulk_category_list']['ebay_data']['featother'] : array();
+				$product_data['auction_duration'] 	= $this->session->data['bulk_category_list']['ebay_data']['auction_duration'];
+				$product_data['condition'] 			= (isset($this->session->data['bulk_category_list']['ebay_data']['condition']) && $this->session->data['bulk_category_list']['ebay_data']['condition'] != 0 ? $this->session->data['bulk_category_list']['ebay_data']['condition'] : '');
+				$product_data['auction_type'] 		= 'FixedPriceItem';
+				$product_data['catalog_epid'] 		= '';
+				$product_data['payment_immediate'] 	= $this->config->get('payment_immediate');
+				$product_data['paypal_email'] 		= $this->config->get('field_payment_paypal_address');
+				$product_data['payment_instruction'] = $this->config->get('field_payment_instruction');
 
-		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
-			'text' => $this->language->get('text_home'),
-			'separator' => false
-		);
+				if (!empty($product_info['sku'])) {
+					$product_data['sku'] = $product_info['sku'];
+				}
 
-		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('extension/openbay', 'token=' . $this->session->data['token'], 'SSL'),
-			'text' => $this->language->get('text_openbay'),
-			'separator' => ' :: '
-		);
+				if (isset($profile_return['data']['returns_accepted'])) {
+					$product_data['returns_accepted'] = $profile_return['data']['returns_accepted'];
+				}
+				if (isset($profile_return['data']['returns_policy'])) {
+					$product_data['return_policy'] = $profile_return['data']['returns_policy'];
+				}
+				if (isset($profile_return['data']['returns_option'])) {
+					$product_data['returns_option'] = $profile_return['data']['returns_option'];
+				}
+				if (isset($profile_return['data']['returns_within'])) {
+					$product_data['returns_within'] = $profile_return['data']['returns_within'];
+				}
+				if (isset($profile_return['data']['returns_shipping'])) {
+					$product_data['returns_shipping'] = $profile_return['data']['returns_shipping'];
+				}
+				if (isset($profile_return['data']['returns_restocking_fee'])) {
+					$product_data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
+				}
 
-		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
-			'text' => $this->language->get('text_ebay'),
-			'separator' => ' :: '
-		);
+				$product_data['location'] 			= $profile_shipping['data']['location'];
+				$product_data['postcode'] 			= $profile_shipping['data']['postcode'];
+				$product_data['dispatch_time'] 		= $profile_shipping['data']['dispatch_time'];
+				$product_data['get_it_fast'] 		= (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
 
-		$this->response->setOutput($this->render(true), $this->config->get('config_compression'));
+				if (isset($profile_shipping['data']['country'])) {
+					$product_data['country'] = $profile_shipping['data']['country'];
+				}
+
+				if (isset($profile_template['data']['ebay_template_id'])) {
+					$template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
+					$product_data['template_html'] = (isset($template['html']) ? base64_encode($template['html']) : '');
+					$product_data['template'] = $profile_template['data']['ebay_template_id'];
+				} else {
+					$product_data['template_html'] = '';
+					$product_data['template'] = '';
+				}
+
+				$product_data['gallery_plus'] 		= $profile_template['data']['ebay_gallery_plus'];
+				$product_data['gallery_super'] 		= $profile_template['data']['ebay_supersize'];
+				$product_data['private_listing'] 	= $profile_generic['data']['private_listing'];
+				$product_data['attributes'] 		= base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($product_id)));
+
+				$product_data['payments'] = array();
+				foreach($payments as $payment) {
+					if ($payments_accepted[$payment['ebay_name']] == 1) {
+						$product_data['payments'][$payment['ebay_name']] = 1;
+					}
+				}
+
+				$product_data['main_image'] 		= 0;
+				$product_data['img'] 				= array();
+
+				$product_images 					= $this->model_catalog_product->getProductImages($product_id);
+				$product_info['product_images'] 	= array();
+
+				if (!empty($product_info['image'])) {
+					$product_data['img'][] = $product_info['image'];
+				}
+
+				if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
+					foreach($product_images as $product_image) {
+						if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
+							$product_data['img'][] = $product_image['image'];
+						}
+					}
+				}
+
+				if (isset($profile_template['data']['ebay_img_template']) && $profile_template['data']['ebay_img_template'] == 1) {
+					$tmp_gallery_array = array();
+					$tmp_thumb_array = array();
+
+					//if the user has not set the exclude default image, add it to the array for theme images.
+					$key_offset = 0;
+					if (!isset($profile_template['data']['default_img_exclude']) || $profile_template['data']['default_img_exclude'] != 1) {
+						$tmp_gallery_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
+						$tmp_thumb_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
+						$key_offset = 1;
+					}
+
+					//loop through the product images and add them.
+					foreach($product_images as $k => $v) {
+						$tmp_gallery_array[$k + $key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
+						$tmp_thumb_array[$k + $key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
+					}
+
+					$product_data['img_tpl'] = $tmp_gallery_array;
+					$product_data['img_tpl_thumb'] = $tmp_thumb_array;
+				}
+
+				$product_data = array_merge($product_data, $profile_shipping['data']);
+
+				$bulk_data[] = $product_data;
+			}
+
+			$this->data['response'] = $this->openbay->ebay->call('listing/bulkListing/', $bulk_data);
+			unset($this->session->data['bulk_category_list']);
+
+			$this->document->setTitle($this->language->get('heading_title'));
+			$this->document->addStyle('view/stylesheet/openbay.css');
+			$this->document->addScript('view/javascript/openbay/faq.js');
+
+			$this->template = 'openbay/ebay_bulk_step4.tpl';
+
+			$this->children = array(
+				'common/header',
+				'common/footer'
+			);
+
+			$this->data['url_return']  = $this->url->link('openbay/ebay/dashboard', 'token=' . $this->session->data['token'], 'SSL');
+
+			$this->data['heading_title'] = $this->language->get('heading_title');
+			$this->data['button_cancel'] = $this->language->get('button_cancel');
+			$this->data['text_success'] = $this->language->get('text_success');
+			$this->data['error_upload_fail'] = $this->language->get('error_upload_fail');
+
+			$this->data['token'] = $this->session->data['token'];
+
+			$this->data['breadcrumbs'] = array();
+
+			$this->data['breadcrumbs'][] = array(
+				'href' => $this->url->link('common/home', 'token=' . $this->session->data['token'], 'SSL'),
+				'text' => $this->language->get('text_home'),
+				'separator' => false
+			);
+
+			$this->data['breadcrumbs'][] = array(
+				'href' => $this->url->link('extension/openbay', 'token=' . $this->session->data['token'], 'SSL'),
+				'text' => $this->language->get('text_openbay'),
+				'separator' => ' :: '
+			);
+
+			$this->data['breadcrumbs'][] = array(
+				'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+				'text' => $this->language->get('text_ebay'),
+				'separator' => ' :: '
+			);
+
+			$this->response->setOutput($this->render(true), $this->config->get('config_compression'));
+		} else {
+			$this->redirect($this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL'));
+		}
 	}
 }
