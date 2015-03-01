@@ -64,10 +64,10 @@
           <tr id="category-popular-row">
             <td><?php echo $entry_category_popular; ?><span class="help"><?php echo $help_category_popular; ?></span></td>
             <td>
-              <p><input type="radio" name="popular" value="" id="popular_default" checked /> <strong><?php echo $lang_none; ?></strong></p>
+              <p><input type="radio" name="popular" value="" id="popular-default" checked /> <strong><?php echo $text_none; ?></strong></p>
 
               <?php foreach ($popular_categories as $cat) { ?>
-              <p><input type="radio" name="popular" value="<?php echo $cat['CategoryID']; ?>" class="popular_category" /> <?php echo $cat['breadcrumb']; ?></p>
+              <p><input type="radio" name="popular" value="<?php echo $cat['CategoryID']; ?>" class="popular-category" /> <?php echo $cat['breadcrumb']; ?></p>
               <?php } ?>
             </td>
           </tr>
@@ -344,7 +344,14 @@ function listingDuration(data) {
 
 $('input[name=popular]').bind('change', function() {
   if ($(this).val() != '') {
-    categoryFavChange($(this).val());
+    $('#category-selections-row').hide();
+    categoryPopularChange($(this).val());
+  } else {
+    $('#category-selections-row').show();
+    $('#condition-container').hide();
+    $('#duration-container').hide();
+    $('#feature-row').empty();
+    $('#feature-container').hide();
   }
 });
 

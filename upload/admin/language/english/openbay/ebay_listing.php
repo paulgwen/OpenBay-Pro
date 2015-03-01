@@ -23,6 +23,7 @@ $_['text_listing_10day']            		= '10 days';
 $_['text_listing_30day']            		= '30 days';
 $_['text_listing_gtc']              		= 'GTC- Good till cancelled';
 $_['text_success']              			= 'Your bulk listings have now been sent for processing, check your email for results';
+$_['text_none']              				= 'None, use category selection';
 
 // Entry
 $_['entry_category']              			= 'eBay category';
