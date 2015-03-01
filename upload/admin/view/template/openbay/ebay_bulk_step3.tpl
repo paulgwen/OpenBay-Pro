@@ -60,6 +60,20 @@
               </select>
             </td>
           </tr>
+          <?php if (!empty($product['popular_cats'])) { ?>
+          <tr id="category-popular-row">
+            <td><?php echo $entry_category_popular; ?><span class="help"><?php echo $help_category_popular; ?></span></td>
+            <td>
+              <p><input type="radio" name="popular" value="" id="popular_default" checked /> <strong><?php echo $lang_none; ?></strong></p>
+
+              <?php foreach ($product['popular_cats'] as $cat) { ?>
+              <p><input type="radio" name="popular" value="<?php echo $cat['CategoryID']; ?>" class="popular_category" /> <?php echo $cat['breadcrumb']; ?></p>
+              <?php } ?>
+            </td>
+          </tr>
+          <?php }else{ ?>
+          <input type="hidden" name="popular" value="" />
+          <?php } ?>
           <tr id="category-selections-row">
             <td><?php echo $entry_category; ?></td>
             <td>
@@ -326,6 +340,18 @@ function listingDuration(data) {
 
   $('#duration-row').empty().html(htmlInj).show();
   $('#duration-loading').hide();
+}
+
+$('input[name=popular]').bind('change', function() {
+  if ($(this).val() != '') {
+    categoryFavChange($(this).val());
+  }
+});
+
+function categoryPopularChange(id) {
+  loadCategories(1, true);
+  $('input[name=category_id]').attr('value', id);
+  getCategoryFeatures(id);
 }
 
 $(document).ready(function() {
