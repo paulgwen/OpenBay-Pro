@@ -461,6 +461,12 @@ class ControllerOpenbayEbayListing extends Controller {
 					$product_data['img_tpl_thumb'] = $tmp_thumb_array;
 				}
 
+				if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+					$product_data['image_location'] = HTTPS_CATALOG . 'image/';
+				} else {
+					$product_data['image_location'] = HTTP_CATALOG . 'image/';
+				}
+
 				$product_data = array_merge($product_data, $profile_shipping['data']);
 
 				$bulk_data[] = $product_data;
