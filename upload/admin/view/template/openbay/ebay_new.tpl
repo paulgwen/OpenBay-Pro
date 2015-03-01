@@ -1012,7 +1012,6 @@
                   }
 
                   if (data.data.conditions) {
-
                       data.data.conditions = $.makeArray(data.data.conditions);
 
                       $.each(data.data.conditions, function(key, val) {
