@@ -1553,8 +1553,6 @@ class ControllerOpenbayOpenbay extends Controller {
 	}
 
 	public function verify() {
-
-
 		$this->load->model('openbay/ebay');
 		$this->load->model('openbay/ebay_template');
 		$this->load->model('catalog/product');

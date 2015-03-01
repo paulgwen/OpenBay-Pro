@@ -33,9 +33,13 @@ $_['entry_profile_shipping']         		= 'Shipping profile';
 $_['entry_profile_returns']         		= 'Returns profile';
 $_['entry_profile_theme']         			= 'Theme profile';
 $_['entry_profile_generic']         		= 'Generic profile';
+$_['entry_category_popular']         		= 'Popular categories';
 
 // Button
 $_['button_continue']         				= 'Continue';
+
+// Help
+$_['help_category_popular']					= 'Previously used categories';
 
 // Errors
 $_['error_select_category']                 = 'You must select at least 1 category';
