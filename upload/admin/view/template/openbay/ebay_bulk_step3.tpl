@@ -60,13 +60,13 @@
               </select>
             </td>
           </tr>
-          <?php if (!empty($product['popular_cats'])) { ?>
+          <?php if (!empty($product['popular_categories'])) { ?>
           <tr id="category-popular-row">
             <td><?php echo $entry_category_popular; ?><span class="help"><?php echo $help_category_popular; ?></span></td>
             <td>
               <p><input type="radio" name="popular" value="" id="popular_default" checked /> <strong><?php echo $lang_none; ?></strong></p>
 
-              <?php foreach ($product['popular_cats'] as $cat) { ?>
+              <?php foreach ($product['popular_categories'] as $cat) { ?>
               <p><input type="radio" name="popular" value="<?php echo $cat['CategoryID']; ?>" class="popular_category" /> <?php echo $cat['breadcrumb']; ?></p>
               <?php } ?>
             </td>
