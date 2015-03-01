@@ -295,7 +295,7 @@ class ControllerOpenbayEbayListing extends Controller {
 			$this->data['defaults']['listing_duration'] = 'Days_30';
 		}
 
-		$product_info['popular_categories'] = $this->model_openbay_ebay->getPopularCategories();
+		$this->data['popular_categories'] = $this->model_openbay_ebay->getPopularCategories();
 
 		$this->data['token'] = $this->session->data['token'];
 
