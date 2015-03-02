@@ -479,11 +479,7 @@ class ControllerOpenbayEbayListing extends Controller {
 				$bulk_data[] = $product_data;
 			}
 
-			echo '<pre>';
-			print_r($bulk_data);
-			echo '</pre>';
-
-			$this->data['response'] = $this->openbay->ebay->call('listing/bulkListing/', $bulk_data);
+			$this->data['response'] = $this->openbay->ebay->call('lms/bulkListing/', $bulk_data);
 			unset($this->session->data['bulk_category_list']);
 
 			$this->document->setTitle($this->language->get('heading_title'));
