@@ -354,7 +354,7 @@ class ControllerOpenbayEbayListing extends Controller {
 				$product_data['name'] 				= $product_info['name'];
 				$product_data['sub_name'] 			= '';
 				$product_data['bestoffer'] 			= 0;
-				$product_data['finalCat'] 			= $this->session->data['bulk_category_list']['ebay_data']['category_id'];
+				$product_data['category_id'] 		= $this->session->data['bulk_category_list']['ebay_data']['category_id'];
 				$product_data['price'][0] 			= $product_info['price'];
 				$product_data['qty'][0] 			= (int)$product_info['quantity'];
 				$product_data['product_id'] 		= (int)$product_id;
