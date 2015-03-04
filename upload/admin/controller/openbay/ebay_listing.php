@@ -480,6 +480,15 @@ class ControllerOpenbayEbayListing extends Controller {
 			}
 
 			$this->data['response'] = $this->openbay->ebay->call('lms/bulkListing/', $bulk_data);
+
+			$this->data['success'] = '';
+
+			if ($this->openbay->ebay->lasterror == true) {
+				$this->error['warning'] = $this->openbay->ebay->lastmsg;
+			} else {
+				$this->data['success'] = $this->openbay->ebay->lastmsg;
+			}
+
 			unset($this->session->data['bulk_category_list']);
 
 			$this->document->setTitle($this->language->get('heading_title'));
@@ -521,6 +530,12 @@ class ControllerOpenbayEbayListing extends Controller {
 				'text' => $this->language->get('text_ebay'),
 				'separator' => ' :: '
 			);
+
+			if (isset($this->error['warning'])) {
+				$this->data['error_warning'] = $this->error['warning'];
+			} else {
+				$this->data['error_warning'] = '';
+			}
 
 			$this->response->setOutput($this->render(true), $this->config->get('config_compression'));
 		} else {
