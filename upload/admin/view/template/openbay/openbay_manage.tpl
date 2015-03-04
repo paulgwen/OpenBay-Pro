@@ -28,7 +28,7 @@
           <a href="#v1-update-tab"><?php echo $tab_update_v1; ?></a>
         </div>
         <div id="v2-update-tab">
-          <div class="warning" id="update-error" style="display:none;"><?php echo $error_warning; ?></div>
+          <div class="warning" id="update-error" style="display:none;"></div>
           <table class="form">
             <tr class="update-v2-box">
               <td valign="middle"><label for="update-v2-beta"><?php echo $lang_use_beta; ?><span class="help"><?php echo $lang_use_beta_2; ?></span></label></td>

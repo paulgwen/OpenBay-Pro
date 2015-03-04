@@ -23,6 +23,7 @@ $_['text_listing_10day']            		= '10 days';
 $_['text_listing_30day']            		= '30 days';
 $_['text_listing_gtc']              		= 'GTC- Good till cancelled';
 $_['text_success']              			= 'Your bulk listings have now been sent for processing, check your email for results';
+$_['text_none']              				= 'None, use category selection';
 
 // Entry
 $_['entry_category']              			= 'eBay category';
@@ -33,9 +34,13 @@ $_['entry_profile_shipping']         		= 'Shipping profile';
 $_['entry_profile_returns']         		= 'Returns profile';
 $_['entry_profile_theme']         			= 'Theme profile';
 $_['entry_profile_generic']         		= 'Generic profile';
+$_['entry_category_popular']         		= 'Popular categories';
 
 // Button
 $_['button_continue']         				= 'Continue';
+
+// Help
+$_['help_category_popular']					= 'Previously used categories';
 
 // Errors
 $_['error_select_category']                 = 'You must select at least 1 category';

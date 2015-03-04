@@ -228,6 +228,8 @@ class ControllerOpenbayEbayListing extends Controller {
 			if (!isset($this->request->post['category_id']) || empty($this->request->post['category_id'])) {
 				$this->error['warning'] = $this->language->get('error_select_ebay_category');
 			} else {
+				$this->model_openbay_ebay->logCategoryUsed($this->request->post['category_id']);
+
 				$this->session->data['bulk_category_list']['ebay_data'] = $this->request->post;
 
 				$this->redirect($this->url->link('openbay/ebay_listing/bulkstep4', 'token=' . $this->session->data['token'], 'SSL'));
@@ -266,6 +268,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		$this->data['entry_profile_returns'] = $this->language->get('entry_profile_returns');
 		$this->data['entry_profile_theme'] = $this->language->get('entry_profile_theme');
 		$this->data['entry_profile_generic'] = $this->language->get('entry_profile_generic');
+		$this->data['entry_category_popular'] = $this->language->get('entry_category_popular');
 		$this->data['text_listing_1day'] = $this->language->get('text_listing_1day');
 		$this->data['text_listing_3day'] = $this->language->get('text_listing_3day');
 		$this->data['text_listing_5day'] = $this->language->get('text_listing_5day');
@@ -273,6 +276,8 @@ class ControllerOpenbayEbayListing extends Controller {
 		$this->data['text_listing_10day'] = $this->language->get('text_listing_10day');
 		$this->data['text_listing_30day'] = $this->language->get('text_listing_30day');
 		$this->data['text_listing_gtc'] = $this->language->get('text_listing_gtc');
+		$this->data['text_none'] = $this->language->get('text_none');
+		$this->data['help_category_popular'] = $this->language->get('help_category_popular');
 
 		$this->data['profiles']['shipping'] = $this->model_openbay_ebay_profile->getAll(0);
 		$this->data['profiles']['shipping_default'] = $this->model_openbay_ebay_profile->getDefault(0);
@@ -290,6 +295,8 @@ class ControllerOpenbayEbayListing extends Controller {
 		if ($this->data['defaults']['listing_duration'] == '') {
 			$this->data['defaults']['listing_duration'] = 'Days_30';
 		}
+
+		$this->data['popular_categories'] = $this->model_openbay_ebay->getPopularCategories();
 
 		$this->data['token'] = $this->session->data['token'];
 
@@ -461,12 +468,18 @@ class ControllerOpenbayEbayListing extends Controller {
 					$product_data['img_tpl_thumb'] = $tmp_thumb_array;
 				}
 
+				if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+					$product_data['image_location'] = HTTPS_CATALOG . 'image/';
+				} else {
+					$product_data['image_location'] = HTTP_CATALOG . 'image/';
+				}
+
 				$product_data = array_merge($product_data, $profile_shipping['data']);
 
 				$bulk_data[] = $product_data;
 			}
 
-			$this->data['response'] = $this->openbay->ebay->call('listing/bulkListing/', $bulk_data);
+			$this->data['response'] = $this->openbay->ebay->call('lms/bulkListing/', $bulk_data);
 			unset($this->session->data['bulk_category_list']);
 
 			$this->document->setTitle($this->language->get('heading_title'));
