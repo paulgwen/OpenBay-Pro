@@ -24,6 +24,7 @@ $_['text_listing_30day']            		= '30 days';
 $_['text_listing_gtc']              		= 'GTC- Good till cancelled';
 $_['text_success']              			= 'Your bulk listings have now been sent for processing, check your email for results';
 $_['text_none']              				= 'None, use category selection';
+$_['text_available']              			= 'You can list up to %s more products due to your plan limit';
 
 // Entry
 $_['entry_category']              			= 'eBay category';
@@ -54,3 +55,6 @@ $_['error_ajax_noload']              		= 'Sorry, could not connect';
 $_['error_category_sync']              		= 'You must sync / import the eBay category settings first';
 $_['error_select_ebay_category']       		= 'You must choose an eBay category for the products';
 $_['error_upload_fail']       				= 'Unable to send the data to the API, please contact support';
+$_['error_permission_bulk']       			= 'Your current subscription plan does not allow you to use bulk listing';
+$_['error_active_jobs']       				= 'There is an active bulk listing job running, please wait for this to complete';
+$_['error_limit_available']       			= 'You have reached the maximum number of products you can link on your current plan';
