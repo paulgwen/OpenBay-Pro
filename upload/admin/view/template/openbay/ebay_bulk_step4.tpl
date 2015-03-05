@@ -13,10 +13,10 @@
       </div>
     </div>
     <div class="content">
-      <?php if (isset($response->Ack) && $response->Ack == 'Success') { ?>
-        <div class="success"><?php echo $text_success; ?></div>
-      <?php } else { ?>
+      <?php if (!empty($error_warning)) { ?>
         <div class="warning"><?php echo $error_upload_fail; ?></div>
+      <?php } else { ?>
+        <div class="success"><?php echo $success; ?></div>
       <?php } ?>
     </div>
   </div>

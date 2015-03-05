@@ -57,7 +57,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 			'text' => $this->language->get('text_ebay'),
 			'separator' => ' :: '
 		);
@@ -154,7 +154,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 			'text' => $this->language->get('text_ebay'),
 			'separator' => ' :: '
 		);
@@ -333,7 +333,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 			'text' => $this->language->get('text_ebay'),
 			'separator' => ' :: '
 		);
@@ -379,7 +379,7 @@ class ControllerOpenbayEbayListing extends Controller {
 				$product_data['name'] 				= $product_info['name'];
 				$product_data['sub_name'] 			= '';
 				$product_data['bestoffer'] 			= 0;
-				$product_data['finalCat'] 			= $this->session->data['bulk_category_list']['ebay_data']['category_id'];
+				$product_data['category_id'] 		= $this->session->data['bulk_category_list']['ebay_data']['category_id'];
 				$product_data['price'][0] 			= $product_info['price'];
 				$product_data['qty'][0] 			= (int)$product_info['quantity'];
 				$product_data['product_id'] 		= (int)$product_id;
@@ -498,6 +498,15 @@ class ControllerOpenbayEbayListing extends Controller {
 			}
 
 			$this->data['response'] = $this->openbay->ebay->call('lms/create/', $bulk_data);
+
+			$this->data['success'] = '';
+
+			if ($this->openbay->ebay->lasterror == true) {
+				$this->error['warning'] = $this->openbay->ebay->lastmsg;
+			} else {
+				$this->data['success'] = $this->openbay->ebay->lastmsg;
+			}
+
 			unset($this->session->data['bulk_category_list']);
 
 			$this->document->setTitle($this->language->get('heading_title'));
@@ -535,10 +544,16 @@ class ControllerOpenbayEbayListing extends Controller {
 			);
 
 			$this->data['breadcrumbs'][] = array(
-				'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+				'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 				'text' => $this->language->get('text_ebay'),
 				'separator' => ' :: '
 			);
+
+			if (isset($this->error['warning'])) {
+				$this->data['error_warning'] = $this->error['warning'];
+			} else {
+				$this->data['error_warning'] = '';
+			}
 
 			$this->response->setOutput($this->render(true), $this->config->get('config_compression'));
 		} else {
