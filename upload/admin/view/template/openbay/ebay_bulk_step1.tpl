@@ -8,6 +8,9 @@
   <?php if ($error_warning) { ?>
     <div class="warning"><?php echo $error_warning; ?></div>
   <?php } else { ?>
+    <?php if ($available) { ?>
+      <div class="success"><?php echo $available; ?></div>
+    <?php } ?>
     <div class="box">
       <div class="heading">
         <h1><img src="view/image/order.png" alt="" /> <?php echo $heading_title; ?></h1>
