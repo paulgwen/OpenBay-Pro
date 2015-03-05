@@ -76,7 +76,7 @@ class ControllerOpenbayEbayListing extends Controller {
 
 		if (isset($status['available']) && $status['available'] < 1) {
 			$this->error['warning'] = $this->language->get('error_limit_available');
-		} elseif ($status['available'] > 0) {
+		} elseif (isset($status['available']) && $status['available'] > 0) {
 			$this->data['available'] = sprintf($this->language->get('text_available'), $status['available']);
 		}
 
