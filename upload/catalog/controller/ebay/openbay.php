@@ -12,6 +12,7 @@ class ControllerEbayOpenbay extends Controller {
 		$this->load->model('openbay/ebay_order');
 
 		if(empty($encrypted)) {
+			http_response_code(204);
 			$this->response->setOutput(json_encode(array('msg' => 'error 002')));
 		} else {
 			$token  = $this->openbay->ebay->pbkdf2($s1, $s2, 1000, 32);
@@ -76,13 +77,16 @@ class ControllerEbayOpenbay extends Controller {
 				}
 
 				if($data['action'] == 'bulkListing') {
+					$products = json_decode(base64_decode($data['data']));
 
+					foreach ($products['created'] as $created_product) {
+						$this->openbay->ebay->createLink($created_product['product_id'], $created_product['item_id'], 0);
+					}
 
-
-
-
+					http_response_code(201);
 				}
 			} else {
+				http_response_code(403);
 				$this->openbay->ebay->log('Secret incorrect or module not active.');
 				$this->response->setOutput(json_encode(array('msg' => 'error 001')));
 			}
