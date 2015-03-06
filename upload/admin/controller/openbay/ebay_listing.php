@@ -494,7 +494,7 @@ class ControllerOpenbayEbayListing extends Controller {
 
 				$product_data = array_merge($product_data, $profile_shipping['data']);
 
-				$bulk_data[] = $product_data;
+				$bulk_data[(int)$product_id] = $product_data;
 			}
 
 			$this->data['response'] = $this->openbay->ebay->call('lms/create/', $bulk_data);
