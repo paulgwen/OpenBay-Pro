@@ -76,13 +76,11 @@ class ControllerEbayOpenbay extends Controller {
 				}
 
 				if($data['action'] == 'bulkListing') {
-					$products = json_decode(base64_decode($data['data']));
+					$products = json_decode(base64_decode($data['data']), true);
 
 					foreach ($products['created'] as $created_product) {
 						$this->openbay->ebay->createLink($created_product['product_id'], $created_product['item_id'], 0);
 					}
-
-					http_response_code(201);
 				}
 			} else {
 				$this->openbay->ebay->log('Secret incorrect or module not active.');
