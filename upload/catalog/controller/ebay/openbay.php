@@ -76,9 +76,7 @@ class ControllerEbayOpenbay extends Controller {
 				}
 
 				if($data['action'] == 'bulkListing') {
-					$this->openbay->ebay->log($data['data']);
 					$products = json_decode(base64_decode($data['data']), true);
-					$this->openbay->ebay->log($products);
 
 					foreach ($products['created'] as $created_product) {
 						$this->openbay->ebay->createLink($created_product['product_id'], $created_product['item_id'], 0);
