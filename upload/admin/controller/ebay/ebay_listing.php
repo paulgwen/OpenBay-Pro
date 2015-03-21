@@ -12,7 +12,7 @@ class ControllerEbayEbayListing extends Controller {
 			} else {
 				$this->session->data['bulk_category_list']['categories'] = $this->request->post['selected'];
 
-				$this->redirect($this->url->link('openbay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL'));
+				$this->redirect($this->url->link('ebay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 		}
 
@@ -29,8 +29,8 @@ class ControllerEbayEbayListing extends Controller {
 			'common/footer'
 		);
 
-		$this->data['url_return']  = $this->url->link('openbay/ebay/dashboard', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['form_action'] = $this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['url_return']  = $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['form_action'] = $this->url->link('ebay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
 		$this->data['button_continue'] = $this->language->get('button_continue');
@@ -62,7 +62,7 @@ class ControllerEbayEbayListing extends Controller {
 			'separator' => ' :: '
 		);
 
-		$status = $this->openbay->ebay->openbay_call('lms/status/', array());
+		$status = $this->ebay->openbay_call('lms/status/', array());
 
 		if ($status['bulk_listing'] == 0) {
 			$this->error['warning'] = $this->language->get('error_permission_bulk');
@@ -94,7 +94,7 @@ class ControllerEbayEbayListing extends Controller {
 		$this->load->model('catalog/product');
 
 		if (!isset($this->session->data['bulk_category_list']['categories']) || empty($this->session->data['bulk_category_list']['categories'])) {
-			$this->redirect($this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->redirect($this->url->link('ebay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
@@ -103,7 +103,7 @@ class ControllerEbayEbayListing extends Controller {
 			} else {
 				$this->session->data['bulk_category_list']['products'] = $this->request->post['selected'];
 
-				$this->redirect($this->url->link('openbay/ebay_listing/bulkstep3', 'token=' . $this->session->data['token'], 'SSL'));
+				$this->redirect($this->url->link('ebay/ebay_listing/bulkstep3', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 		}
 
@@ -120,9 +120,9 @@ class ControllerEbayEbayListing extends Controller {
 			'common/footer'
 		);
 
-		$this->data['url_return']  = $this->url->link('openbay/ebay/dashboard', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['url_back']  = $this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['form_action'] = $this->url->link('openbay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['url_return']  = $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['url_back']  = $this->url->link('ebay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['form_action'] = $this->url->link('ebay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['button_continue'] = $this->language->get('button_continue');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -161,7 +161,7 @@ class ControllerEbayEbayListing extends Controller {
 
 		$categories = $this->session->data['bulk_category_list']['categories'];
 
-		$ebay_active = $this->openbay->ebay->getLiveListingArray();
+		$ebay_active = $this->ebay->getLiveListingArray();
 
 		$products = array();
 		$products_fail = array();
@@ -239,7 +239,7 @@ class ControllerEbayEbayListing extends Controller {
 		$this->load->model('openbay/ebay_profile');
 
 		if (!isset($this->session->data['bulk_category_list']['products']) || empty($this->session->data['bulk_category_list']['products'])) {
-			$this->redirect($this->url->link('openbay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL'));
+			$this->redirect($this->url->link('ebay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		if ($this->request->server['REQUEST_METHOD'] == 'POST') {
@@ -250,7 +250,7 @@ class ControllerEbayEbayListing extends Controller {
 
 				$this->session->data['bulk_category_list']['ebay_data'] = $this->request->post;
 
-				$this->redirect($this->url->link('openbay/ebay_listing/bulkstep4', 'token=' . $this->session->data['token'], 'SSL'));
+				$this->redirect($this->url->link('ebay/ebay_listing/bulkstep4', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 		}
 
@@ -265,9 +265,9 @@ class ControllerEbayEbayListing extends Controller {
 			'common/footer'
 		);
 
-		$this->data['url_return']  = $this->url->link('openbay/ebay/dashboard', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['url_back']  = $this->url->link('openbay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL');
-		$this->data['form_action'] = $this->url->link('openbay/ebay_listing/bulkstep3', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['url_return']  = $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['url_back']  = $this->url->link('ebay/ebay_listing/bulkstep2', 'token=' . $this->session->data['token'], 'SSL');
+		$this->data['form_action'] = $this->url->link('ebay/ebay_listing/bulkstep3', 'token=' . $this->session->data['token'], 'SSL');
 
 		$this->data['button_submit'] = $this->language->get('button_submit');
 		$this->data['button_cancel'] = $this->language->get('button_cancel');
@@ -497,14 +497,14 @@ class ControllerEbayEbayListing extends Controller {
 				$bulk_data[(int)$product_id] = $product_data;
 			}
 
-			$this->data['response'] = $this->openbay->ebay->openbay_call('lms/create/', $bulk_data);
+			$this->data['response'] = $this->ebay->openbay_call('lms/create/', $bulk_data);
 
 			$this->data['success'] = '';
 
-			if ($this->openbay->ebay->lasterror == true) {
-				$this->error['warning'] = $this->openbay->ebay->lastmsg;
+			if ($this->ebay->lasterror == true) {
+				$this->error['warning'] = $this->ebay->lastmsg;
 			} else {
-				$this->data['success'] = $this->openbay->ebay->lastmsg;
+				$this->data['success'] = $this->ebay->lastmsg;
 			}
 
 			unset($this->session->data['bulk_category_list']);
