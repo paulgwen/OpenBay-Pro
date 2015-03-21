@@ -235,8 +235,8 @@ class ControllerEbayEbayListing extends Controller {
 
 	public function bulkStep3() {
 		$this->load->language('openbay/ebay_listing');
-		$this->load->model('openbay/ebay');
-		$this->load->model('openbay/ebay_profile');
+		$this->load->model('ebay/openbay');
+		$this->load->model('ebay/profile');
 
 		if (!isset($this->session->data['bulk_category_list']['products']) || empty($this->session->data['bulk_category_list']['products'])) {
 			$this->redirect($this->url->link('ebay/ebay_listing/bulkstep1', 'token=' . $this->session->data['token'], 'SSL'));
@@ -246,7 +246,7 @@ class ControllerEbayEbayListing extends Controller {
 			if (!isset($this->request->post['category_id']) || empty($this->request->post['category_id'])) {
 				$this->error['warning'] = $this->language->get('error_select_ebay_category');
 			} else {
-				$this->model_openbay_ebay->logCategoryUsed($this->request->post['category_id']);
+				$this->model_ebay_openbay->logCategoryUsed($this->request->post['category_id']);
 
 				$this->session->data['bulk_category_list']['ebay_data'] = $this->request->post;
 
@@ -297,24 +297,24 @@ class ControllerEbayEbayListing extends Controller {
 		$this->data['text_none'] = $this->language->get('text_none');
 		$this->data['help_category_popular'] = $this->language->get('help_category_popular');
 
-		$this->data['profiles']['shipping'] = $this->model_openbay_ebay_profile->getAll(0);
-		$this->data['profiles']['shipping_default'] = $this->model_openbay_ebay_profile->getDefault(0);
+		$this->data['profiles']['shipping'] = $this->model_ebay_profile->getAll(0);
+		$this->data['profiles']['shipping_default'] = $this->model_ebay_profile->getDefault(0);
 
-		$this->data['profiles']['returns'] = $this->model_openbay_ebay_profile->getAll(1);
-		$this->data['profiles']['returns_default'] = $this->model_openbay_ebay_profile->getDefault(1);
+		$this->data['profiles']['returns'] = $this->model_ebay_profile->getAll(1);
+		$this->data['profiles']['returns_default'] = $this->model_ebay_profile->getDefault(1);
 
-		$this->data['profiles']['theme'] = $this->model_openbay_ebay_profile->getAll(2);
-		$this->data['profiles']['theme_default'] = $this->model_openbay_ebay_profile->getDefault(2);
+		$this->data['profiles']['theme'] = $this->model_ebay_profile->getAll(2);
+		$this->data['profiles']['theme_default'] = $this->model_ebay_profile->getDefault(2);
 
-		$this->data['profiles']['generic'] = $this->model_openbay_ebay_profile->getAll(3);
-		$this->data['profiles']['generic_default'] = $this->model_openbay_ebay_profile->getDefault(3);
+		$this->data['profiles']['generic'] = $this->model_ebay_profile->getAll(3);
+		$this->data['profiles']['generic_default'] = $this->model_ebay_profile->getDefault(3);
 
 		$this->data['defaults']['listing_duration'] = $this->config->get('openbaypro_duration');
 		if ($this->data['defaults']['listing_duration'] == '') {
 			$this->data['defaults']['listing_duration'] = 'Days_30';
 		}
 
-		$this->data['popular_categories'] = $this->model_openbay_ebay->getPopularCategories();
+		$this->data['popular_categories'] = $this->model_ebay_openbay->getPopularCategories();
 
 		$this->data['token'] = $this->session->data['token'];
 
@@ -349,9 +349,9 @@ class ControllerEbayEbayListing extends Controller {
 
 	public function bulkStep4() {
 		$this->load->language('openbay/ebay_listing');
-		$this->load->model('openbay/ebay');
-		$this->load->model('openbay/ebay_profile');
-		$this->load->model('openbay/ebay_template');
+		$this->load->model('ebay/openbay');
+		$this->load->model('ebay/profile');
+		$this->load->model('ebay/template');
 		$this->load->model('catalog/product');
 		$this->load->model('tool/image');
 
@@ -359,11 +359,11 @@ class ControllerEbayEbayListing extends Controller {
 			$bulk_data = array();
 
 			//load all of the listing defaults and assign to correct variable names
-			$profile_shipping = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_shipping']);
-			$profile_return = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_returns']);
-			$profile_template = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_theme']);
-			$profile_generic = $this->model_openbay_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_generic']);
-			$payments = $this->model_openbay_ebay->getPaymentTypes();
+			$profile_shipping = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_shipping']);
+			$profile_return = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_returns']);
+			$profile_template = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_theme']);
+			$profile_generic = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_generic']);
+			$payments = $this->model_ebay_openbay->getPaymentTypes();
 			$payments_accepted = $this->config->get('ebay_payment_types');
 
 			foreach($this->session->data['bulk_category_list']['products'] as $product_id) {
@@ -426,7 +426,7 @@ class ControllerEbayEbayListing extends Controller {
 				}
 
 				if (isset($profile_template['data']['ebay_template_id'])) {
-					$template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
+					$template = $this->model_ebay_template->get($profile_template['data']['ebay_template_id']);
 					$product_data['template_html'] = (isset($template['html']) ? base64_encode($template['html']) : '');
 					$product_data['template'] = $profile_template['data']['ebay_template_id'];
 				} else {
@@ -437,7 +437,7 @@ class ControllerEbayEbayListing extends Controller {
 				$product_data['gallery_plus'] 		= $profile_template['data']['ebay_gallery_plus'];
 				$product_data['gallery_super'] 		= $profile_template['data']['ebay_supersize'];
 				$product_data['private_listing'] 	= $profile_generic['data']['private_listing'];
-				$product_data['attributes'] 		= base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($product_id)));
+				$product_data['attributes'] 		= base64_encode(json_encode($this->model_ebay_openbay->getProductAttributes($product_id)));
 
 				$product_data['payments'] = array();
 				foreach($payments as $payment) {
