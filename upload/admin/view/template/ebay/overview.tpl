@@ -1,18 +1,18 @@
 <?php echo $header; ?>
 <div id="content">
     <div class="breadcrumb">
-<?php 
+<?php
         foreach ($breadcrumbs as $breadcrumb) {
             echo $breadcrumb['separator'].'<a href="'.$breadcrumb['href'].'">'.$breadcrumb['text'].'</a>';
-        } 
+        }
 ?>
-    </div> 
-        
+    </div>
+
     <?php if ($success) { ?>
         <div class="success mBottom10"><?php echo $success; ?></div>
     <?php } ?>
 
-    <div class="box mBottom130"> 
+    <div class="box mBottom130">
         <div class="heading">
             <h1><?php echo $lang_heading; ?></h1>
         </div>
@@ -22,7 +22,7 @@
                     <img src="<?php echo HTTPS_SERVER; ?>view/image/openbay/openbay_icon1.png" title="" alt="" border="0" />
                     <h3><?php echo $lang_heading_settings; ?></h3>
                 </div>
-                
+
                 <?php if($validation == true){ ?>
                     <div class="openbayPod" onclick="location='<?php echo $links_sync; ?>'">
                         <img src="<?php echo HTTPS_SERVER; ?>view/image/openbay/openbay_icon10.png" title="" alt="" border="0" />
@@ -65,6 +65,10 @@
                         <img src="<?php echo HTTPS_SERVER; ?>view/image/openbay/openbay_icon12.png" title="" alt="" border="0" />
                         <h3><?php echo $lang_heading_template; ?></h3>
                     </div>
+                    <div class="openbayPod" onclick="location='<?php echo $links_bulkcategory; ?>'">
+                        <img src="<?php echo HTTPS_SERVER; ?>view/image/openbay/openbay_icon3.png" title="" alt="" border="0" />
+                        <h3><?php echo $lang_heading_bulkcategory; ?></h3>
+                    </div>
 
                 <!--
                     <div class="openbayPod" onclick="location=''">
@@ -92,5 +96,5 @@
             $(this).css('background-color', '#FFFFFF').css('border-color', '#CCCCCC');
         });
     });
-//--></script> 
+//--></script>
 <?php echo $footer; ?>
