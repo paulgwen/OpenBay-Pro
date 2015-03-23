@@ -30,7 +30,7 @@
                         <h2><?php echo $lang_main_settings_heading ?></h2>
                         <tr>
                             <td><?php echo $lang_enabled ?></td>
-                            <td>               
+                            <td>
                                 <select class="width100" name="amazonus_status" id="enabled">
                                     <?php if ($is_enabled) { ?>
                                         <option value="1" selected="selected"><?php echo $lang_yes ?></option>
@@ -64,13 +64,13 @@
                                 <?php } else { ?>
                                     <img class="apiConnectionImg" src="view/image/success.png" />  <?php echo $lang_api_ok; ?>
                                 <?php } ?>
-                                
+
                             </td>
                         </tr>
-                        
-                    </table>                    
+
+                    </table>
                 </div>
-                
+
                 <div id="page-product">
                     <table class="form">
                         <h2><?php echo $lang_listings_heading ?></h2>
@@ -83,13 +83,13 @@
                             <td>
                                 <select class="width250" name="openbay_amazonus_listing_default_condition">
                                     <option></option>
-                                    <?php foreach($conditions as $value => $condition): ?>
-                                        <?php if($value == $openbay_amazonus_listing_default_condition): ?>
+                                    <?php foreach($conditions as $value => $condition) { ?>
+                                        <?php if($value == $openbay_amazonus_listing_default_condition) { ?>
                                             <option selected="selected" value="<?php echo $value; ?>"><?php echo $condition; ?></option>
-                                        <? else: ?>
+                                        <?php } else { ?>
                                             <option value="<?php echo $value; ?>"><?php echo $condition; ?></option>
-                                        <?php endif; ?>
-                                    <?php endforeach; ?>
+                                        <?php } ?>
+                                    <?php } ?>
                                 </select>
                             </td>
                         </tr>
@@ -115,8 +115,8 @@
                                 </td>
                             </tr>
                         <?php endforeach; ?>
-                    </table>     
-                    
+                    </table>
+
                     <table class="form">
                         <h2><?php echo $lang_other ?></h2>
                         <tr>
@@ -164,10 +164,10 @@
         </div>
     </div>
 </div>
-<script type="text/javascript" src="view/javascript/jquery/ui/jquery-ui-timepicker-addon.js"></script> 
+<script type="text/javascript" src="view/javascript/jquery/ui/jquery-ui-timepicker-addon.js"></script>
 <script type="text/javascript">
     $(document).ready(function(){
-        $('#tabs a').tabs(); 
+        $('#tabs a').tabs();
     });
 </script>
 <?php echo $footer; ?>

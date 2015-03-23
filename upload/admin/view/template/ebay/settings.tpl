@@ -421,12 +421,18 @@
                     <h2><?php echo $lang_developer; ?></h2>
                     <p><?php echo $lang_developer_desc; ?></p>
                     <table class="form">
-
                         <tr>
                             <td><label><?php echo $lang_developer_empty; ?></td>
                             <td>
                                 <a onclick="devClearData();" class="button" id="devClearData"><span><?php echo $lang_clear; ?></span></a>
                                 <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" id="imageDevClearData" class="displayNone"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label><?php echo $lang_developer_locks; ?></td>
+                            <td>
+                                <a onclick="removeLocks();" class="button" id="removeLocks"><span><?php echo $lang_clear; ?></span></a>
+                                <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" id="imageRemoveLocks" class="displayNone"/>
                             </td>
                         </tr>
                         <tr>
@@ -521,7 +527,6 @@
 </div>
 
 <script type="text/javascript">
-
     function devClearData() {
         var pass = prompt("<?php echo $lang_ajax_dev_enter_pw; ?>", "");
 
@@ -567,6 +572,30 @@
                     }, 500);
                 }
             });
+    }
+
+    function removeLocks() {
+        $.ajax({
+            url: 'index.php?route=openbay/openbay/deleteAllLocks&token=<?php echo $token; ?>',
+            type: 'post',
+            dataType: 'json',
+            beforeSend: function() {
+                $('#removeLocks').hide();
+                $('#imageRemoveLocks').show();
+            },
+            success: function(json) {
+                setTimeout(function() {
+                    alert(json.msg);
+                    $('#removeLocks').show();
+                    $('#imageRemoveLocks').hide();
+                }, 500);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                if (xhr.status != 0) {
+                    alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+                }
+            }
+        });
     }
 
     function validateForm() {
@@ -617,7 +646,6 @@
         checkCredentials();
         changeTaxHandler();
     });
-
 //--></script>
 
 <?php echo $footer; ?>
