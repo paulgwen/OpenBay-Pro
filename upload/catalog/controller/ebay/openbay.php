@@ -74,6 +74,14 @@ class ControllerEbayOpenbay extends Controller {
 				if($data['action'] == 'updateLog') {
 					$this->model_openbay_ebay_openbay->updateLog();
 				}
+
+				if($data['action'] == 'bulkListing') {
+					$products = json_decode(base64_decode($data['data']), true);
+
+					foreach ($products['created'] as $created_product) {
+						$this->openbay->ebay->createLink($created_product['product_id'], $created_product['item_id'], 0);
+					}
+				}
 			} else {
 				$this->openbay->ebay->log('Secret incorrect or module not active.');
 				$this->response->setOutput(json_encode(array('msg' => 'error 001')));

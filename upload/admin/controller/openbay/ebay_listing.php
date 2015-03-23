@@ -57,10 +57,28 @@ class ControllerOpenbayEbayListing extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 			'text' => $this->language->get('text_ebay'),
 			'separator' => ' :: '
 		);
+
+		$status = $this->openbay->ebay->call('lms/status/', array());
+
+		if ($status['bulk_listing'] == 0) {
+			$this->error['warning'] = $this->language->get('error_permission_bulk');
+		}
+
+		if ($status['active_jobs'] == 1) {
+			$this->error['warning'] = $this->language->get('error_active_jobs');
+		}
+
+		$this->data['available'] = '';
+
+		if (isset($status['available']) && $status['available'] < 1) {
+			$this->error['warning'] = $this->language->get('error_limit_available');
+		} elseif (isset($status['available']) && $status['available'] > 0) {
+			$this->data['available'] = sprintf($this->language->get('text_available'), $status['available']);
+		}
 
 		if (isset($this->error['warning'])) {
 			$this->data['error_warning'] = $this->error['warning'];
@@ -136,7 +154,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 			'text' => $this->language->get('text_ebay'),
 			'separator' => ' :: '
 		);
@@ -315,7 +333,7 @@ class ControllerOpenbayEbayListing extends Controller {
 		);
 
 		$this->data['breadcrumbs'][] = array(
-			'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+			'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 			'text' => $this->language->get('text_ebay'),
 			'separator' => ' :: '
 		);
@@ -476,10 +494,10 @@ class ControllerOpenbayEbayListing extends Controller {
 
 				$product_data = array_merge($product_data, $profile_shipping['data']);
 
-				$bulk_data[] = $product_data;
+				$bulk_data[(int)$product_id] = $product_data;
 			}
 
-			$this->data['response'] = $this->openbay->ebay->call('lms/bulkListing/', $bulk_data);
+			$this->data['response'] = $this->openbay->ebay->call('lms/create/', $bulk_data);
 
 			$this->data['success'] = '';
 
@@ -526,7 +544,7 @@ class ControllerOpenbayEbayListing extends Controller {
 			);
 
 			$this->data['breadcrumbs'][] = array(
-				'href' => $this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], 'SSL'),
+				'href' => $this->url->link('openbay/openbay', 'token=' . $this->session->data['token'], 'SSL'),
 				'text' => $this->language->get('text_ebay'),
 				'separator' => ' :: '
 			);
