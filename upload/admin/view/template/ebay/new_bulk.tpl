@@ -640,7 +640,7 @@ function listingDuration(data, id){
 function categorySuggestedChange(val, id){
     $('#cSelections_'+id).hide();
     loadCategories(1, true, id);
-    $('input[name=finalCat]').attr('value', val);
+    $('#finalCat_'+id).attr('value', val);
     getCategoryFeatures(val, id);
 }
 
