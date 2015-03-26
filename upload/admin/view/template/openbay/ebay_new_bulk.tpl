@@ -49,12 +49,12 @@
                                             <p><label style="display:inline-block;" class="width100 mRight10 bold"><?php echo $lang_price; ?>:</label><input id="price_<?php echo $i; ?>" type="text" name="price" class="openbayData_<?php echo $i; ?> width50" value="<?php echo number_format($product['price']*(($default['defaults']['tax']/100) + 1), 2, '.', ''); ?>" /></p>
                                             <p><label style="display:inline-block;" class="width100 mRight10 bold"><?php echo $lang_stock; ?>:</label><?php echo $product['quantity']; ?></p>
                                             <input type="hidden" name="qty" value="<?php echo $product['quantity']; ?>" class="openbayData_<?php echo $i; ?>" />
-                                            
+
                                             <div class="buttons right">
                                                 <a class="button" onclick="showFeatures('<?php echo $i; ?>');" id="editFeature_<?php echo $i; ?>" style="display:none;"><span><?php echo $lang_features; ?></span></a>
                                                 <a class="button" onclick="showCatalog('<?php echo $i; ?>');" id="editCatalog_<?php echo $i; ?>" style="display:none;"><span><?php echo $lang_catalog; ?></span></a>
                                             </div>
-                                            
+
                                             <div id="featurePage_<?php echo $i; ?>" class="greyScreenBox featurePage">
                                                 <div class="bold border p5 previewClose">X</div>
                                                 <div class="previewContentScroll">
@@ -265,7 +265,7 @@
 
     function removeBox(id){
         $('#p_row_'+id).fadeOut('medium');
-    
+
         setTimeout(function(){
             $('#p_row_'+id).remove();
         }, 1000);
@@ -304,7 +304,7 @@
                         $.each(data.data, function(key,val){
                             if(val.percent != 0) {
                                 htmlInj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="suggested_category_'+id+'" name="suggested_'+id+'" value="'+val.id+'" onchange="categorySuggestedChange('+val.id+','+id+')"';
-                                if(i == 1){ 
+                                if(i == 1){
                                     htmlInj += ' checked="checked"';
                                     categorySuggestedChange(val.id, id);
                                 }
@@ -337,7 +337,7 @@
 
     function loadCategories(level, skip, id){
         var parent = '';
-        
+
         if(level == 1){
             parent = ''
         }else{
@@ -456,7 +456,7 @@
 
     function itemFeatures(cat, id){
         $('#editFeature_'+id).hide();
-        
+
         $.ajax({
             url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category='+cat,
             type: 'GET',
@@ -523,7 +523,7 @@
                 }
 
                 $('#editFeature_'+id).show();
-                
+
                 removeCount();
             },
             failure: function(){
@@ -554,7 +554,7 @@
         if(qry == ''){
             alert('<?php echo $lang_search_text; ?>');
         }
-        
+
         $.ajax({
             url: 'index.php?route=openbay/openbay/searchEbayCatalog&token=<?php echo $token; ?>',
             type: 'POST',
@@ -596,7 +596,7 @@
             }
         });
     }
-    
+
     function processCatalogItem(val, id){
         html = '';
         html += '<div style="float:left; display:inline; width:450px; height:100px; padding:5px; margin-right:10px; margin-bottom:10px;" class="border">';
@@ -641,7 +641,7 @@
     function categorySuggestedChange(val, id){
         $('#cSelections_'+id).hide();
         loadCategories(1, true, id);
-        $('input[name=finalCat]').attr('value', val);
+        $('#finalCat_'+id).attr('value', val);
         getCategoryFeatures(val, id);
     }
 
@@ -680,7 +680,7 @@
         $.each($('.pId'), function(i){
             id = $(this).val();
             name = $('#title_'+$(this).val()).val();
-        
+
             $('#p_row_msg_'+$(this).val()).show();
             $('.p_row_content_'+$(this).val()).hide();
             $('#p_row_title_'+$(this).val()).text(name).show();
@@ -755,7 +755,7 @@
             var id = '';
             var name = '';
             var processedData = '';
-            
+
             showGreyScreen('loadingVerify');
 
             $('.warning').hide();
@@ -831,11 +831,11 @@
         showGreyScreen('previewPage');
         $('#previewContentIframe').attr('src', url);
     }
-    
+
     function showFeatures(id){
         showGreyScreen('featurePage_'+id);
     }
-    
+
     function showCatalog(id){
         showGreyScreen('catalogPage_'+id);
     }
