@@ -27,7 +27,7 @@
 
                         <div class="box mTop15 listingBox" id="p_row_<?php echo $i; ?>">
                             <input type="hidden" class="pId openbayData_<?php echo $i; ?>" name="pId" value="<?php echo $i; ?>" />
-                            <input type="hidden" class="openbayData_<?php echo $i; ?>" name="product_id" value="<?php echo $product['product_id']; ?>" />
+                            <input type="hidden" class="openbayData_<?php echo $i; ?>" name="product_id" value="<?php echo $product['product_id']; ?>" id="product-id-<?php echo $i; ?>" />
                             <div class="heading">
                                 <div id="p_row_title_<?php echo $i; ?>" style="float:left;" class="displayNone bold m0 p10"></div>
                                 <div id="p_row_buttons_<?php echo $i; ?>" class="buttons right">
@@ -454,84 +454,106 @@ function html_encode(s) {
   return $('<div>').text(s).html();
 }
 
-function itemFeatures(cat, id){
-    $('#editFeature_'+id).hide();
+function itemFeatures(category_id, id){
+  $('#editFeature_' + id).hide();
 
-    $.ajax({
-        url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category='+cat,
-        type: 'GET',
-        dataType: 'json',
-        beforeSend: function(){ addCount(); },
-        success: function(data) {
-            if(data.error == false){
-                $('#featureRow_'+id).empty();
+  $.ajax({
+    url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category_id=' + category_id + '&product_id=' + $('#product-id-' + id).val(),
+    type: 'GET',
+    dataType: 'json',
+    beforeSend: function(){ addCount(); },
+    success: function(data) {
+      if(data.error == false){
+        $('#featureRow_'+id).empty();
 
-                var htmlInj = '';
-                var htmlInj2 = '';
-                var specificCount = 0;
+        var html_inj = '';
+        var html_inj2 = '';
+        var specific_count = 0;
+        var field_value = '';
+        var show_other = false;
+        var show_other_value = '';
+        var product_id = $('#product-id-' + id).val();
 
-                if(data.data.Recommendations.NameRecommendation){
+        if(data.data){
+          $.each(data.data, function(option_specific_key, option_specific_value) {
+            html_inj2 = '';
 
-                    data.data.Recommendations.NameRecommendation = $.makeArray(data.data.Recommendations.NameRecommendation);
+            html_inj += '<tr>';
+            html_inj += '<td class="ebaySpecificTitle left">'+option_specific_value.name+'</td>';
+            html_inj += '<td>';
 
-                    $.each(data.data.Recommendations.NameRecommendation, function(key, val){
-                        htmlInj2 = '';
+            if (("options" in option_specific_value) && (option_specific_value.validation.max_values == 1)) {
+              // matched_value_key in option_specific_value
+              if ("matched_value_key" in option_specific_value) {
+                $.each(option_specific_value.options, function(option_key, option) {
+                  if (option_specific_value.matched_value_key == option_key) {
+                    html_inj2 += '<option value="' + option + '" selected>' + option + '</option>';
+                  } else {
+                    html_inj2 += '<option value="' + option + '">' + option + '</option>';
+                  }
+                });
+              } else {
+                html_inj2 += '<option disabled selected><?php echo $text_select; ?></option>';
 
-                        if(("ValueRecommendation" in val) && (val.ValidationRules.MaxValues == 1)){
-                            htmlInj2 += '<option value="">-- <?php echo $lang_select; ?> --</option>';
+                $.each(option_specific_value.options, function(option_key, option) {
+                  html_inj2 += '<option value="' + option + '">' + option + '</option>';
+                });
+              }
 
-                            //force an array in case of single element
-                            val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
+              show_other = false;
+              show_other_value = '';
 
-                            $.each(val.ValueRecommendation, function(key2, option){
-                              field_value = option.Value.replace('"', '&quot;');
-                              htmlInj2 += '<option value="'+field_value+'">'+option.Value+'</option>';
-                            });
-
-                            if(val.ValidationRules.SelectionMode == 'FreeText'){
-                                htmlInj2 += '<option value="Other"><?php echo $lang_other; ?></option>';
-                            }
-                            htmlInj += '<tr><td class="ebaySpecificTitle left">'+val.Name+'</td><td><select name="feat['+val.Name+']" class="ebaySpecificSelect openbayData_'+id+' left" id="spec_sel_'+specificCount+'" onchange="toggleSpecOther('+specificCount+');">'+htmlInj2+'</select><br /><span id="spec_'+specificCount+'_other" class="ebaySpecificSpan"><p><?php echo $lang_other; ?>:&nbsp;<input type="text" name="featother['+val.Name+']" class="ebaySpecificOther openbayData_'+id+'" /></p></span></td></tr>';
-
-                        }else if(("ValueRecommendation" in val) && (val.ValidationRules.MaxValues > 1)){
-                            htmlInj += '<tr><td class="ebaySpecificTitle left">'+val.Name+'</td><td class="left">';
-
-                            //force an array in case of single element
-                            val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
-
-                            $.each(val.ValueRecommendation, function(key2, option){
-                              field_value = option.Value.replace('"', '&quot;');
-                              htmlInj += '<p><input type="checkbox" name="feat['+val.Name+'][]" value="'+field_value+'" class="openbayData_'+id+'"/>'+option.Value+'</p>';
-                            });
-
-                            htmlInj += '</td></tr>';
-                        }else{
-                            htmlInj += '<tr><td class="ebaySpecificTitle left">'+val.Name+'</td><td><input type="text" name="feat['+val.Name+']" class="ebaySpecificInput openbayData_'+id+' left" /></td></tr>';
-                        }
-
-                        specificCount++;
-                    });
-
-
-                    $('#featureRow_'+id).append(htmlInj);
-                }else{
-                    $('#featureRow_'+id).text('None');
+              if (option_specific_value.validation.selection_mode == 'FreeText') {
+                if (option_specific_value.unmatched_value != '') {
+                  html_inj2 += '<option value="Other" selected><?php echo $lang_other; ?></option>';
+                  show_other = true;
+                  show_other_value = option_specific_value.unmatched_value;
+                } else {
+                  html_inj2 += '<option value="Other"><?php echo $lang_other; ?></option>';
                 }
+              }
+
+              html_inj += '<select class="ebaySpecificSelect openbayData_' + id + ' left" style="min-with:200px; padding:5px 2px;" name="feat[' + option_specific_value.name + ']" id="spec_sel_' + specific_count + '" onchange="toggleSpecOther(' + specific_count + ');">' + html_inj2 + '</select>';
+
+              if (show_other === true) {
+                html_inj += '<p id="spec_' + specific_count + '_other">';
+              } else {
+                html_inj += '<p id="spec_' + specific_count + '_other" style="display:none;">';
+              }
+              html_inj += '<input class="ebaySpecificOther openbayData_' + id + ' left" type="text" name="featother[' + option_specific_value.name + ']" value="' + show_other_value + '"/>';
+              html_inj += '</p>';
+            } else if (("options" in option_specific_value) && (option_specific_value.validation.max_values > 1)) {
+              $.each(option_specific_value.options, function(option_key, option) {
+                html_inj += '<p class="left"><input type="checkbox" name="feat[' + option_specific_value.name + '][]" value="' + option + '" class="openbayData_'+id+'"/>' + option + '</p>';
+              });
             }else{
-                alert(data.msg);
+              html_inj += '<input type="text" name="feat[' + option_specific_value.name + ']" class="ebaySpecificInput openbayData_' + id + ' left" value="' + option_specific_value.unmatched_value + '" />';
             }
 
-            $('#editFeature_'+id).show();
+            html_inj += '</td></tr>';
 
-            removeCount();
-        },
-        failure: function(){
-            removeCount();
-        },
-        error: function(){
-            removeCount();
+            specific_count++;
+          });
+
+          $('#featureRow_'+id).append(html_inj);
+        } else {
+          $('#featureRow_'+id).text('None');
         }
-    });
+      } else {
+        alert(data.msg);
+      }
+
+      $('#editFeature_'+id).show();
+
+      removeCount();
+    },
+    failure: function(){
+      removeCount();
+    },
+    error: function(){
+      removeCount();
+    }
+  });
 }
 
 function toggleSpecOther(id){

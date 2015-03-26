@@ -56,7 +56,7 @@ class ModelEbayOpenbay extends Model{
                       `AutoPayEnabled` tinyint(1) NOT NULL,
                       PRIMARY KEY (`ebay_category_id`)
                     ) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
-        
+
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_category_history`;");
         $this->db->query("
                     CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_category_history` (
@@ -247,24 +247,24 @@ class ModelEbayOpenbay extends Model{
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_order`;");
         $this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_profile`;");
     }
-    
+
     public function getSellerStoreCategories(){
         $qry = $this->db->query("SHOW TABLES LIKE '" . DB_PREFIX . "ebay_store_category'");
-        
+
         if( $qry->num_rows ){
             $qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_store_category` WHERE `parent_id` = '0' ORDER BY `CategoryName` ASC");
-            
+
             if($qry->num_rows){
                 $cats = array();
-                
-                foreach($qry->rows as $row){                    
+
+                foreach($qry->rows as $row){
                     $lev1 = $row['CategoryName'];
                     $qry2 = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_store_category` WHERE `parent_id` = '".$row['ebay_store_category_id']."' ORDER BY `CategoryName` ASC");
-                    
+
                     if($qry2->num_rows){
                         foreach($qry2->rows as $row2){
                             $qry3 = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_store_category` WHERE `parent_id` = '".$row2['ebay_store_category_id']."' ORDER BY `CategoryName` ASC");
-                            
+
                             if($qry3->num_rows){
                                 foreach($qry3->rows as $row3){
                                     $cats[$row3['CategoryID']] = $lev1 .' > ' . $row2['CategoryName'] .' > ' . $row3['CategoryName'];
@@ -277,7 +277,7 @@ class ModelEbayOpenbay extends Model{
                         $cats[$row['CategoryID']] = $lev1;
                     }
                 }
-                
+
                 return $cats;
             }else{
                 return false;
@@ -286,12 +286,12 @@ class ModelEbayOpenbay extends Model{
             return false;
         }
     }
-    
+
     public function getCategory($parent){
         $this->load->language('openbay/openbay');
-        
+
         $json = array();
-        
+
         if(empty($parent)){
             $cat_qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_category` WHERE `CategoryID` = `CategoryParentID`");
         }else{
@@ -309,46 +309,46 @@ class ModelEbayOpenbay extends Model{
             if(empty($parent)){
                 $json['error'] = $this->language->get('error_category_sync');
             }
-            
+
             $json['items'] = null;
         }
-        
+
         return $json;
     }
-    
+
     public function getSuggestedCategories($qry){
         $this->load->language('openbay/openbay');
-        
+
         $response['data']   = $this->ebay->openbay_call('listing/getSuggestedCategories/', array('qry' => $qry));
 	$response['error']  = $this->ebay->lasterror;
         $response['msg']    = $this->ebay->lastmsg;
-        
+
         if(empty($response['data'])){
             $response['msg'] = $this->language->get('error_category_nosuggestions');
         }
-        
+
         return $response;
     }
-    
-    public function getShippingService($loc){        
+
+    public function getShippingService($loc){
         $json   = array();
         $sql    = "SELECT * FROM `" . DB_PREFIX . "ebay_shipping` WHERE `InternationalService` = '".$loc."' AND `site` = '3' AND `ValidForSellingFlow` = '1'";
         $qry    = $this->db->query($sql);
-        
+
         if($qry->num_rows){
             $json['svc'] = array();
             foreach($qry->rows as $row){
                 $json['svc'][] = $row;
             }
         }
-        
+
         return $json;
     }
-    
-    public function getShippingLocations(){             
+
+    public function getShippingLocations(){
         $sql = "SELECT * FROM `" . DB_PREFIX . "ebay_shipping_location` WHERE `shipping_location` != 'None' AND `shipping_location` != 'Worldwide'";
         $qry = $this->db->query($sql);
-        
+
         if($qry->num_rows){
             $json = array();
             foreach($qry->rows as $row){
@@ -359,14 +359,14 @@ class ModelEbayOpenbay extends Model{
             return false;
         }
     }
-    
-    public function getShippingServiceName($loc, $id){        
+
+    public function getShippingServiceName($loc, $id){
         $qry = $this->db->query("SELECT `description` FROM `" . DB_PREFIX . "ebay_shipping` WHERE `ShippingService` = '".$this->db->escape($id)."'");
         return $qry->row['description'];
     }
-    
-    public function getEbayCategorySpecifics($catId){
-	$response['data']   = $this->ebay->openbay_call('listing/getEbayCategorySpecifics/', array('id' => $catId));
+
+    public function getEbayCategorySpecifics($category_id){
+	$response['data']   = $this->ebay->openbay_call('listing/getEbayCategorySpecifics/', array('id' => $category_id));
         $response['error']  = $this->ebay->lasterror;
         $response['msg']    = $this->ebay->lastmsg;
         return $response;
@@ -390,43 +390,43 @@ class ModelEbayOpenbay extends Model{
     public function getPaymentTypes(){
         $cat_payment    = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_payment_method`");
         $payments       = array();
-        
+
         foreach($cat_payment->rows as $row){
             $payments[] = $row;
         }
 
         return $payments;
     }
-    
+
     public function getPopularCategories(){
         $res    = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_category_history` ORDER BY `used` DESC LIMIT 5");
         $cats   = array();
-        
+
         foreach($res->rows as $row){
             $cats[] = $row;
         }
-        
+
         return $cats;
     }
-    
+
     private function getCategoryStructure($id){
         $res = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_category` WHERE `CategoryID` = '".$this->db->escape($id)."' LIMIT 1");
         return $res->row;
     }
-        
+
     public function ebayVerifyAddItem($data, $options){
         if($options == 'yes'){
             $response['data'] = $this->ebay->openbay_call('listing/verifyFixedPrice/', $data);
         }else{
             $response['data'] = $this->ebay->openbay_call('listing/ebayVerifyAddItem/', $data);
         }
-        
+
 	    $response['error']  = $this->ebay->lasterror;
         $response['msg']    = $this->ebay->lastmsg;
-        
+
         return $response;
     }
-    
+
     public function ebayAddItem($data, $options){
         if($options == 'yes'){
             $response = $this->ebay->openbay_call('listing/addFixedPrice/', $data);
@@ -440,7 +440,7 @@ class ModelEbayOpenbay extends Model{
         $data2['data']   = $response;
         $data2['error']  = $this->ebay->lasterror;
         $data2['msg']    = $this->ebay->lastmsg;
-        
+
         if(!empty($response['ItemID'])){
             $this->ebay->createLink($data['product_id'], $response['ItemID'], $variant);
             $this->ebay->insertReserve($data, $response['ItemID'], $variant);
@@ -492,7 +492,7 @@ class ModelEbayOpenbay extends Model{
 			}
 		}
 	}
-    
+
     public function getProductStock($id){
         $res = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product` WHERE `product_id` = '".$this->db->escape($id)."' LIMIT 1");
 
@@ -515,29 +515,29 @@ class ModelEbayOpenbay extends Model{
             'variant'       => $variant
         );
     }
-    
+
     public function getUsage(){
         return $this->ebay->openbay_call('report/accountUse/');
     }
-    
+
     public function getPlans(){
         return $this->ebay->openbay_call('plan/getPlans/');
     }
-    
+
     public function getMyPlan(){
         return $this->ebay->openbay_call('plan/myPlan/');
     }
-    
+
     public function getLiveListingArray(){
         $qry = $this->db->query("SELECT `product_id`, `ebay_item_id` FROM `" . DB_PREFIX . "ebay_listing` WHERE `status` = 1");
-        
+
         $data = array();
         if($qry->num_rows){
             foreach($qry->rows as $row){
                 $data[$row['product_id']] = $row['ebay_item_id'];
             }
         }
-        
+
         return $data;
     }
 
@@ -545,15 +545,15 @@ class ModelEbayOpenbay extends Model{
         $this->request->post['domain'] = HTTPS_SERVER;
 
         $data = $this->ebay->openbay_call('account/validate/', $this->request->post, array(), 'json', 1);
-        
+
         if($this->ebay->lasterror == true){
             return array(
-                'error'     => $this->ebay->lasterror, 
+                'error'     => $this->ebay->lasterror,
                 'msg'       => $this->ebay->lastmsg
             );
         }else{
             return array(
-                'error'     => $this->ebay->lasterror, 
+                'error'     => $this->ebay->lasterror,
                 'msg'       => $this->ebay->lastmsg,
                 'data'      => $data
             );
@@ -565,7 +565,7 @@ class ModelEbayOpenbay extends Model{
         $this->ebay->log('Requesting stock report.');
         $this->response->setOutput(json_encode(array('msg' => 'Report has been requested')));
     }
-    
+
     public function editSave($data){
         $this->ebay->log('editSave() - start..');
 

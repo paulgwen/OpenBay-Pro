@@ -400,15 +400,79 @@ class ControllerOpenbayOpenbay extends Controller {
         $this->response->setOutput(json_encode($data));
     }
 
-    public function getEbayCategorySpecifics() {
+	public function getEbayCategorySpecifics() {
+		$this->load->model('ebay/openbay');
+		$this->load->model('catalog/product');
+		$this->load->model('catalog/attribute');
 
-        $this->load->model('ebay/openbay');
-        $data = $this->model_ebay_openbay->getEbayCategorySpecifics($this->request->get['category']);
-        $this->response->setOutput(json_encode($data));
-    }
+		$response = $this->model_ebay_openbay->getEbayCategorySpecifics($this->request->get['category_id']);
+
+		foreach($response['data']['Recommendations']['NameRecommendation'] as $name_recommendation_key => $name_recommendation) {
+			$recommendation_data_option = array(
+				'name' => $name_recommendation['Name'],
+				'validation' =>
+					array(
+						'max_values' => $name_recommendation['ValidationRules']['MaxValues'],
+						'selection_mode' => $name_recommendation['ValidationRules']['SelectionMode'],
+					),
+				'unmatched_value' => '',
+			);
+
+			if (isset($name_recommendation['ValueRecommendation'])) {
+				if (!isset($name_recommendation['ValueRecommendation']['Value'])) {
+					foreach($name_recommendation['ValueRecommendation'] as $value_recommendation_key => $value_recommendation) {
+						$recommendation_data_option['options'][] = $value_recommendation['Value'];
+					}
+				}
+			}
+
+			$recommendation_data[] = $recommendation_data_option;
+		}
+
+		if (isset($this->request->get['product_id'])) {
+			$product_attributes = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
+
+			foreach ($product_attributes as $product_attribute) {
+				$attribute_info = $this->model_catalog_attribute->getAttribute($product_attribute['attribute_id']);
+
+				if ($attribute_info) {
+					// search the ebay attribute results for a match
+					foreach($recommendation_data as $name_recommendation_key => $name_recommendation) {
+						if (strtolower($attribute_info['name']) == strtolower($name_recommendation['name'])) {
+							$preset_match_found = false;
+
+							if (isset($name_recommendation['options'])) {
+								foreach($name_recommendation['options'] as $value_recommendation_key => $value_recommendation) {
+
+									if (strtolower($value_recommendation) == strtolower($product_attribute['product_attribute_description'][$this->config->get('config_language_id')]['text'])) {
+										$preset_match_found = $value_recommendation_key;
+									}
+								}
+							}
+
+							if ($preset_match_found === false) {
+								if ($name_recommendation['validation']['selection_mode'] == 'FreeText') {
+									$recommendation_data[$name_recommendation_key]['unmatched_value'] = $product_attribute['product_attribute_description'][$this->config->get('config_language_id')]['text'];
+								}
+							} else {
+								$recommendation_data[$name_recommendation_key]['matched_value_key'] = $preset_match_found;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		$json = array(
+			'data' => $recommendation_data,
+			'msg' => $response['msg'],
+			'error' => $response['error'],
+		);
+
+		$this->response->setOutput(json_encode($json));
+	}
 
     public function getCategoryFeatures() {
-
         $this->load->model('ebay/openbay');
         $data = $this->model_ebay_openbay->getCategoryFeatures($this->request->get['category']);
         $this->response->setOutput(json_encode($data));

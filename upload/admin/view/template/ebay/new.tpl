@@ -7,15 +7,15 @@
     <?php } ?>
 
     <div class="box">
-      
+
     <div class="heading">
         <h1><img src="view/image/information.png" alt="" /> <?php echo $lang_page_title; ?></h1>
         <div class="buttons"><a onclick="confirmAction('<?php echo $cancel; ?>');" class="button" id="cancel_button"><span><?php echo $lang_cancel; ?></span></a></div>
     </div>
-      
+
     <div class="content" id="mainForm">
-        
-        <div id="tabs" class="htabs"> 
+
+        <div id="tabs" class="htabs">
             <a href="#tab-listing-general"><?php echo $lang_tab_general; ?></a>
             <a href="#tab-listing-feature"><?php echo $lang_tab_feature; ?></a>
             <a href="#tab-listing-catalog"><?php echo $lang_tab_ebay_catalog; ?></a>
@@ -26,10 +26,10 @@
             <a href="#tab-listing-shipping"><?php echo $lang_tab_shipping; ?></a>
             <a href="#tab-listing-returns"><?php echo $lang_tab_returns; ?></a>
         </div>
-        
+
         <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form">
 
-            <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>" />
+            <input type="hidden" name="product_id" value="<?php echo $product['product_id']; ?>" id="product-id" />
             <input type="hidden" name="auction_type" value="FixedPriceItem" />
             <input type="hidden" name="attributes" value="<?php echo $product['attributes']; ?>" />
 
@@ -160,7 +160,7 @@
                     </tr>
                 </table>
             </div>
-        
+
             <div id="tab-listing-images">
                 <table class="form">
                     <tr>
@@ -306,7 +306,7 @@
                 </table>
             <?php } ?>
         </div>
-        
+
             <div id="tab-listing-price">
                 <table class="form">
                     <tr>
@@ -645,7 +645,7 @@
                     </td>
                 </tr>
             </table>
-        
+
     </form>
 
 
@@ -897,7 +897,7 @@
 
     function getCategoryFeatures(cat){
         itemFeatures(cat);
-        
+
         $('#durationRow').hide();
         $('#durationLoading').show();
         $('#durationContainer').show();
@@ -956,7 +956,7 @@
         }
 
         var html = '';
-        
+
         $.ajax({
             url: 'index.php?route=openbay/openbay/searchEbayCatalog&token=<?php echo $token; ?>',
             type: 'POST',
@@ -978,7 +978,7 @@
                         $.each(data.data.productSearchResult.products, function(key, val){
                             processCatalogItem(val);
                         });
-                        
+
                         $('#showCatalogDiv').prepend('<div style="clear:both;"></div>').append('<div style="clear:both;"></div>');
                     }
                 }else{
@@ -994,7 +994,7 @@
             }
         });
     }
-    
+
     function processCatalogItem(val){
         html = '';
         html += '<div style="float:left; display:inline; width:365px; height:100px; padding:5px; margin-right:10px; margin-bottom:10px;" class="border">';
@@ -1043,82 +1043,114 @@
       return $('<div>').text(s).html();
     }
 
-    function itemFeatures(cat){
-        $.ajax({
-            url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category='+cat,
-            type: 'GET',
-            dataType: 'json',
-            beforeSend: function(){
-                $('#featureRow').show();        
-                $('#featLoading').show();
-                $('#showFeatureDiv').show();
-                $('#showFeatureDivPreload').hide();
-            },
-            success: function(data) {
-                if(data.error == false){
-                    $('#featureRow').empty();
-                    $('.optSpecifics').empty().hide();
+    function itemFeatures(category_id) {
+      $.ajax({
+        url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category_id=' + category_id + '&product_id=' + $('#product-id').val(),
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function() {
+          $('#featureRow').show();
+          $('#featLoading').show();
+          $('#showFeatureDiv').show();
+          $('#showFeatureDivPreload').hide();
+        },
+        success: function(data) {
+          if (data.error == false) {
+            $('#featureRow').empty();
+            $('.optSpecifics').empty().hide();
 
-                    var htmlInj = '';
-                    var htmlInj2 = '';
-                    var specificCount = 0;
-                    var field_value = '';
+            var html_inj = '';
+            var html_inj2 = '';
+            var specific_count = 0;
+            var field_value = '';
+            var show_other = false;
+            var show_other_value = '';
 
-                    if(data.data.Recommendations.NameRecommendation){
+            if (data.data) {
+              $.each(data.data, function(option_specific_key, option_specific_value) {
+                html_inj2 = '';
 
-                        data.data.Recommendations.NameRecommendation = $.makeArray(data.data.Recommendations.NameRecommendation);
+                html_inj += '<tr>';
+                html_inj += '<td class="ebaySpecificTitle">' + option_specific_value.name + '</td>';
+                html_inj += '<td>';
 
-                        $.each(data.data.Recommendations.NameRecommendation, function(key, val){
-                            htmlInj2 = '';
+                if (("options" in option_specific_value) && (option_specific_value.validation.max_values == 1)) {
+                  // matched_value_key in option_specific_value
+                  if ("matched_value_key" in option_specific_value) {
+                    $.each(option_specific_value.options, function(option_key, option) {
+                      if (option_specific_value.matched_value_key == option_key) {
+                        html_inj2 += '<option value="' + option + '" selected>' + option + '</option>';
+                      } else {
+                        html_inj2 += '<option value="' + option + '">' + option + '</option>';
+                      }
+                    });
+                  } else {
+                    html_inj2 += '<option disabled selected><?php echo $text_select; ?></option>';
 
-                            if(("ValueRecommendation" in val) && (val.ValidationRules.MaxValues == 1)){
-                                htmlInj2 += '<option value="">-- <?php echo $lang_select; ?> --</option>';
+                    $.each(option_specific_value.options, function(option_key, option) {
+                      html_inj2 += '<option value="' + option + '">' + option + '</option>';
+                    });
+                  }
 
-                                val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
+                  show_other = false;
+                  show_other_value = '';
 
-                                $.each(val.ValueRecommendation, function(key2, option){
-                                  field_value = option.Value.replace('"', '&quot;');
-                                  htmlInj2 += '<option value="'+field_value+'">'+option.Value+'</option>';
-                                });
-
-                                if(val.ValidationRules.SelectionMode == 'FreeText'){
-                                    htmlInj2 += '<option value="Other"><?php echo $lang_other; ?></option>';
-                                }
-
-                                htmlInj += '<tr><td class="ebaySpecificTitle">'+val.Name+'</td><td><select name="feat['+val.Name+']" class="ebaySpecificSelect" id="spec_sel_'+specificCount+'" onchange="toggleSpecOther('+specificCount+');">'+htmlInj2+'</select><span id="spec_'+specificCount+'_other" class="ebaySpecificSpan"><?php echo $lang_other; ?>:&nbsp;<input type="text" name="featother['+val.Name+']" class="ebaySpecificOther" /></span></td></tr>';
-                            }else if(("ValueRecommendation" in val) && (val.ValidationRules.MaxValues > 1)){
-                                htmlInj += '<tr><td class="ebaySpecificTitle">'+val.Name+'</td><td>';
-
-                                val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
-
-                                $.each(val.ValueRecommendation, function(key2, option){
-                                  field_value = option.Value.replace('"', '&quot;');
-                                  htmlInj += '<p><input type="checkbox" name="feat['+val.Name+'][]" value="'+field_value+'" />'+option.Value+'</p>';
-                                });
-
-                                htmlInj += '</td></tr>';
-                            }else{
-                                htmlInj += '<tr><td class="ebaySpecificTitle">'+val.Name+'</td><td><input type="text" name="feat['+val.Name+']" class="ebaySpecificInput" /></td></tr>';
-                            }
-
-                            specificCount++;
-                        });
-
-                        $('#featureRow').append(htmlInj);
-                    }else{
-                        $('#featureRow').text('None');
+                  if (option_specific_value.validation.selection_mode == 'FreeText') {
+                    if (option_specific_value.unmatched_value != '') {
+                      html_inj2 += '<option value="Other" selected><?php echo $lang_other; ?></option>';
+                      show_other = true;
+                      show_other_value = option_specific_value.unmatched_value;
+                    } else {
+                      html_inj2 += '<option value="Other"><?php echo $lang_other; ?></option>';
                     }
-                }else{
-                    if(data.msg == null){
-                        alert('<?php echo $lang_ajax_noload; ?>');
-                    }else{
-                        alert(data.msg);
-                    }
+                  }
+
+                  html_inj += '<select style="min-with:200px; padding:2px;" name="feat[' + option_specific_value.name + ']" id="spec_sel_' + specific_count + '" onchange="toggleSpecOther(' + specific_count + ');">' + html_inj2 + '</select>';
+
+                  if (show_other === true) {
+                    html_inj += '<span id="spec_' + specific_count + '_other">';
+                  } else {
+                    html_inj += '<span id="spec_' + specific_count + '_other" style="display:none;">';
+                  }
+                  html_inj += '<input style="margin-left:20px;" type="text" name="featother[' + option_specific_value.name + ']" value="' + show_other_value + '"/>';
+                  html_inj += '</span>';
+
+                } else if (("options" in option_specific_value) && (option_specific_value.validation.max_values > 1)) {
+
+                  $.each(option_specific_value.options, function(option_key, option) {
+                    html_inj += '<p>';
+                    html_inj += '<input type="checkbox" name="feat[' + option_specific_value.name + '][]" value="' + option + '" /> ' + option;
+                    html_inj += '</p>';
+                  });
+                } else {
+                  html_inj += '<input type="text" name="feat[' + option_specific_value.name + ']" class="ebaySpecificInput" value="' + option_specific_value.unmatched_value + '" /></td>';
                 }
+                html_inj += '</td>';
+                html_inj += '</tr>';
 
-                $('#featLoading').hide();
+                specific_count++;
+              });
+
+              $('#featureRow').append(html_inj);
+            } else {
+              $('#featureRow').text('None');
             }
-        });
+          } else {
+            if (data.msg == null) {
+              alert('<?php echo $lang_ajax_noload; ?>');
+            } else {
+              alert(data.msg);
+            }
+          }
+
+          $('#featLoading').hide();
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          if (xhr.status != 0) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+          }
+        }
+      });
     }
 
     function toggleSpecOther(id){
@@ -1176,7 +1208,7 @@
 
                     html += '<p class="shipping_' + id + '_' + count + '"><label><?php echo $lang_shipping_first; ?></label><input type="text" name="price_' + id + '[' + count + ']" style="width:50px;" value="0.00" />';
                     html += '&nbsp;&nbsp;<label><?php echo $lang_shipping_add; ?></label><input type="text" name="priceadditional_' + id + '[' + count + ']" style="width:50px;" value="0.00" />&nbsp;&nbsp;<a onclick="removeShipping(\'' + id + '\',\'' + count + '\');" class="button"><span><?php echo $lang_btn_remove; ?></span></a></p>';
-                    html += '<div style="clear:both;" class="shipping_' + id + '_' + count + '"></div>';    
+                    html += '<div style="clear:both;" class="shipping_' + id + '_' + count + '"></div>';
                     $('#'+id+'Btn').append(html);
                 }
         });
@@ -1552,12 +1584,12 @@
     function profileShippingUpdate(){
         if($('#profile_shipping').val() != 'def'){
             $('#profileShippingLoading').show();
-            
+
             $.ajax({
                 type:'GET',
                 dataType: 'json',
                 url: 'index.php?route=ebay/profile/profileGet&token=<?php echo $token; ?>&ebay_profile_id='+$('#profile_shipping').val(),
-                success: function(data){ 
+                success: function(data){
                     setTimeout(function(){
                         $('#location').val(data.data.location);
                         $('#postcode').val(data.data.postcode);
@@ -1720,7 +1752,7 @@
 
         image_upload('option_image_input_'+grp_id+'_'+id+'_'+count, 'option_image_img_'+grp_id+'_'+id+'_'+count,'option_image_'+grp_id+'_'+id+'_'+count,'option_image_input_'+grp_id+'_'+id+'_'+count);
     }
-    
+
     function confirmAction(url){
 	if (confirm("<?php echo $lang_confirm_action; ?>")){
             window.location = url;
@@ -1781,12 +1813,12 @@
         <?php } ?>
 
         <?php if($product['profiles_shipping_def'] > 0){ ?>
-            $('#profile_shipping').val(<?php echo $product['profiles_shipping_def']; ?>); 
+            $('#profile_shipping').val(<?php echo $product['profiles_shipping_def']; ?>);
             profileShippingUpdate();
         <?php } ?>
 
         <?php if($product['profiles_theme_def'] > 0){ ?>
-            $('#profile_theme').val(<?php echo $product['profiles_theme_def']; ?>); 
+            $('#profile_theme').val(<?php echo $product['profiles_theme_def']; ?>);
             profileThemeUpdate();
         <?php } ?>
     });
