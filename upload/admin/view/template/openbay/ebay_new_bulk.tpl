@@ -27,7 +27,7 @@
 
                             <div class="box mTop15 listingBox" id="p_row_<?php echo $i; ?>">
                                 <input type="hidden" class="pId openbayData_<?php echo $i; ?>" name="pId" value="<?php echo $i; ?>" />
-                                <input type="hidden" class="openbayData_<?php echo $i; ?>" name="product_id" value="<?php echo $product['product_id']; ?>" />
+                                <input type="hidden" class="openbayData_<?php echo $i; ?>" name="product_id" value="<?php echo $product['product_id']; ?>" id="product-id-<?php echo $i; ?>" />
                                 <div class="heading">
                                     <div id="p_row_title_<?php echo $i; ?>" style="float:left;" class="displayNone bold m0 p10"></div>
                                     <div id="p_row_buttons_<?php echo $i; ?>" class="buttons right">
@@ -296,28 +296,28 @@
             success: function(data) {
                 $('#suggestedCat_'+id).empty();
 
-                var htmlInj = '';
+                var html_inj = '';
 
                 if(data.error == false && data.data){
                     var i = 1;
 
                         $.each(data.data, function(key,val){
                             if(val.percent != 0) {
-                                htmlInj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="suggested_category_'+id+'" name="suggested_'+id+'" value="'+val.id+'" onchange="categorySuggestedChange('+val.id+','+id+')"';
+                                html_inj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="suggested_category_'+id+'" name="suggested_'+id+'" value="'+val.id+'" onchange="categorySuggestedChange('+val.id+','+id+')"';
                                 if(i == 1){
-                                    htmlInj += ' checked="checked"';
+                                    html_inj += ' checked="checked"';
                                     categorySuggestedChange(val.id, id);
                                 }
-                                htmlInj += '/> ('+val.percent+'% match) '+val.name+'</p>';
+                                html_inj += '/> ('+val.percent+'% match) '+val.name+'</p>';
                             }
                             i++;
                         });
 
-                        htmlInj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="manual_use_category_'+id+'" name="suggested_'+id+'" value="" onchange="useManualCategory('+id+')" /> Choose category</p>';
-                        $('#suggestedCat_'+id).html(htmlInj);
+                        html_inj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="manual_use_category_'+id+'" name="suggested_'+id+'" value="" onchange="useManualCategory('+id+')" /> Choose category</p>';
+                        $('#suggestedCat_'+id).html(html_inj);
                 }else{
-                    htmlInj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="manual_use_category_'+id+'" name="suggested_'+id+'" value="" onchange="useManualCategory('+id+')" checked="checked" /> Choose category</p>';
-                    $('#suggestedCat_'+id).html(htmlInj);
+                    html_inj += '<p style="margin:0px; padding:0 0 0 10px;"><input type="radio" id="manual_use_category_'+id+'" name="suggested_'+id+'" value="" onchange="useManualCategory('+id+')" checked="checked" /> Choose category</p>';
+                    $('#suggestedCat_'+id).html(html_inj);
                     useManualCategory(id);
                 }
 
@@ -416,22 +416,22 @@
             beforeSend: function(){ addCount(); },
             success: function(data) {
                 if(data.error == false){
-                    var htmlInj = '';
+                    var html_inj = '';
 
                     listingDuration(data.data.durations, id);
 
                     if(data.data.conditions){
                         $.each(data.data.conditions, function(key, val){
-                            htmlInj += '<option value='+val.id+'>'+val.name+'</option>';
+                            html_inj += '<option value='+val.id+'>'+val.name+'</option>';
                         });
 
-                        if(htmlInj == ''){
+                        if(html_inj == ''){
                             $('#conditionRow_'+id).empty();
                             $('#conditionContainer_'+id).hide();
                             $('#conditionRow_'+id).hide();
                             $('#conditionLoading_'+id).hide();
                         }else{
-                            $('#conditionRow_'+id).empty().html(htmlInj);
+                            $('#conditionRow_'+id).empty().html(html_inj);
                             $('#conditionRow_'+id).show();
                             $('#conditionLoading_'+id).hide();
                         }
@@ -454,71 +454,92 @@
       return $('<div>').text(s).html();
     }
 
-    function itemFeatures(cat, id){
-        $('#editFeature_'+id).hide();
+    function itemFeatures(category_id, id){
+        $('#editFeature_' + id).hide();
 
         $.ajax({
-            url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category='+cat,
+            url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category_id=' + category_id + '&product_id=' + $('#product-id-' + id).val(),
             type: 'GET',
             dataType: 'json',
             beforeSend: function(){ addCount(); },
             success: function(data) {
                 if(data.error == false){
-                    $('#featureRow_'+id).empty();
+                  $('#featureRow_'+id).empty();
 
-                    var htmlInj = '';
-                    var htmlInj2 = '';
-                    var specificCount = 0;
-                    var field_value = '';
+                  var html_inj = '';
+                  var html_inj2 = '';
+                  var specific_count = 0;
+                  var field_value = '';
+                  var show_other = false;
+                  var show_other_value = '';
+                  var product_id = $('#product-id-' + id).val();
 
-                    if(data.data.Recommendations.NameRecommendation){
+                  if(data.data){
+                    $.each(data.data, function(option_specific_key, option_specific_value) {
+                        html_inj2 = '';
 
-                        data.data.Recommendations.NameRecommendation = $.makeArray(data.data.Recommendations.NameRecommendation);
+                      html_inj += '<tr>';
+                      html_inj += '<td class="ebaySpecificTitle left">'+option_specific_value.name+'</td>';
+                      html_inj += '<td>';
 
-                        $.each(data.data.Recommendations.NameRecommendation, function(key, val){
-                            htmlInj2 = '';
+                        if (("options" in option_specific_value) && (option_specific_value.validation.max_values == 1)) {
+                          // matched_value_key in option_specific_value
+                          if ("matched_value_key" in option_specific_value) {
+                            $.each(option_specific_value.options, function(option_key, option) {
+                              if (option_specific_value.matched_value_key == option_key) {
+                                html_inj2 += '<option value="' + option + '" selected>' + option + '</option>';
+                              } else {
+                                html_inj2 += '<option value="' + option + '">' + option + '</option>';
+                              }
+                            });
+                          } else {
+                            html_inj2 += '<option disabled selected><?php echo $text_select; ?></option>';
 
-                            if(("ValueRecommendation" in val) && (val.ValidationRules.MaxValues == 1)){
-                                htmlInj2 += '<option value="">-- <?php echo $lang_select; ?> --</option>';
+                            $.each(option_specific_value.options, function(option_key, option) {
+                              html_inj2 += '<option value="' + option + '">' + option + '</option>';
+                            });
+                          }
 
-                                //force an array in case of single element
-                                val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
+                          show_other = false;
+                          show_other_value = '';
 
-                                $.each(val.ValueRecommendation, function(key2, option){
-                                  field_value = option.Value.replace('"', '&quot;');
-                                  htmlInj2 += '<option value="'+field_value+'">'+option.Value+'</option>';
-                                });
-
-                                if(val.ValidationRules.SelectionMode == 'FreeText'){
-                                    htmlInj2 += '<option value="Other"><?php echo $lang_other; ?></option>';
-                                }
-                                htmlInj += '<tr><td class="ebaySpecificTitle left">'+val.Name+'</td><td><select name="feat['+val.Name+']" class="ebaySpecificSelect openbayData_'+id+' left" id="spec_sel_'+specificCount+'" onchange="toggleSpecOther('+specificCount+');">'+htmlInj2+'</select><br /><span id="spec_'+specificCount+'_other" class="ebaySpecificSpan"><p><?php echo $lang_other; ?>:&nbsp;<input type="text" name="featother['+val.Name+']" class="ebaySpecificOther openbayData_'+id+'" /></p></span></td></tr>';
-
-                            }else if(("ValueRecommendation" in val) && (val.ValidationRules.MaxValues > 1)){
-                                htmlInj += '<tr><td class="ebaySpecificTitle left">'+val.Name+'</td><td class="left">';
-
-                                //force an array in case of single element
-                                val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
-
-                                $.each(val.ValueRecommendation, function(key2, option){
-                                  field_value = option.Value.replace('"', '&quot;');
-                                  htmlInj += '<p><input type="checkbox" name="feat['+val.Name+'][]" value="'+field_value+'" class="openbayData_'+id+'"/>'+option.Value+'</p>';
-                                });
-
-                                htmlInj += '</td></tr>';
-                            }else{
-                                htmlInj += '<tr><td class="ebaySpecificTitle left">'+val.Name+'</td><td><input type="text" name="feat['+val.Name+']" class="ebaySpecificInput openbayData_'+id+' left" /></td></tr>';
+                          if (option_specific_value.validation.selection_mode == 'FreeText') {
+                            if (option_specific_value.unmatched_value != '') {
+                              html_inj2 += '<option value="Other" selected><?php echo $lang_other; ?></option>';
+                              show_other = true;
+                              show_other_value = option_specific_value.unmatched_value;
+                            } else {
+                              html_inj2 += '<option value="Other"><?php echo $lang_other; ?></option>';
                             }
+                          }
 
-                            specificCount++;
-                        });
+                          html_inj += '<select class="ebaySpecificSelect openbayData_' + id + ' left" style="min-with:200px; padding:5px 2px;" name="feat[' + option_specific_value.name + ']" id="spec_sel_' + specific_count + '" onchange="toggleSpecOther(' + specific_count + ');">' + html_inj2 + '</select>';
 
+                          if (show_other === true) {
+                            html_inj += '<p id="spec_' + specific_count + '_other">';
+                          } else {
+                            html_inj += '<p id="spec_' + specific_count + '_other" style="display:none;">';
+                          }
+                          html_inj += '<input class="ebaySpecificOther openbayData_' + id + ' left" type="text" name="featother[' + option_specific_value.name + ']" value="' + show_other_value + '"/>';
+                          html_inj += '</p>';
+                        } else if (("options" in option_specific_value) && (option_specific_value.validation.max_values > 1)) {
+                          $.each(option_specific_value.options, function(option_key, option) {
+                            html_inj += '<p class="left"><input type="checkbox" name="feat[' + option_specific_value.name + '][]" value="' + option + '" class="openbayData_'+id+'"/>' + option + '</p>';
+                          });
+                        }else{
+                          html_inj += '<input type="text" name="feat[' + option_specific_value.name + ']" class="ebaySpecificInput openbayData_' + id + ' left" value="' + option_specific_value.unmatched_value + '" />';
+                        }
 
-                        $('#featureRow_'+id).append(htmlInj);
-                    }else{
-                        $('#featureRow_'+id).text('None');
-                    }
-                }else{
+                        html_inj += '</td></tr>';
+
+                        specific_count++;
+                    });
+
+                    $('#featureRow_'+id).append(html_inj);
+                  } else {
+                    $('#featureRow_'+id).text('None');
+                  }
+                } else {
                     alert(data.msg);
                 }
 
@@ -626,14 +647,14 @@
         lang["Days_30"]     = '30 Days';
         lang["GTC"]         = 'GTC';
 
-        htmlInj        = '';
+        html_inj        = '';
         $.each(data, function(key, val){
-            htmlInj += '<option value="'+val+'"';
-            if(val == listingDefault){ htmlInj += ' selected="selected"';}
-            htmlInj += '>'+lang[val]+'</option>';
+            html_inj += '<option value="'+val+'"';
+            if(val == listingDefault){ html_inj += ' selected="selected"';}
+            html_inj += '>'+lang[val]+'</option>';
         });
 
-        $('#durationRow_'+id).empty().html(htmlInj);
+        $('#durationRow_'+id).empty().html(html_inj);
         $('#durationRow_'+id).show();
         $('#durationLoading_'+id).hide();
     }

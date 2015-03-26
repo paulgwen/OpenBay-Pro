@@ -1167,7 +1167,7 @@
                     var html_inj2 = '';
                     var specific_count = 0;
                     var field_value = '';
-                    var show_other = 0;
+                    var show_other = false;
                     var show_other_value = '';
 
                   if (data.data) {
