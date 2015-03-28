@@ -114,7 +114,7 @@
                         <td style="vertical-align:top; padding-top:15px;"><?php echo $lang_category_features; ?></td>
                         <td>
                             <img src="<?php echo HTTPS_SERVER; ?>view/image/loading.gif" id="featLoading" class="displayNone" />
-                            <table class="form" id="featureRow"></table>
+                            <table class="form" id="feature-row"></table>
                         </td>
                     </tr>
                 </table>
@@ -797,7 +797,7 @@
                         $('#cSelectionsRow').show();
                         $('#showFeatureDiv').hide();
                         $('#showCatalogDiv').hide();
-                        $('#featureRow').empty();
+                        $('#feature-row').empty();
                         $('#specifics').empty();
                         $('input[name=popular]').removeAttr('checked');
                         $('#popular_default').prop('checked', 'checked');
@@ -834,7 +834,7 @@
     function loadCategories(level, skip){
         $('#showFeatureDiv').hide();
         $('#showCatalogDiv').hide();
-        $('#featureRow').empty();
+        $('#feature-row').empty();
         $('#specifics').empty();
 
         if(level == 1){
@@ -1049,14 +1049,14 @@
         type: 'GET',
         dataType: 'json',
         beforeSend: function() {
-          $('#featureRow').show();
+          $('#feature-row').show();
           $('#featLoading').show();
           $('#showFeatureDiv').show();
           $('#showFeatureDivPreload').hide();
         },
         success: function(data) {
           if (data.error == false) {
-            $('#featureRow').empty();
+            $('#feature-row').empty();
             $('.optSpecifics').empty().hide();
 
             var html_inj = '';
@@ -1085,7 +1085,7 @@
                       }
                     });
                   } else {
-                    html_inj2 += '<option disabled selected><?php echo $text_select; ?></option>';
+                    html_inj2 += '<option disabled selected></option>';
 
                     $.each(option_specific_value.options, function(option_key, option) {
                       html_inj2 += '<option value="' + option + '">' + option + '</option>';
@@ -1131,9 +1131,9 @@
                 specific_count++;
               });
 
-              $('#featureRow').append(html_inj);
+              $('#feature-row').append(html_inj);
             } else {
-              $('#featureRow').text('None');
+              $('#feature-row').text('None');
             }
           } else {
             if (data.msg == null) {
@@ -1529,7 +1529,7 @@
         $('#cSelectionsRow').show();
         $('#showFeatureDiv').hide();
         $('#showCatalogDiv').hide();
-        $('#featureRow').empty();
+        $('#feature-row').empty();
         $('#specifics').empty();
         $('input[name=suggested]').removeAttr('checked');
         $('#suggested_default').prop('checked', 'checked');

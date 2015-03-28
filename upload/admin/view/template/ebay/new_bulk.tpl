@@ -493,7 +493,7 @@ function itemFeatures(category_id, id){
                   }
                 });
               } else {
-                html_inj2 += '<option disabled selected><?php echo $text_select; ?></option>';
+                html_inj2 += '<option disabled selected></option>';
 
                 $.each(option_specific_value.options, function(option_key, option) {
                   html_inj2 += '<option value="' + option + '">' + option + '</option>';

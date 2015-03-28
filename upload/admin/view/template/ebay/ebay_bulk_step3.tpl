@@ -103,10 +103,19 @@
               <img id="duration-loading" src="view/image/loading.gif" />
             </td>
           </tr>
-          <tr id="feature-container" class="displayNone">
+          <tr class="displayNone feature-mapping-container">
+            <td style="vertical-align:top; padding-top:15px;"><?php echo $entry_mapping_choose; ?></td>
+            <td>
+              <select name="auto_mapping" id="auto-mapping" class="width200">
+                <option value="1" selected><?php echo $text_yes; ?></option>
+                <option value="0"><?php echo $text_no; ?></option>
+              </select>
+            </td>
+          </tr>
+          <tr class="displayNone feature-container">
             <td style="vertical-align:top; padding-top:15px;"><?php echo $entry_category_features; ?></td>
             <td>
-              <table class="form" id="feature-row"></table>
+              <table class="form" id="feature-row" style="display:none;"></table>
               <img id="feature-loading" src="view/image/loading.gif" />
             </td>
           </tr>
@@ -121,7 +130,8 @@ function loadCategories(level, skip) {
   $('#condition-container').hide();
   $('#duration-container').hide();
   $('#feature-row').empty();
-  $('#feature-container').hide();
+  $('.feature-container').hide();
+  $('.feature-mapping-container').hide();
 
   if (level == 1) {
     var parent = '';
@@ -200,7 +210,7 @@ function getCategoryFeatures(cat) {
     dataType: 'json',
     success: function(data) {
       if (data.error == false) {
-        var htmlInj = '';
+        var html_inj = '';
         listingDuration(data.data.durations);
 
         if (data.data.conditions) {
@@ -210,10 +220,10 @@ function getCategoryFeatures(cat) {
             data.data.conditions = $.makeArray(data.data.conditions);
 
             $.each(data.data.conditions, function(key, val) {
-              htmlInj += '<option value='+val.id+'>'+val.name+'</option>';
+              html_inj += '<option value='+val.id+'>'+val.name+'</option>';
             });
 
-            $('#condition-row').empty().html(htmlInj);
+            $('#condition-row').empty().html(html_inj);
             $('#condition-row').show();
             $('#condition-loading').hide();
           }
@@ -234,72 +244,70 @@ function getCategoryFeatures(cat) {
   });
 }
 
-function itemFeatures(cat) {
+function itemFeatures(category_id) {
   $('#feature-row').hide();
   $('#feature-loading').show();
-  $('#feature-container').show();
+  $('.feature-mapping-container').show();
 
   $.ajax({
-    url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category='+cat,
+    url: 'index.php?route=openbay/openbay/getEbayCategorySpecifics&token=<?php echo $token; ?>&category_id=' + category_id,
     type: 'GET',
     dataType: 'json',
     beforeSend: function() {
       $('#feature-row').empty();
       $('.optSpecifics').empty().hide();
+      $('#feature-loading').show();
     },
     success: function(data) {
       if (data.error == false) {
 
-        var htmlInj = '';
-        var htmlInj2 = '';
-        var specificCount = 0;
-        var field_value = '';
+        var html_inj = '';
+        var html_inj2 = '';
+        var specific_count = 0;
 
-        if (data.data.Recommendations.NameRecommendation) {
-          data.data.Recommendations.NameRecommendation = $.makeArray(data.data.Recommendations.NameRecommendation);
+        if (data.data) {
+          $.each(data.data, function(option_specific_key, option_specific_value) {
+            html_inj2 = '';
 
-          $.each(data.data.Recommendations.NameRecommendation, function(key, val) {
-            htmlInj2 = '';
+            html_inj += '<tr>';
+            html_inj += '<td class="ebaySpecificTitle">' + option_specific_value.name + '</td>';
+            html_inj += '<td>';
 
-            if (("ValueRecommendation" in val) && (val.ValidationRules.MaxValues == 1)) {
-              htmlInj2 += '<option value=""><?php echo $text_select; ?></option>';
+            if (("options" in option_specific_value) && (option_specific_value.validation.max_values == 1)) {
+              html_inj2 += '<option disabled selected></option>';
 
-              val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
-
-              $.each(val.ValueRecommendation, function(key2, option) {
-                field_value = option.Value.replace('"', '&quot;');
-                htmlInj2 += '<option value="'+field_value+'">'+option.Value+'</option>';
+              $.each(option_specific_value.options, function(option_key, option) {
+                html_inj2 += '<option value="' + option + '">' + option + '</option>';
               });
 
-              if (val.ValidationRules.SelectionMode == 'FreeText') {
-                htmlInj2 += '<option value="Other"><?php echo $text_other; ?></option>';
+              if (option_specific_value.validation.selection_mode == 'FreeText') {
+                  html_inj2 += '<option value="Other">Other</option>';
               }
 
-              htmlInj += '<tr><td class="ebay-specific-title">'+val.Name+'</td><td><select name="feat['+val.Name+']" class="ebay-specific-select" id="spec_sel_'+specificCount+'" onchange="toggleSpecOther('+specificCount+');">'+htmlInj2+'</select><span id="spec_'+specificCount+'_other" class="ebaySpecificSpan"><?php echo $text_other; ?>:&nbsp;<input type="text" name="featother['+val.Name+']" class="ebaySpecificOther" /></span></td></tr>';
-            }else if (("ValueRecommendation" in val) && (val.ValidationRules.MaxValues > 1)) {
-              htmlInj += '<tr><td class="ebay-specific-title">'+val.Name+'</td><td>';
+              html_inj += '<select style="min-with:200px; padding:2px;" name="feat[' + option_specific_value.name + ']" id="spec_sel_' + specific_count + '" onchange="toggleSpecOther(' + specific_count + ');">' + html_inj2 + '</select>';
+              html_inj += '<span id="spec_' + specific_count + '_other" style="display:none;">';
+                html_inj += '<input style="margin-left:20px;" type="text" name="featother[' + option_specific_value.name + ']"/>';
+              html_inj += '</span>';
 
-              val.ValueRecommendation = $.makeArray(val.ValueRecommendation);
-
-              $.each(val.ValueRecommendation, function(key2, option) {
-                field_value = option.Value.replace('"', '&quot;');
-                htmlInj += '<p><input type="checkbox" name="feat['+val.Name+'][]" value="'+field_value+'" />'+option.Value+'</p>';
+            } else if (("options" in option_specific_value) && (option_specific_value.validation.max_values > 1)) {
+              $.each(option_specific_value.options, function(option_key, option) {
+                html_inj += '<p>';
+                html_inj += '<input type="checkbox" name="feat[' + option_specific_value.name + '][]" value="' + option + '" /> ' + option;
+                html_inj += '</p>';
               });
-
-              htmlInj += '</td></tr>';
-            }else{
-              htmlInj += '<tr><td class="ebay-specific-title">'+val.Name+'</td><td><input type="text" name="feat['+val.Name+']" class="ebaySpecificInput" /></td></tr>';
+            } else {
+              html_inj += '<input type="text" name="feat[' + option_specific_value.name + ']" class="ebaySpecificInput" /></td>';
             }
+            html_inj += '</td>';
+            html_inj += '</tr>';
 
-            specificCount++;
+            specific_count++;
           });
 
-          $('#feature-row').append(htmlInj).show();
+          $('#feature-row').append(html_inj).show();
         } else {
-          $('#feature-row').text('None').show;
+          $('#feature-row').text('None').show();
         }
-
-        $('#feature-loading').hide();
       }else{
         if (data.msg == null) {
           alert('<?php echo $error_ajax_noload; ?>');
@@ -307,6 +315,8 @@ function itemFeatures(cat) {
           alert(data.msg);
         }
       }
+
+      $('#feature-loading').hide();
     },
     error: function (xhr, ajaxOptions, thrownError) {
       if (xhr.status != 0) {
@@ -328,19 +338,27 @@ function listingDuration(data) {
   lang["Days_30"]     = '<?php echo $text_listing_30day; ?>';
   lang["GTC"]         = '<?php echo $text_listing_gtc; ?>';
 
-  htmlInj        = '';
+  html_inj        = '';
 
   data = $.makeArray(data);
 
   $.each(data, function(key, val) {
-    htmlInj += '<option value="'+val+'"';
-    if (val == listing_default) { htmlInj += ' selected="selected"';}
-    htmlInj += '>'+lang[val]+'</option>';
+    html_inj += '<option value="'+val+'"';
+    if (val == listing_default) { html_inj += ' selected="selected"';}
+    html_inj += '>'+lang[val]+'</option>';
   });
 
-  $('#duration-row').empty().html(htmlInj).show();
+  $('#duration-row').empty().html(html_inj).show();
   $('#duration-loading').hide();
 }
+
+$('#auto-mapping').bind('change', function() {
+  if($(this).val() == 0) {
+    $('.feature-container').show();
+  } else {
+    $('.feature-container').hide();
+  }
+});
 
 $('input[name=popular]').bind('change', function() {
   if ($(this).val() != '') {
@@ -351,7 +369,8 @@ $('input[name=popular]').bind('change', function() {
     $('#condition-container').hide();
     $('#duration-container').hide();
     $('#feature-row').empty();
-    $('#feature-container').hide();
+    $('.feature-container').hide();
+    $('.feature-mapping-container').hide();
   }
 });
 

@@ -287,6 +287,7 @@ class ControllerEbayEbayListing extends Controller {
 		$this->data['entry_profile_theme'] = $this->language->get('entry_profile_theme');
 		$this->data['entry_profile_generic'] = $this->language->get('entry_profile_generic');
 		$this->data['entry_category_popular'] = $this->language->get('entry_category_popular');
+		$this->data['entry_mapping_choose'] = $this->language->get('entry_mapping_choose');
 		$this->data['text_listing_1day'] = $this->language->get('text_listing_1day');
 		$this->data['text_listing_3day'] = $this->language->get('text_listing_3day');
 		$this->data['text_listing_5day'] = $this->language->get('text_listing_5day');
@@ -295,6 +296,8 @@ class ControllerEbayEbayListing extends Controller {
 		$this->data['text_listing_30day'] = $this->language->get('text_listing_30day');
 		$this->data['text_listing_gtc'] = $this->language->get('text_listing_gtc');
 		$this->data['text_none'] = $this->language->get('text_none');
+		$this->data['text_yes'] = $this->language->get('text_yes');
+		$this->data['text_no'] = $this->language->get('text_no');
 		$this->data['help_category_popular'] = $this->language->get('help_category_popular');
 
 		$this->data['profiles']['shipping'] = $this->model_ebay_profile->getAll(0);
