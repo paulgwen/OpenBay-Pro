@@ -361,13 +361,48 @@ class ControllerEbayEbayListing extends Controller {
 		if (isset($this->session->data['bulk_category_list']['ebay_data'])) {
 			$bulk_data = array();
 
-			//load all of the listing defaults and assign to correct variable names
 			$profile_shipping = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_shipping']);
 			$profile_return = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_returns']);
 			$profile_template = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_theme']);
 			$profile_generic = $this->model_ebay_profile->get($this->session->data['bulk_category_list']['ebay_data']['profile_generic']);
 			$payments = $this->model_ebay_openbay->getPaymentTypes();
 			$payments_accepted = $this->config->get('ebay_payment_types');
+
+			/**
+			 * get the eBay category features again if auto-mapping
+			 */
+			$recommendation_data_names = array();
+			$recommendation_data_values = array();
+
+			if ($this->session->data['bulk_category_list']['ebay_data']['auto_mapping'] == 1) {
+				$category_specifics = $this->model_ebay_openbay->getEbayCategorySpecifics($this->session->data['bulk_category_list']['ebay_data']['category_id']);
+
+				if (isset($category_specifics['data']['Recommendations']['NameRecommendation'])) {
+					$recommendation_count = 1;
+
+					foreach($category_specifics['data']['Recommendations']['NameRecommendation'] as $name_recommendation_key => $name_recommendation) {
+						$recommendation_data_names[$recommendation_count] = strtolower((string)$name_recommendation['Name']);
+
+						$recommendation_data_option = array(
+							'max_values' => (int)$name_recommendation['ValidationRules']['MaxValues'],
+							'selection_mode' => (string)$name_recommendation['ValidationRules']['SelectionMode'],
+							'options' => array(),
+						);
+
+						if (isset($name_recommendation['ValueRecommendation'])) {
+							if (!isset($name_recommendation['ValueRecommendation']['Value'])) {
+								foreach($name_recommendation['ValueRecommendation'] as $value_recommendation_key => $value_recommendation) {
+									$recommendation_data_option['options'][] = strtolower((string)$value_recommendation['Value']);
+								}
+							}
+						}
+
+						$recommendation_data_values[$recommendation_count] = $recommendation_data_option;
+
+						$recommendation_count++;
+					}
+				}
+			}
 
 			foreach($this->session->data['bulk_category_list']['products'] as $product_id) {
 				$product_data = array();
@@ -386,8 +421,6 @@ class ControllerEbayEbayListing extends Controller {
 				$product_data['price'][0] 			= $product_info['price'];
 				$product_data['qty'][0] 			= (int)$product_info['quantity'];
 				$product_data['product_id'] 		= (int)$product_id;
-				$product_data['feat'] 				= !empty($this->session->data['bulk_category_list']['ebay_data']['feat']) ? $this->session->data['bulk_category_list']['ebay_data']['feat'] : array();
-				$product_data['featother'] 			= !empty($this->session->data['bulk_category_list']['ebay_data']['featother']) ? $this->session->data['bulk_category_list']['ebay_data']['featother'] : array();
 				$product_data['auction_duration'] 	= $this->session->data['bulk_category_list']['ebay_data']['auction_duration'];
 				$product_data['condition'] 			= (isset($this->session->data['bulk_category_list']['ebay_data']['condition']) && $this->session->data['bulk_category_list']['ebay_data']['condition'] != 0 ? $this->session->data['bulk_category_list']['ebay_data']['condition'] : '');
 				$product_data['auction_type'] 		= 'FixedPriceItem';
@@ -440,7 +473,6 @@ class ControllerEbayEbayListing extends Controller {
 				$product_data['gallery_plus'] 		= $profile_template['data']['ebay_gallery_plus'];
 				$product_data['gallery_super'] 		= $profile_template['data']['ebay_supersize'];
 				$product_data['private_listing'] 	= $profile_generic['data']['private_listing'];
-				$product_data['attributes'] 		= base64_encode(json_encode($this->model_ebay_openbay->getProductAttributes($product_id)));
 
 				$product_data['payments'] = array();
 				foreach($payments as $payment) {
@@ -471,7 +503,6 @@ class ControllerEbayEbayListing extends Controller {
 					$tmp_gallery_array = array();
 					$tmp_thumb_array = array();
 
-					//if the user has not set the exclude default image, add it to the array for theme images.
 					$key_offset = 0;
 					if (!isset($profile_template['data']['default_img_exclude']) || $profile_template['data']['default_img_exclude'] != 1) {
 						$tmp_gallery_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
@@ -493,6 +524,40 @@ class ControllerEbayEbayListing extends Controller {
 					$product_data['image_location'] = HTTPS_CATALOG . 'image/';
 				} else {
 					$product_data['image_location'] = HTTP_CATALOG . 'image/';
+				}
+
+				$product_attributes = $this->model_ebay_openbay->getProductAttributes($product_id);
+
+				$product_data['attributes'] = base64_encode(json_encode($product_attributes));
+
+				if ($this->session->data['bulk_category_list']['ebay_data']['auto_mapping'] == 1) {
+					$product_data['feat'] = array();
+					$product_data['featother'] = array();
+
+					if (!empty($product_attributes)) {
+						foreach ($product_attributes as $product_attribute_group) {
+							if (!empty($product_attribute_group['attribute'])) {
+								foreach ($product_attribute_group['attribute'] as $product_attribute) {
+									if (in_array(strtolower($product_attribute['name']), $recommendation_data_names)) {
+										// get the array key
+										$attribute_key = array_search(strtolower($product_attribute['name']), $recommendation_data_names);
+
+										if (in_array(strtolower($product_attribute['text']), $recommendation_data_values[$attribute_key]['options'])) {
+											$product_data['feat'][$product_attribute['name']] = $product_attribute['text'];
+										} else {
+											if ($recommendation_data_values[$attribute_key]['selection_mode'] == 'FreeText') {
+												$product_data['feat'][$product_attribute['name']] = '';
+												$product_data['featother'][$product_attribute['name']] = $product_attribute['text'];
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				} else {
+					$product_data['feat'] = !empty($this->session->data['bulk_category_list']['ebay_data']['feat']) ? $this->session->data['bulk_category_list']['ebay_data']['feat'] : array();
+					$product_data['featother'] = !empty($this->session->data['bulk_category_list']['ebay_data']['featother']) ? $this->session->data['bulk_category_list']['ebay_data']['featother'] : array();
 				}
 
 				$product_data = array_merge($product_data, $profile_shipping['data']);

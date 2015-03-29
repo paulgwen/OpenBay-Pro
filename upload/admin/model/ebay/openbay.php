@@ -366,16 +366,18 @@ class ModelEbayOpenbay extends Model{
     }
 
     public function getEbayCategorySpecifics($category_id){
-	$response['data']   = $this->ebay->openbay_call('listing/getEbayCategorySpecifics/', array('id' => $category_id));
-        $response['error']  = $this->ebay->lasterror;
-        $response['msg']    = $this->ebay->lastmsg;
+		$response['data'] 	= $this->ebay->openbay_call('listing/getEbayCategorySpecifics/', array('id' => $category_id));
+        $response['error'] 	= $this->ebay->lasterror;
+        $response['msg'] 	= $this->ebay->lastmsg;
+
         return $response;
     }
 
     public function getCategoryFeatures($catId){
-	$response['data']   = $this->ebay->openbay_call('listing/getCategoryFeatures/', array('id' => $catId));
+		$response['data']   = $this->ebay->openbay_call('listing/getCategoryFeatures/', array('id' => $catId));
         $response['error']  = $this->ebay->lasterror;
         $response['msg']    = $this->ebay->lastmsg;
+
         return $response;
     }
 
@@ -541,7 +543,7 @@ class ModelEbayOpenbay extends Model{
         return $data;
     }
 
-    public function verifyCreds(){
+    public function verifyCredentials(){
         $this->request->post['domain'] = HTTPS_SERVER;
 
         $data = $this->ebay->openbay_call('account/validate/', $this->request->post, array(), 'json', 1);
