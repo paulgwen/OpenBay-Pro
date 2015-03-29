@@ -351,6 +351,8 @@ class ControllerEbayEbayListing extends Controller {
 	}
 
 	public function bulkStep4() {
+		set_time_limit(0);
+
 		$this->load->language('openbay/ebay_listing');
 		$this->load->model('ebay/openbay');
 		$this->load->model('ebay/profile');
