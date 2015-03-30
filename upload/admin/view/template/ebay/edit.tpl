@@ -137,13 +137,14 @@ function load(){
         },
         success: function(data) {
             if(data.error == false){
+              $('#itemId').val(data.data.listing.itemId);
+
                 if(data.data.listing.status == 0){
                     $('#form').hide();
                     $('#btn_end_item').hide();
                     $('#error_box').html('<p><?php echo $lang_error_ended; ?></p>').fadeIn('slow');
                 }else{
                     $('#title').val(data.data.listing.title);
-                    $('#itemId').val(data.data.listing.itemId);
 
                     if(data.data.variant.variant == 1){
                         $('.stdMatrix').remove();

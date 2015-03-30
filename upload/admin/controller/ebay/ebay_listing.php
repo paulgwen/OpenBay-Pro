@@ -548,7 +548,7 @@ class ControllerEbayEbayListing extends Controller {
 											$product_data['feat'][$product_attribute['name']] = $product_attribute['text'];
 										} else {
 											if ($recommendation_data_values[$attribute_key]['selection_mode'] == 'FreeText') {
-												$product_data['feat'][$product_attribute['name']] = '';
+												$product_data['feat'][$product_attribute['name']] = 'Other';
 												$product_data['featother'][$product_attribute['name']] = $product_attribute['text'];
 											}
 										}
