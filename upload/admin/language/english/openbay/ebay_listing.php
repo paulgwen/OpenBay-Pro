@@ -36,12 +36,14 @@ $_['entry_profile_returns']         		= 'Returns profile';
 $_['entry_profile_theme']         			= 'Theme profile';
 $_['entry_profile_generic']         		= 'Generic profile';
 $_['entry_category_popular']         		= 'Popular categories';
+$_['entry_mapping_choose']         			= 'Use Attribute auto-mapping';
 
 // Button
 $_['button_continue']         				= 'Continue';
 
 // Help
 $_['help_category_popular']					= 'Previously used categories';
+$_['help_mapping_choose']					= 'Auto mapping will map any eBay category option that is returned with a matching OpenCart product attribute.';
 
 // Errors
 $_['error_select_category']                 = 'You must select at least 1 category';
