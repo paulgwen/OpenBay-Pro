@@ -376,7 +376,7 @@ class ControllerOpenbayEbayListing extends Controller {
 			$recommendation_data_values = array();
 
 			if ($this->session->data['bulk_category_list']['ebay_data']['auto_mapping'] == 1) {
-				$category_specifics = $this->model_ebay_openbay->getEbayCategorySpecifics($this->session->data['bulk_category_list']['ebay_data']['category_id']);
+				$category_specifics = $this->model_openbay_ebay->getEbayCategorySpecifics($this->session->data['bulk_category_list']['ebay_data']['category_id']);
 
 				if (isset($category_specifics['data']['Recommendations']['NameRecommendation'])) {
 					$recommendation_count = 1;
@@ -531,7 +531,7 @@ class ControllerOpenbayEbayListing extends Controller {
 					$product_data['image_location'] = HTTP_CATALOG . 'image/';
 				}
 
-				$product_attributes = $this->model_ebay_openbay->getProductAttributes($product_id);
+				$product_attributes = $this->model_openbay_ebay->getProductAttributes($product_id);
 
 				$product_data['attributes'] = base64_encode(json_encode($product_attributes));
 
