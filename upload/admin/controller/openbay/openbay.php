@@ -567,12 +567,10 @@ class ControllerOpenbayOpenbay extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
-	public function verifyCreds() {
-
-
+	public function verifyCredentials() {
 		$this->load->model('openbay/ebay');
 
-		$json = $this->model_openbay_ebay->verifyCreds();
+		$json = $this->model_openbay_ebay->verifyCredentials();
 
 		$this->response->setOutput(json_encode($json));
 	}

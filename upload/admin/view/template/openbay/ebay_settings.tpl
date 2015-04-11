@@ -626,7 +626,7 @@
 
     function checkCredentials() {
         $.ajax({
-            url: 'index.php?route=openbay/openbay/verifyCreds&token=<?php echo $token; ?>',
+            url: 'index.php?route=openbay/openbay/verifycredentials&token=<?php echo $token; ?>',
             type: 'POST',
             dataType: 'json',
             data: {token: $('#openbaypro_token').val(), secret: $('#openbaypro_secret').val(), string1: $('#openbaypro_string1').val(), string2: $('#openbaypro_string2').val()},
@@ -669,5 +669,4 @@
         changeTaxHandler();
     });
 //--></script>
-
 <?php echo $footer; ?>
