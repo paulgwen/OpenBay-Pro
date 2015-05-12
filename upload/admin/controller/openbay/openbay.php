@@ -347,9 +347,9 @@ class ControllerOpenbayOpenbay extends Controller {
 		}
 
 		if (isset($this->request->post['ebay_measurement'])) {
-			$data['ebay_measurement'] = $this->request->post['ebay_measurement'];
+			$this->data['ebay_measurement'] = $this->request->post['ebay_measurement'];
 		} else {
-			$data['ebay_measurement'] = $this->config->get('ebay_measurement');
+			$this->data['ebay_measurement'] = $this->config->get('ebay_measurement');
 		}
 
 		$this->data['measurement_types']	= $this->openbay->ebay->getSetting('measurement_types');
@@ -1424,6 +1424,8 @@ class ControllerOpenbayOpenbay extends Controller {
 				$weight_parts = explode('.', $product_info['weight']);
 				$product_info['weight_major'] = (int)$weight_parts[0];
 				$product_info['weight_minor'] = (int)substr($weight_parts[1], 0, 3);
+
+				$product_info['defaults']['ebay_measurement'] = $this->config->get('ebay_measurement');
 
 				$product_info['defaults']['listing_duration'] = $this->config->get('openbaypro_duration');
 				if ($product_info['defaults']['listing_duration'] == '') {
