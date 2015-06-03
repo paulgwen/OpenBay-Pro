@@ -949,6 +949,7 @@ class ControllerExtensionOpenbay extends Controller {
 
 		//Amazon EU
 		if ($this->config->get('amazon_status') == 1) {
+			$this->load->model('amazon/amazon');
 
 			$orders = array();
 
@@ -973,6 +974,8 @@ class ControllerExtensionOpenbay extends Controller {
 							'carrier_from_list' => $carrier_from_list,
 							'tracking' => $this->request->post['tracking'][$order_id],
 						);
+
+						$this->model_amazon_amazon->updateAmazonOrderTracking($order_id, $carrier, $carrier_from_list, !empty($carrier) ? $this->request->post['tracking'][$order_id] : '');
 					}
 
 					if ($this->config->get('openbay_amazon_order_status_canceled') == $this->request->post['order_status_id']) {
@@ -991,6 +994,7 @@ class ControllerExtensionOpenbay extends Controller {
 
 		//Amazon US
 		if ($this->config->get('amazonus_status') == 1) {
+			$this->load->model('amazonus/amazonus');
 
 			$orders = array();
 
@@ -1015,6 +1019,8 @@ class ControllerExtensionOpenbay extends Controller {
 							'carrier_from_list' => $carrier_from_list,
 							'tracking' => $this->request->post['tracking'][$order_id],
 						);
+
+						$this->model_amazonus_amazonus->updateAmazonusOrderTracking($order_id, $carrier, $carrier_from_list, !empty($carrier) ? $this->request->post['tracking'][$order_id] : '');
 					}
 
 					if ($this->config->get('openbay_amazonus_order_status_canceled') == $this->request->post['order_status_id']) {
