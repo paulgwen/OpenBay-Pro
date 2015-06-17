@@ -1003,6 +1003,14 @@ final class Ebay
 
                                 //compare the stock - if different trigger update
                                 if($ebay_variant['qty'] != $options[$option_id]['stock']){
+									$reserve = $this->getReserve($item['productId'], $item['itemId'], $ebay_variant['sku']);
+
+									if ($reserve != false) {
+										if ($options[$option_id]['stock'] > $reserve) {
+											$options[$option_id]['stock'] = $reserve;
+										}
+									}
+									
                                     $this->log('putStockUpdateBulk() - Revising variant item: '.$item['itemId'].',Stock: '.$options[$option_id]['stock'].', SKU '.$ebay_variant['sku']);
                                     $this->openbay_call('item/reviseStock/', array('itemId' => $item['itemId'], 'stock' => $options[$option_id]['stock'], 'sku' => $ebay_variant['sku']));
                                 }
