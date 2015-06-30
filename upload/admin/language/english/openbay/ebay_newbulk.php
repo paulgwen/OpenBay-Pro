@@ -55,6 +55,12 @@ $_['lang_catalog_no_products']      = 'No catalog items found';
 $_['lang_search_failed']            = 'Search failed';
 $_['lang_esc_key']                  = 'The splash page has been hidden but may not have finished loading';
 
+$_['text_product_identifiers']    	= 'Product identifiers';
+$_['text_ean']    					= 'EAN';
+$_['text_upc']    					= 'UPC';
+$_['text_isbn']    					= 'ISBN';
+$_['text_identifier_not_required']  = 'Not required';
+
 //Errors
 $_['lang_error_ship_profile']       = 'You need to have a default shipping profile set up';
 $_['lang_error_generic_profile']    = 'You need to have a default generic profile set up';
