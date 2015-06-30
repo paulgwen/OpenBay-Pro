@@ -397,57 +397,62 @@ function loadCategories(level, skip, id){
     });
 }
 
-function getCategoryFeatures(cat, id){
-    itemFeatures(cat, id);
-    $('#editCatalog_'+id).show();
+function getCategoryFeatures(cat, id) {
+  itemFeatures(cat, id);
+  $('#editCatalog_' + id).show();
 
-    $('#durationRow_'+id).hide();
-    $('#durationLoading_'+id).show();
-    $('#durationContainer_'+id).show();
+  $('#durationRow_' + id).hide();
+  $('#durationLoading_' + id).show();
+  $('#durationContainer_' + id).show();
 
-    $('#conditionRow_'+id).hide();
-    $('#conditionLoading_'+id).show();
-    $('#conditionContainer_'+id).show();
+  $('#conditionRow_' + id).hide();
+  $('#conditionLoading_' + id).show();
+  $('#conditionContainer_' + id).show();
 
-    $.ajax({
-        url: 'index.php?route=openbay/openbay/getCategoryFeatures&token=<?php echo $token; ?>&category='+cat,
-        type: 'GET',
-        dataType: 'json',
-        beforeSend: function(){ addCount(); },
-        success: function(data) {
-            if(data.error == false){
-                var htmlInj = '';
+  $('#product_identifier_container_' + id).hide();
+  $('.product_identifier_required_' + id).val('0');
 
-                listingDuration(data.data.durations, id);
+  $.ajax({
+    url: 'index.php?route=openbay/openbay/getCategoryFeatures&token=<?php echo $token; ?>&category=' + cat,
+    type: 'GET',
+    dataType: 'json',
+    beforeSend: function () {
+      addCount();
+    },
+    success: function (data) {
+      if (data.error == false) {
+        var htmlInj = '';
 
-                if(data.data.conditions){
-                    $.each(data.data.conditions, function(key, val){
-                        htmlInj += '<option value='+val.id+'>'+val.name+'</option>';
-                    });
+        listingDuration(data.data.durations, id);
 
-                    if(htmlInj == ''){
-                        $('#conditionRow_'+id).empty();
-                        $('#conditionContainer_'+id).hide();
-                        $('#conditionRow_'+id).hide();
-                        $('#conditionLoading_'+id).hide();
-                    }else{
-                        $('#conditionRow_'+id).empty().html(htmlInj);
-                        $('#conditionRow_'+id).show();
-                        $('#conditionLoading_'+id).hide();
-                    }
-                }
-            }else{
-                alert(data.msg);
-            }
-            removeCount();
-        },
-        failure: function(){
-            removeCount();
-        },
-        error: function(){
-            removeCount();
+        if (data.data.conditions) {
+          $.each(data.data.conditions, function (key, val) {
+            htmlInj += '<option value=' + val.id + '>' + val.name + '</option>';
+          });
+
+          if (htmlInj == '') {
+            $('#conditionRow_' + id).empty();
+            $('#conditionContainer_' + id).hide();
+            $('#conditionRow_' + id).hide();
+            $('#conditionLoading_' + id).hide();
+          } else {
+            $('#conditionRow_' + id).empty().html(htmlInj);
+            $('#conditionRow_' + id).show();
+            $('#conditionLoading_' + id).hide();
+          }
         }
-    });
+      } else {
+        alert(data.msg);
+      }
+      removeCount();
+    },
+    failure: function () {
+      removeCount();
+    },
+    error: function () {
+      removeCount();
+    }
+  });
 }
 
 function html_encode(s) {
@@ -864,5 +869,30 @@ function genericProfileChange(id){
     modifyPrices(id);
 }
 
+function identifierNotRequired(id) {
+  var not_required_text = "<?php echo $setting['product_details']['product_identifier_unavailable_text']; ?>";
+
+  if ($('#identifier_not_required_' + id + ':checked').length == 1) {
+    if ($('#identifier_ean_required_' + id).val() == 1) {
+      $('#identifier_ean_' + id).val(not_required_text);
+    }
+    if ($('#identifier_isbn_required_' + id).val() == 1) {
+      $('#identifier_isbn_' + id).val(not_required_text);
+    }
+    if ($('#identifier_upc_required_' + id).val() == 1) {
+      $('#identifier_upc_' + id).val(not_required_text);
+    }
+  } else {
+    if ($('#identifier_ean_required_' + id).val() == 1) {
+      $('#identifier_ean_' + id).val($('#identifier_ean_original_' + id).val());
+    }
+    if ($('#identifier_isbn_required_' + id).val() == 1) {
+      $('#identifier_isbn_' + id).val($('#identifier_isbn_original_' + id).val());
+    }
+    if ($('#identifier_upc_required_' + id).val() == 1) {
+      $('#identifier_upc_' + id).val($('#identifier_upc_original_' + id).val());
+    }
+  }
+}
 </script>
 <?php echo $footer; ?>
