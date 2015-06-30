@@ -205,6 +205,10 @@ $_['lang_option_description']       = 'Variation images can be used to display a
  */
 $_['lang_search_catalog']           = 'Search eBay catalog:';
 $_['lang_image_catalog']            = 'Use default image:<span class="help">This will change your main image and will be set to use the eBay catalog image</span>';
+$_['text_product_identifiers']    	= 'Product identifiers';
+$_['text_ean']    					= 'EAN';
+$_['text_upc']    					= 'UPC';
+$_['text_isbn']    					= 'ISBN';
 
 /**
  * Errors
