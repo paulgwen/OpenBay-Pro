@@ -1315,6 +1315,13 @@ class ControllerOpenbayOpenbay extends Controller {
                 $setting['countries'] = $this->ebay->getSetting('countries');
                 if(is_array($setting['countries'])) { ksort($setting['countries']); }
 
+				$setting['product_details'] = $this->openbay->ebay->getSetting('product_details');
+
+				if (!isset($setting['product_details']['product_identifier_unavailable_text'])) {
+					$this->session->data['warning'] = $this->language->get('error_missing_settings');
+					$this->redirect($this->url->link('openbay/openbay/viewSync&token=' . $this->session->data['token'], 'SSL'));
+				}
+
                 $setting['returns'] = $this->ebay->getSetting('returns');
 
                 if(empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){

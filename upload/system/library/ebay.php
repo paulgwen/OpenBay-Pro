@@ -1010,7 +1010,7 @@ final class Ebay
 											$options[$option_id]['stock'] = $reserve;
 										}
 									}
-									
+
                                     $this->log('putStockUpdateBulk() - Revising variant item: '.$item['itemId'].',Stock: '.$options[$option_id]['stock'].', SKU '.$ebay_variant['sku']);
                                     $this->openbay_call('item/reviseStock/', array('itemId' => $item['itemId'], 'stock' => $options[$option_id]['stock'], 'sku' => $ebay_variant['sku']));
                                 }
@@ -1497,6 +1497,20 @@ final class Ebay
         $this->log('Getting eBay settings / sync');
 
         if ($this->lasterror === false) {
+			if (isset($response['product_details'])) {
+				$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_setting_option` WHERE `key` = 'product_details' LIMIT 1");
+
+				if ($qry->num_rows > 0) {
+					$this->db->query("UPDATE `" . DB_PREFIX . "ebay_setting_option` SET `data` = '" . $this->db->escape(serialize($response['product_details'])) . "', `last_updated`  = now() WHERE `key` = 'product_details' LIMIT 1");
+					$this->log('Updated product_details into ebay_setting_option table');
+				} else {
+					$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_setting_option` SET `key` = 'product_details', `data` = '" . $this->db->escape(serialize($response['product_details'])) . "', `last_updated`  = now()");
+					$this->log('Inserted product_details into ebay_setting_option table');
+				}
+			} else {
+				$this->log('Non identifier text not set!');
+			}
+
             if (isset($response['urls']['ViewItemURL'])) {
                 $this->db->query("DELETE FROM `" . DB_PREFIX . "setting` WHERE  `key` = 'openbaypro_ebay_itm_link' LIMIT 1");
                 $this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `value` = '" . $this->db->escape((string) $response['urls']['ViewItemURL']) . "', `key` = 'openbaypro_ebay_itm_link', `group` = 'openbay'");
