@@ -116,21 +116,21 @@
                 <td><?php echo $text_ean; ?></td>
                 <td>
                   <input type="hidden" name="identifier_ean_required" class="product_identifier_required" />
-                  <input type="text" name="identifier_ean" value="<?php echo (isset($product['ean']) ? $product['ean'] : ''; ?>" id="identifier_ean" />
+                  <input type="text" name="identifier_ean" value="<?php echo (isset($product['ean']) ? $product['ean'] : ''); ?>" id="identifier_ean" />
                 </td>
               </tr>
               <tr id="product_identifier_isbn_container" style="display:none;">
                 <td><?php echo $text_isbn; ?></td>
                 <td>
                   <input type="hidden" name="identifier_isbn_required" class="product_identifier_required" />
-                  <input type="text" name="identifier_isbn" value="<?php echo (isset($product['isbn']) ? $product['isbn'] : ''; ?>" id="identifier_isbn" />
+                  <input type="text" name="identifier_isbn" value="<?php echo (isset($product['isbn']) ? $product['isbn'] : ''); ?>" id="identifier_isbn" />
                 </td>
               </tr>
               <tr id="product_identifier_upc_container" style="display:none;">
                 <td><?php echo $text_upc; ?></td>
                 <td>
                   <input type="hidden" name="identifier_upc_required" class="product_identifier_required" />
-                  <input type="text" name="identifier_upc" value="<?php echo (isset($product['upc']) ? $product['upc'] : ''; ?>" id="identifier_upc" />
+                  <input type="text" name="identifier_upc" value="<?php echo (isset($product['upc']) ? $product['upc'] : ''); ?>" id="identifier_upc" />
                 </td>
               </tr>
             </table>
