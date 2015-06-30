@@ -133,6 +133,10 @@ $_['text_shape']       				= 'Irregular shape';
 $_['text_width']       				= 'Width';
 $_['text_length']       			= 'Length';
 $_['text_depth']       				= 'Depth / Height';
+$_['text_product_identifiers']    	= 'Product identifiers';
+$_['text_ean']    					= 'EAN';
+$_['text_upc']    					= 'UPC';
+$_['text_isbn']    					= 'ISBN';
 
 //Returns
 $_['lang_return_accepted']          = 'Returns accepted?';

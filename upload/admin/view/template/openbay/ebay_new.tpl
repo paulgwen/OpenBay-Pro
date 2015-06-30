@@ -108,16 +108,42 @@
           </div>
 
           <div id="tab-listing-feature">
-              <p id="showFeatureDivPreload"><?php echo $lang_feature_pretext; ?></p>
-              <table class="form" id="showFeatureDiv">
-                  <tr>
-                      <td style="vertical-align:top; padding-top:15px;"><?php echo $lang_category_features; ?></td>
-                      <td>
-                          <img src="view/image/loading.gif" id="featLoading" class="displayNone" />
-                          <table class="form" id="featureRow"></table>
-                      </td>
-                  </tr>
-              </table>
+            <table class="form" style="display: none;" id="product_identifier_container">
+              <tr>
+                <td colspan="2"><h3><?php echo $text_product_identifiers; ?></h3></td>
+              </tr>
+              <tr id="product_identifier_ean_container" style="display:none;">
+                <td><?php echo $text_ean; ?></td>
+                <td>
+                  <input type="hidden" name="identifier_ean_required" class="product_identifier_required" />
+                  <input type="text" name="identifier_ean" value="<?php echo (isset($product['ean']) ? $product['ean'] : ''; ?>" id="identifier_ean" />
+                </td>
+              </tr>
+              <tr id="product_identifier_isbn_container" style="display:none;">
+                <td><?php echo $text_isbn; ?></td>
+                <td>
+                  <input type="hidden" name="identifier_isbn_required" class="product_identifier_required" />
+                  <input type="text" name="identifier_isbn" value="<?php echo (isset($product['isbn']) ? $product['isbn'] : ''; ?>" id="identifier_isbn" />
+                </td>
+              </tr>
+              <tr id="product_identifier_upc_container" style="display:none;">
+                <td><?php echo $text_upc; ?></td>
+                <td>
+                  <input type="hidden" name="identifier_upc_required" class="product_identifier_required" />
+                  <input type="text" name="identifier_upc" value="<?php echo (isset($product['upc']) ? $product['upc'] : ''; ?>" id="identifier_upc" />
+                </td>
+              </tr>
+            </table>
+            <p id="showFeatureDivPreload"><?php echo $lang_feature_pretext; ?></p>
+            <table class="form" id="showFeatureDiv">
+              <tr>
+                <td style="vertical-align:top; padding-top:15px;"><?php echo $lang_category_features; ?></td>
+                <td>
+                  <img src="view/image/loading.gif" id="featLoading" class="displayNone" />
+                  <table class="form" id="featureRow"></table>
+                </td>
+              </tr>
+            </table>
           </div>
 
           <div id="tab-listing-catalog">
@@ -989,53 +1015,83 @@
     }
 
     function getCategoryFeatures(cat) {
-        itemFeatures(cat);
+      itemFeatures(cat);
 
-        $('#durationRow').hide();
-        $('#durationLoading').show();
-        $('#durationContainer').show();
-        $('#conditionRow').hide();
-        $('#conditionLoading').show();
-        $('#conditionContainer').show();
+      $('#durationRow').hide();
+      $('#durationLoading').show();
+      $('#durationContainer').show();
+      $('#conditionRow').hide();
+      $('#conditionLoading').show();
+      $('#conditionContainer').show();
 
-        $.ajax({
-          url: 'index.php?route=openbay/openbay/getCategoryFeatures&token=<?php echo $token; ?>&category=' + cat,
-          type: 'GET',
-          dataType: 'json',
-          success: function(data) {
-              if (data.error == false) {
-                  var html_inj = '';
-                  listingDuration(data.data.durations);
+      $('#product_identifier_container').hide();
+      $('.product_identifier_required').val('0');
 
-                  if (data.data.maxshipping != false) {
-                      $('#maxShippingAlert').append(data.data.maxshipping).show();
-                  }
+      $.ajax({
+        url: 'index.php?route=openbay/openbay/getCategoryFeatures&token=<?php echo $token; ?>&category=' + cat,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            if (data.error == false) {
+              var html_inj = '';
+              listingDuration(data.data.durations);
 
-                  if (data.data.conditions) {
-                      data.data.conditions = $.makeArray(data.data.conditions);
-
-                      $.each(data.data.conditions, function(key, val) {
-                          html_inj += '<option value='+val.id+'>'+val.name+'</option>';
-                      });
-
-                      $('#conditionRow').empty().html(html_inj);
-                      $('#conditionRow').show();
-                      $('#conditionLoading').hide();
-                  }
-              } else {
-                  if (data.msg == null) {
-                      alert('<?php echo $lang_ajax_noload; ?>');
-                  } else {
-                      alert(data.msg);
-                  }
+              if (data.data.maxshipping != false) {
+                $('#maxShippingAlert').append(data.data.maxshipping).show();
               }
-          },
-          error: function (xhr, ajaxOptions, thrownError) {
-            if (xhr.status != 0) {
-              alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+
+              if (data.data.conditions) {
+                data.data.conditions = $.makeArray(data.data.conditions);
+
+                $.each(data.data.conditions, function(key, val) {
+                  html_inj += '<option value='+val.id+'>'+val.name+'</option>';
+                });
+
+                $('#conditionRow').empty().html(html_inj);
+                $('#conditionRow').show();
+                $('#conditionLoading').hide();
+              }
+
+              if (data.data.ean_identifier_requirement != '') {
+                $('#product_identifier_container').show();
+                $('#product_identifier_ean_container').show();
+
+                if (data.data.ean_identifier_requirement == 'Required') {
+                  $('#product_identifier_ean_required').val(1);
+                }
+              }
+
+              if (data.data.isbn_identifier_requirement != '') {
+                $('#product_identifier_container').show();
+                $('#product_identifier_isbn_container').show();
+
+                if (data.data.isbn_identifier_requirement == 'Required') {
+                  $('#product_identifier_isbn_required').val(1);
+                }
+              }
+
+              if (data.data.upc_identifier_requirement != '') {
+                $('#product_identifier_container').show();
+                $('#product_identifier_upc_container').show();
+
+                if (data.data.upc_identifier_requirement == 'Required') {
+                  $('#product_identifier_upc_required').val(1);
+                }
+              }
+            } else {
+              if (data.msg == null) {
+                alert('<?php echo $lang_ajax_noload; ?>');
+              } else {
+                alert(data.msg);
+              }
             }
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+          if (xhr.status != 0) {
+            alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
           }
-        });
+        }
+      });
     }
 
     function searchEbayCatalog() {
