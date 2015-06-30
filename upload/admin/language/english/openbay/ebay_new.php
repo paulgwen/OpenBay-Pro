@@ -137,6 +137,7 @@ $_['text_product_identifiers']    	= 'Product identifiers';
 $_['text_ean']    					= 'EAN';
 $_['text_upc']    					= 'UPC';
 $_['text_isbn']    					= 'ISBN';
+$_['text_identifier_not_required']  = 'Not required';
 
 //Returns
 $_['lang_return_accepted']          = 'Returns accepted?';

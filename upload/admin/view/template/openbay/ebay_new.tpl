@@ -115,22 +115,31 @@
               <tr id="product_identifier_ean_container" style="display:none;">
                 <td><?php echo $text_ean; ?></td>
                 <td>
-                  <input type="hidden" name="identifier_ean_required" class="product_identifier_required" />
+                  <input type="hidden" id="identifier_ean_required" class="product_identifier_required" value="0" />
+                  <input type="hidden" id="identifier_ean_original" value="<?php echo $product['ean']; ?>" />
                   <input type="text" name="identifier_ean" value="<?php echo (isset($product['ean']) ? $product['ean'] : ''); ?>" id="identifier_ean" />
                 </td>
               </tr>
               <tr id="product_identifier_isbn_container" style="display:none;">
                 <td><?php echo $text_isbn; ?></td>
                 <td>
-                  <input type="hidden" name="identifier_isbn_required" class="product_identifier_required" />
+                  <input type="hidden" id="identifier_isbn_required" class="product_identifier_required" value="0" />
+                  <input type="hidden" id="identifier_isbn_original" value="<?php echo $product['isbn']; ?>" />
                   <input type="text" name="identifier_isbn" value="<?php echo (isset($product['isbn']) ? $product['isbn'] : ''); ?>" id="identifier_isbn" />
                 </td>
               </tr>
               <tr id="product_identifier_upc_container" style="display:none;">
                 <td><?php echo $text_upc; ?></td>
                 <td>
-                  <input type="hidden" name="identifier_upc_required" class="product_identifier_required" />
+                  <input type="hidden" id="identifier_upc_required" class="product_identifier_required" value="0" />
+                  <input type="hidden" id="identifier_upc_original" value="<?php echo $product['upc']; ?>" />
                   <input type="text" name="identifier_upc" value="<?php echo (isset($product['upc']) ? $product['upc'] : ''); ?>" id="identifier_upc" />
+                </td>
+              </tr>
+              <tr>
+                <td><?php echo $text_identifier_not_required; ?></td>
+                <td>
+                  <input type="checkbox" name="identifier_not_required" value="1" id="identifier_not_required" />
                 </td>
               </tr>
             </table>
@@ -754,7 +763,6 @@
                   </td>
               </tr>
           </table>
-
         </form>
     </div>
 
@@ -1057,7 +1065,7 @@
                 $('#product_identifier_ean_container').show();
 
                 if (data.data.ean_identifier_requirement == 'Required') {
-                  $('#product_identifier_ean_required').val(1);
+                  $('#identifier_ean_required').val(1);
                 }
               }
 
@@ -1066,7 +1074,7 @@
                 $('#product_identifier_isbn_container').show();
 
                 if (data.data.isbn_identifier_requirement == 'Required') {
-                  $('#product_identifier_isbn_required').val(1);
+                  $('#identifier_isbn_required').val(1);
                 }
               }
 
@@ -1075,7 +1083,7 @@
                 $('#product_identifier_upc_container').show();
 
                 if (data.data.upc_identifier_requirement == 'Required') {
-                  $('#product_identifier_upc_required').val(1);
+                  $('#identifier_upc_required').val(1);
                 }
               }
             } else {
@@ -1698,6 +1706,32 @@
         var taxEx = taxInc / ((rate /100)+1);
         $('#taxEx').val(parseFloat(taxEx).toFixed(2));
     }
+
+    $('#identifier_not_required').on("click", function() {
+      var not_required_text = "<?php echo $setting['product_details']['product_identifier_unavailable_text']; ?>";
+
+      if ($('#identifier_not_required:checked').length == 1) {
+        if ($('#identifier_ean_required').val() == 1) {
+          $('#identifier_ean').val(not_required_text);
+        }
+        if ($('#identifier_isbn_required').val() == 1) {
+          $('#identifier_isbn').val(not_required_text);
+        }
+        if ($('#identifier_upc_required').val() == 1) {
+          $('#identifier_upc').val(not_required_text);
+        }
+      } else {
+        if ($('#identifier_ean_required').val() == 1) {
+          $('#identifier_ean').val($('#identifier_ean_original').val());
+        }
+        if ($('#identifier_isbn_required').val() == 1) {
+          $('#identifier_isbn').val($('#identifier_isbn_original').val());
+        }
+        if ($('#identifier_upc_required').val() == 1) {
+          $('#identifier_upc').val($('#identifier_upc_original').val());
+        }
+      }
+    });
 
     $('#popular_default').click(function() {
         $('#cSelectionsRow').show();
