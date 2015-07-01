@@ -58,7 +58,45 @@
                                             <div id="featurePage_<?php echo $i; ?>" class="greyScreenBox featurePage">
                                                 <div class="bold border p5 previewClose">X</div>
                                                 <div class="previewContentScroll">
-                                                    <table class="form" id="featureRow_<?php echo $i; ?>"></table>
+                                                  <table class="form" id="product_identifier_container_<?php echo $i; ?>" style="display: none;">
+                                                    <tr id="product_identifier_ean_container_<?php echo $i; ?>" style="display:none;">
+                                                      <td class="ebaySpecificTitle left"><?php echo $text_ean; ?></td>
+                                                      <td>
+                                                        <p class="left">
+                                                          <input type="hidden" id="identifier_ean_required_<?php echo $i; ?>" class="product_identifier_required_<?php echo $i; ?>" value="0" />
+                                                          <input type="hidden" id="identifier_ean_original_<?php echo $i; ?>" value="<?php echo $product['ean']; ?>" />
+                                                          <input type="text" name="identifier_ean" value="<?php echo $product['ean']; ?>" id="identifier_ean_<?php echo $i; ?>" class="ebaySpecificInput openbayData_<?php echo $i; ?>" />
+                                                        </p>
+                                                      </td>
+                                                    </tr>
+                                                    <tr id="product_identifier_isbn_container_<?php echo $i; ?>" style="display:none;">
+                                                      <td class="ebaySpecificTitle left"><?php echo $text_isbn; ?></td>
+                                                      <td>
+                                                        <p class="left">
+                                                          <input type="hidden" id="identifier_isbn_required_<?php echo $i; ?>" class="product_identifier_required_<?php echo $i; ?>" value="0" />
+                                                          <input type="hidden" id="identifier_isbn_original_<?php echo $i; ?>" value="<?php echo $product['isbn']; ?>" />
+                                                          <input type="text" name="identifier_isbn" value="<?php echo $product['isbn']; ?>" id="identifier_isbn_<?php echo $i; ?>" class="ebaySpecificInput openbayData_<?php echo $i; ?>" />
+                                                        </p>
+                                                      </td>
+                                                    </tr>
+                                                    <tr id="product_identifier_upc_container_<?php echo $i; ?>" style="display:none;">
+                                                      <td class="ebaySpecificTitle left"><?php echo $text_upc; ?></td>
+                                                      <td>
+                                                        <p class="left">
+                                                          <input type="hidden" id="identifier_upc_required_<?php echo $i; ?>" class="product_identifier_required" value="0" />
+                                                          <input type="hidden" id="identifier_upc_original_<?php echo $i; ?>" value="<?php echo $product['upc']; ?>" />
+                                                          <input type="text" name="identifier_upc" value="<?php echo $product['upc']; ?>" id="identifier_upc_<?php echo $i; ?>" class="ebaySpecificInput openbayData_<?php echo $i; ?>" />
+                                                        </p>
+                                                      </td>
+                                                    </tr>
+                                                    <tr>
+                                                      <td class="ebaySpecificTitle left"><?php echo $text_identifier_not_required; ?></td>
+                                                      <td>
+                                                        <p class="left"><input type="checkbox" name="identifier_not_required" value="1" id="identifier_not_required_<?php echo $i; ?>" onclick="identifierNotRequired(<?php echo $i; ?>);" /></p>
+                                                      </td>
+                                                    </tr>
+                                                  </table>
+                                                  <table class="form" id="featureRow_<?php echo $i; ?>"></table>
                                                 </div>
                                             </div>
 
