@@ -3,7 +3,7 @@ final class Ebay
 {
     private $registry;
     private $url    = 'https://uk.openbaypro.com/';
-    private $noLog  = array('notification/getPublicNotifications/','setup/getEbayCategories/','item/getItemAllList/', 'account/validate/');
+    private $no_log  = array('notification/getPublicNotifications/','setup/getEbayCategories/','item/getItemAllList/', 'account/validate/');
 
     public function __construct($registry) {
         $this->registry     = $registry;
@@ -15,12 +15,25 @@ final class Ebay
         $this->lasterror    = '';
         $this->lastmsg      = '';
 
-        $this->load->library('log');
-        $this->logger = new Log('ebaylog.log');
+        if ($this->logging == 1) {
+            $this->setLogger();
+        }
     }
 
     public function __get($name) {
         return $this->registry->get($name);
+    }
+
+    private function setLogger() {
+        $this->load->library('log');
+
+        if(file_exists(DIR_LOGS . 'ebaylog.log')) {
+            if(filesize(DIR_LOGS . 'ebaylog.log') > ($this->max_log_size * 1000000)) {
+                rename(DIR_LOGS . 'ebaylog.log', DIR_LOGS . '_ebaylog_' . date('Y-m-d_H-i-s') . '.log');
+            }
+        }
+
+        $this->logger = new Log('ebaylog.log');
     }
 
     public function log($data, $write = true){
@@ -54,7 +67,7 @@ final class Ebay
             $this->lastmsg      = '';
 
             /* There may be some calls we just dont want to log */
-            if(!in_array($call, $this->noLog)){
+            if(!in_array($call, $this->no_log)){
                 $this->log('openbay_call('.$call.') - Data: '.  json_encode($post));
             }
 
@@ -97,7 +110,7 @@ final class Ebay
             curl_close($ch);
 
             /* There may be some calls we just dont want to log */
-            if(!in_array($call, $this->noLog)){
+            if(!in_array($call, $this->no_log)){
                 $this->log('openbay_call() - Result of : "'.$result.'"');
             }
 
