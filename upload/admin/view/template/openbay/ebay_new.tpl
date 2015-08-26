@@ -64,7 +64,7 @@
                 </div>
               <?php } ?>
               <?php if (!empty($product['popular_cats'])) { ?>
-              <div class="form-group">
+                <div class="form-group" id="category-popular-row">
                 <label class="col-sm-2 control-label">
                   <span title="" data-toggle="tooltip" data-original-title="<?php echo $help_category_popular; ?>"><?php echo $entry_category_popular; ?></span>
                 </label>
@@ -76,7 +76,7 @@
                 </div>
               </div>
               <?php } else { ?>
-              <input type="hidden" name="popular" value="" />
+                <input type="hidden" name="popular" value="" />
               <?php } ?>
               <div class="form-group" id="category-selections-row">
                 <label class="col-sm-2 control-label"><?php echo $entry_category; ?></label>
@@ -132,7 +132,7 @@
                   <input type="hidden" name="finalCat" id="final-category" />
                 </div>
               </div>
-              <div class="form-group" id="suggested-cats-container" style="display: none;">
+              <div class="form-group" id="category-suggested-row" style="display: none;">
                 <label class="col-sm-2 control-label">
                   <span title="" data-toggle="tooltip" data-original-title="<?php echo $help_category_suggested; ?>"><?php echo $entry_category_suggested; ?></span>
                 </label>
@@ -169,6 +169,39 @@
             </div>
 
             <div id="tab-listing-feature" class="tab-pane">
+              <div class="well" style="display: none;" id="product_identifier_container">
+                <h3><?php echo $text_product_identifiers; ?></h3>
+                <div class="form-group" id="product_identifier_ean_container" style="display:none;">
+                  <label class="col-sm-2 control-label"><?php echo $text_ean; ?></label>
+                  <div class="col-sm-10">
+                    <input type="hidden" id="identifier_ean_required" class="product_identifier_required" value="0" />
+                    <input type="hidden" id="identifier_ean_original" value="<?php echo $product['ean']; ?>" />
+                    <input type="text" name="identifier_ean" value="<?php echo $product['ean']; ?>" id="identifier_ean" class="form-control" />
+                  </div>
+                </div>
+                <div class="form-group" id="product_identifier_isbn_container" style="display:none;">
+                  <label class="col-sm-2 control-label"><?php echo $text_isbn; ?></label>
+                  <div class="col-sm-10">
+                    <input type="hidden" id="identifier_isbn_required" class="product_identifier_required" value="0" />
+                    <input type="hidden" id="identifier_isbn_original" value="<?php echo $product['isbn']; ?>" />
+                    <input type="text" name="identifier_isbn" value="<?php echo $product['isbn']; ?>" id="identifier_isbn" class="form-control" />
+                  </div>
+                </div>
+                <div class="form-group" id="product_identifier_upc_container" style="display:none;">
+                  <label class="col-sm-2 control-label"><?php echo $text_upc; ?></label>
+                  <div class="col-sm-10">
+                    <input type="hidden" id="identifier_upc_required" class="product_identifier_required" value="0" />
+                    <input type="hidden" id="identifier_upc_original" value="<?php echo $product['upc']; ?>" />
+                    <input type="text" name="identifier_upc" value="<?php echo $product['upc']; ?>" id="identifier_upc" class="form-control" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><?php echo $text_identifier_not_required; ?></label>
+                  <div class="col-sm-10">
+                    <input type="checkbox" name="identifier_not_required" value="1" id="identifier_not_required" class="form-control" />
+                  </div>
+                </div>
+              </div>
               <div class="alert alert-info"><?php echo $text_features_help; ?></div>
               <div class="form-group">
                 <div class="col-sm-12">
@@ -589,7 +622,7 @@
                 <label class="col-sm-2 control-label"><?php echo $entry_imediate_payment; ?></label>
                 <div class="col-sm-10">
                   <input type="hidden" name="ebay_payment_immediate" value="0" />
-                  <input type="checkbox" name="ebay_payment_immediate" value="1" id="ebay_payment_immediate" <?php if ($product['defaults']['ebay_payment_immediate'] != 1) { echo 'checked '; } ?> />
+                  <input type="checkbox" name="ebay_payment_immediate" value="1" id="ebay_payment_immediate" <?php if ($product['defaults']['ebay_payment_immediate'] == 1) { echo 'checked '; } ?> />
                 </div>
               </div>
               <div class="form-group">
@@ -1054,7 +1087,6 @@
             success: function(data) {
                 if (data.error == false) {
                     var html_inj = '';
-
                         if (data.data) {
                             html_inj += '<p><input type="radio" name="suggested" value="" id="suggested_default" checked="checked"/> <strong><?php echo $text_none; ?></strong></p>';
 
@@ -1066,7 +1098,7 @@
                                 }
                             });
 
-                            $('#suggested-cats-container').fadeIn();
+                            $('#category-suggested-row').fadeIn();
                         }
 
                         $('#suggested-cats').html(html_inj);
@@ -1079,18 +1111,39 @@
 
                   $('.suggested_category').bind('click', function() {
                     $('#category-selections-row').hide();
+
                     $('input[name=popular]').removeAttr('checked');
+
+                    if($('#category-popular-row').length != 0) {
+                      $('#category-popular-row').hide();
+                    }
+
                     $('#popular_default').prop('checked', true);
                   });
 
                   $('.popular-category').bind('click', function() {
                     $('#category-selections-row').hide();
+
                     $('input[name=suggested]').removeAttr('checked');
+
+                    if($('#category-suggested-row').length != 0) {
+                      $('#category-suggested-row').hide();
+                    }
+
                     $('#suggested_default').prop('checked', true);
                   });
 
                   $('#suggested_default').bind('click', function() {
                     $('#category-selections-row').show();
+
+                    if($('#category-suggested-row').length != 0) {
+                      $('#category-suggested-row').show();
+                    }
+
+                    if($('#category-popular-row').length != 0) {
+                      $('#category-popular-row').show();
+                    }
+
                     $('#show-feature-element').hide();
                     $('#product-catalog-container').hide();
                     $('#feature-content').empty();
@@ -1212,6 +1265,9 @@
         $('#vrm-input-container').remove();
         $('#vin-input-container').remove();
 
+        $('#product_identifier_container').hide();
+        $('.product_identifier_required').val('0');
+
         $.ajax({
             url: 'index.php?route=openbay/ebay/getCategoryFeatures&token=<?php echo $token; ?>&category='+cat,
             type: 'GET',
@@ -1264,6 +1320,33 @@
                     html_inj += '</div>';
                     html_inj += '</div>';
                     $('#tab-listing-description').prepend(html_inj);
+                  }
+
+                  if (data.data.ean_identifier_requirement != '') {
+                    $('#product_identifier_container').show();
+                    $('#product_identifier_ean_container').show();
+
+                    if (data.data.ean_identifier_requirement == 'Required') {
+                      $('#identifier_ean_required').val(1);
+                    }
+                  }
+
+                  if (data.data.isbn_identifier_requirement != '') {
+                    $('#product_identifier_container').show();
+                    $('#product_identifier_isbn_container').show();
+
+                    if (data.data.isbn_identifier_requirement == 'Required') {
+                      $('#identifier_isbn_required').val(1);
+                    }
+                  }
+
+                  if (data.data.upc_identifier_requirement != '') {
+                    $('#product_identifier_container').show();
+                    $('#product_identifier_upc_container').show();
+
+                    if (data.data.upc_identifier_requirement == 'Required') {
+                      $('#identifier_upc_required').val(1);
+                    }
                   }
                 } else {
                     if (data.msg == null) {
@@ -1364,6 +1447,32 @@
       }
     });
   }
+
+  $('#identifier_not_required').on("click", function() {
+    var not_required_text = "<?php echo $setting['product_details']['product_identifier_unavailable_text']; ?>";
+
+    if ($('#identifier_not_required:checked').length == 1) {
+      if ($('#identifier_ean_required').val() == 1) {
+        $('#identifier_ean').val(not_required_text);
+      }
+      if ($('#identifier_isbn_required').val() == 1) {
+        $('#identifier_isbn').val(not_required_text);
+      }
+      if ($('#identifier_upc_required').val() == 1) {
+        $('#identifier_upc').val(not_required_text);
+      }
+    } else {
+      if ($('#identifier_ean_required').val() == 1) {
+        $('#identifier_ean').val($('#identifier_ean_original').val());
+      }
+      if ($('#identifier_isbn_required').val() == 1) {
+        $('#identifier_isbn').val($('#identifier_isbn_original').val());
+      }
+      if ($('#identifier_upc_required').val() == 1) {
+        $('#identifier_upc').val($('#identifier_upc_original').val());
+      }
+    }
+  });
 
   $(document).on("change", '.compatibility-data', function() {
     $('#compatibility-content-add').hide();
@@ -2060,6 +2169,15 @@
 
   $('#popular_default').click(function() {
     $('#category-selections-row').show();
+
+    if($('#category-suggested-row').length != 0) {
+      $('#category-suggested-row').show();
+    }
+
+    if($('#category-popular-row').length != 0) {
+      $('#category-popular-row').show();
+    }
+
     $('#show-feature-element').hide();
     $('#product-catalog-container').hide();
     $('#feature-content').empty();

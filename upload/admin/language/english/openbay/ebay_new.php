@@ -86,6 +86,11 @@ $_['text_price_inc_tax']          	= 'Including tax';
 $_['text_ebay_imagesize_ok']        = 'The image size is good, it can be used on eBay';
 $_['text_compatible']        		= 'Compatible options';
 $_['text_loading_compatibility']    = 'Loading compatibility options';
+$_['text_product_identifiers']    	= 'Product identifiers';
+$_['text_ean']    					= 'EAN';
+$_['text_upc']    					= 'UPC';
+$_['text_isbn']    					= 'ISBN';
+$_['text_identifier_not_required']  = 'Not required';
 
 // Column
 $_['column_stock_total']      		= 'In stock';
