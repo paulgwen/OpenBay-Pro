@@ -1797,9 +1797,9 @@ class ControllerOpenbayEbay extends Controller {
 					$data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
 				}
 
-				$data['location']           = $profile_shipping['data']['location'];
-				$data['postcode']           = $profile_shipping['data']['postcode'];
-				$data['dispatch_time']      = $profile_shipping['data']['dispatch_time'];
+				$data['location'] = $profile_shipping['data']['location'];
+				$data['postcode'] = $profile_shipping['data']['postcode'];
+				$data['dispatch_time'] = $profile_shipping['data']['dispatch_time'];
 
 				if (isset($profile_shipping['data']['country'])) {
 					$data['country'] = $profile_shipping['data']['country'];
@@ -1817,7 +1817,15 @@ class ControllerOpenbayEbay extends Controller {
 					$data['global_shipping'] = $profile_shipping['data']['global_shipping'];
 				}
 
-				$data['get_it_fast']        = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
+				if (isset($profile_shipping['data']['promotional_shipping_discount'])) {
+					$data['promotional_shipping_discount'] = $profile_shipping['data']['promotional_shipping_discount'];
+				}
+
+				if (isset($profile_shipping['data']['promotional_shipping_discount_international'])) {
+					$data['promotional_shipping_discount_international'] = $profile_shipping['data']['promotional_shipping_discount_international'];
+				}
+
+				$data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
 
 				if (isset($profile_template['data']['ebay_template_id'])) {
 					$template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
@@ -1828,10 +1836,10 @@ class ControllerOpenbayEbay extends Controller {
 					$data['template'] = '';
 				}
 
-				$data['gallery_plus']       = $profile_template['data']['ebay_gallery_plus'];
-				$data['gallery_super']      = $profile_template['data']['ebay_supersize'];
+				$data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
+				$data['gallery_super'] = $profile_template['data']['ebay_supersize'];
 
-				$data['private_listing']    = $profile_generic['data']['private_listing'];
+				$data['private_listing'] = $profile_generic['data']['private_listing'];
 
 				//product attributes - this is just a direct pass through used with the template tag
 				$data['attributes'] = base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($post['product_id'])));
@@ -2047,6 +2055,14 @@ class ControllerOpenbayEbay extends Controller {
 
 				if (isset($profile_shipping['data']['global_shipping'])) {
 					$data['global_shipping'] = $profile_shipping['data']['global_shipping'];
+				}
+
+				if (isset($profile_shipping['data']['promotional_shipping_discount'])) {
+					$data['promotional_shipping_discount'] = $profile_shipping['data']['promotional_shipping_discount'];
+				}
+
+				if (isset($profile_shipping['data']['promotional_shipping_discount_international'])) {
+					$data['promotional_shipping_discount_international'] = $profile_shipping['data']['promotional_shipping_discount_international'];
 				}
 
 				$data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
