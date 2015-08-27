@@ -1813,6 +1813,10 @@ class ControllerOpenbayEbay extends Controller {
 					$data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
 				}
 
+				if (isset($profile_shipping['data']['global_shipping'])) {
+					$data['global_shipping'] = $profile_shipping['data']['global_shipping'];
+				}
+
 				$data['get_it_fast']        = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
 
 				if (isset($profile_template['data']['ebay_template_id'])) {
@@ -2041,7 +2045,11 @@ class ControllerOpenbayEbay extends Controller {
 					$data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
 				}
 
-				$data['get_it_fast']        = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
+				if (isset($profile_shipping['data']['global_shipping'])) {
+					$data['global_shipping'] = $profile_shipping['data']['global_shipping'];
+				}
+
+				$data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
 
 				if (isset($profile_template['data']['ebay_template_id'])) {
 					$template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
