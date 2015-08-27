@@ -425,26 +425,30 @@ class ControllerOpenbayEbay extends Controller {
 
 		$response = $this->model_openbay_ebay->getEbayCategorySpecifics($this->request->get['category_id']);
 
-		foreach($response['data']['Recommendations']['NameRecommendation'] as $name_recommendation_key => $name_recommendation) {
-			$recommendation_data_option = array(
-				'name' => $name_recommendation['Name'],
-				'validation' =>
-					array(
-						'max_values' => $name_recommendation['ValidationRules']['MaxValues'],
-						'selection_mode' => $name_recommendation['ValidationRules']['SelectionMode'],
-					),
-				'unmatched_value' => '',
-			);
+		$recommendation_data = array();
 
-			if (isset($name_recommendation['ValueRecommendation'])) {
-				if (!isset($name_recommendation['ValueRecommendation']['Value'])) {
-					foreach($name_recommendation['ValueRecommendation'] as $value_recommendation_key => $value_recommendation) {
-						$recommendation_data_option['options'][] = $value_recommendation['Value'];
+		if (isset($response['data']['Recommendations']['NameRecommendation']) && is_array($response['data']['Recommendations']['NameRecommendation'])) {
+			foreach($response['data']['Recommendations']['NameRecommendation'] as $name_recommendation_key => $name_recommendation) {
+				$recommendation_data_option = array(
+					'name' => $name_recommendation['Name'],
+					'validation' =>
+						array(
+							'max_values' => $name_recommendation['ValidationRules']['MaxValues'],
+							'selection_mode' => $name_recommendation['ValidationRules']['SelectionMode'],
+						),
+					'unmatched_value' => '',
+				);
+
+				if (isset($name_recommendation['ValueRecommendation'])) {
+					if (!isset($name_recommendation['ValueRecommendation']['Value'])) {
+						foreach($name_recommendation['ValueRecommendation'] as $value_recommendation_key => $value_recommendation) {
+							$recommendation_data_option['options'][] = $value_recommendation['Value'];
+						}
 					}
 				}
-			}
 
-			$recommendation_data[] = $recommendation_data_option;
+				$recommendation_data[] = $recommendation_data_option;
+			}
 		}
 
 		if (isset($this->request->get['product_id'])) {
@@ -1298,6 +1302,7 @@ class ControllerOpenbayEbay extends Controller {
 				$setting['shipping_types'] = $this->openbay->ebay->getSetting('shipping_types');
 				$setting['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
 				$setting['product_details'] = $this->openbay->ebay->getSetting('product_details');
+				$setting['listing_restrictions'] = $this->openbay->ebay->getSetting('listing_restrictions');
 
 				if (!isset($setting['product_details']['product_identifier_unavailable_text'])) {
 					$this->session->data['warning'] = $this->language->get('error_missing_settings');
@@ -1800,6 +1805,14 @@ class ControllerOpenbayEbay extends Controller {
 					$data['country'] = $profile_shipping['data']['country'];
 				}
 
+				if (isset($profile_shipping['data']['eligible_for_pickup_dropoff'])) {
+					$data['eligible_for_pickup_dropoff'] = $profile_shipping['data']['eligible_for_pickup_dropoff'];
+				}
+
+				if (isset($profile_shipping['data']['eligible_for_pickup_instore'])) {
+					$data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
+				}
+
 				$data['get_it_fast']        = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
 
 				if (isset($profile_template['data']['ebay_template_id'])) {
@@ -2018,6 +2031,14 @@ class ControllerOpenbayEbay extends Controller {
 
 				if (isset($profile_shipping['data']['country'])) {
 					$data['country'] = $profile_shipping['data']['country'];
+				}
+
+				if (isset($profile_shipping['data']['eligible_for_pickup_dropoff'])) {
+					$data['eligible_for_pickup_dropoff'] = $profile_shipping['data']['eligible_for_pickup_dropoff'];
+				}
+
+				if (isset($profile_shipping['data']['eligible_for_pickup_instore'])) {
+					$data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
 				}
 
 				$data['get_it_fast']        = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
