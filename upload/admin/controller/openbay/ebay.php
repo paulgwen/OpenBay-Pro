@@ -427,8 +427,8 @@ class ControllerOpenbayEbay extends Controller {
 
 		$recommendation_data = array();
 
-		if (isset($response['data']['Recommendations']['NameRecommendation']) && is_array($response['data']['Recommendations']['NameRecommendation'])) {
-			foreach($response['data']['Recommendations']['NameRecommendation'] as $name_recommendation_key => $name_recommendation) {
+		if (isset($response['data']['Recommendations']['NameRecommendation'])) {
+			foreach ($response['data']['Recommendations']['NameRecommendation'] as $name_recommendation_key => $name_recommendation) {
 				$recommendation_data_option = array(
 					'name' => $name_recommendation['Name'],
 					'validation' =>
@@ -441,7 +441,7 @@ class ControllerOpenbayEbay extends Controller {
 
 				if (isset($name_recommendation['ValueRecommendation'])) {
 					if (!isset($name_recommendation['ValueRecommendation']['Value'])) {
-						foreach($name_recommendation['ValueRecommendation'] as $value_recommendation_key => $value_recommendation) {
+						foreach ($name_recommendation['ValueRecommendation'] as $value_recommendation_key => $value_recommendation) {
 							$recommendation_data_option['options'][] = $value_recommendation['Value'];
 						}
 					}
@@ -449,34 +449,34 @@ class ControllerOpenbayEbay extends Controller {
 
 				$recommendation_data[] = $recommendation_data_option;
 			}
-		}
 
-		if (isset($this->request->get['product_id'])) {
-			$product_attributes = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
+			if (isset($this->request->get['product_id'])) {
+				$product_attributes = $this->model_catalog_product->getProductAttributes($this->request->get['product_id']);
 
-			foreach ($product_attributes as $product_attribute) {
-				$attribute_info = $this->model_catalog_attribute->getAttribute($product_attribute['attribute_id']);
+				foreach ($product_attributes as $product_attribute) {
+					$attribute_info = $this->model_catalog_attribute->getAttribute($product_attribute['attribute_id']);
 
-				if ($attribute_info) {
-					// search the ebay attribute results for a match
-					foreach($recommendation_data as $name_recommendation_key => $name_recommendation) {
-						if (strtolower($attribute_info['name']) == strtolower($name_recommendation['name'])) {
-							$preset_match_found = false;
+					if ($attribute_info) {
+						// search the ebay attribute results for a match
+						foreach ($recommendation_data as $name_recommendation_key => $name_recommendation) {
+							if (strtolower($attribute_info['name']) == strtolower($name_recommendation['name'])) {
+								$preset_match_found = false;
 
-							if (isset($name_recommendation['options'])) {
-								foreach($name_recommendation['options'] as $value_recommendation_key => $value_recommendation) {
-									if (strtolower($value_recommendation) == strtolower($product_attribute['product_attribute_description'][$this->config->get('config_language_id')]['text'])) {
-										$preset_match_found = $value_recommendation_key;
+								if (isset($name_recommendation['options'])) {
+									foreach ($name_recommendation['options'] as $value_recommendation_key => $value_recommendation) {
+										if (strtolower($value_recommendation) == strtolower($product_attribute['product_attribute_description'][$this->config->get('config_language_id')]['text'])) {
+											$preset_match_found = $value_recommendation_key;
+										}
 									}
 								}
-							}
 
-							if ($preset_match_found === false) {
-								if ($name_recommendation['validation']['selection_mode'] == 'FreeText') {
-									$recommendation_data[$name_recommendation_key]['unmatched_value'] = $product_attribute['product_attribute_description'][$this->config->get('config_language_id')]['text'];
+								if ($preset_match_found === false) {
+									if ($name_recommendation['validation']['selection_mode'] == 'FreeText') {
+										$recommendation_data[$name_recommendation_key]['unmatched_value'] = $product_attribute['product_attribute_description'][$this->config->get('config_language_id')]['text'];
+									}
+								} else {
+									$recommendation_data[$name_recommendation_key]['matched_value_key'] = $preset_match_found;
 								}
-							} else {
-								$recommendation_data[$name_recommendation_key]['matched_value_key'] = $preset_match_found;
 							}
 						}
 					}

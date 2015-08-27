@@ -1197,7 +1197,7 @@ final class Ebay {
 					$this->log('Inserted listing_restrictions into ebay_setting_option table');
 				}
 			} else {
-				$this->log('Non identifier text not set!');
+				$this->log('listing_restrictions data not set!');
 			}
 
 			if (isset($response['product_details'])) {
