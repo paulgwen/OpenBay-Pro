@@ -2,7 +2,7 @@
     <id>OpenBay Pro for Amazonus</id>
     <version>1</version>
     <vqmver>1.0.8</vqmver>
-    <author>Martynas Puronas</author>
+    <author>James Allsup</author>
 
     <!-- Adding Amazonus class to the registry object -->
     <file name="system/engine/controller.php">
