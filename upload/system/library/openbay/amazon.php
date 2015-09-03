@@ -110,7 +110,7 @@ class Amazon {
 	}
 
 	public function productUpdateListen($product_id, $data = array()) {
-		$logger = new Log('amazon_stocks.log');
+		$logger = new \Log('amazon_stocks.log');
 		$logger->write('productUpdateListen (' . $product_id . ')');
 
 		$product = $this->db->query("SELECT DISTINCT * FROM `" . DB_PREFIX . "product` WHERE `product_id` = '" . (int)$product_id . "' LIMIT 1")->row;
@@ -156,7 +156,7 @@ class Amazon {
 		}
 		$this->load->model('openbay/amazon');
 
-		$log = new Log('amazon.log');
+		$log = new \Log('amazon.log');
 		$log->write('Called bulkUpdateOrders method');
 
 		$request = array(
@@ -221,7 +221,7 @@ class Amazon {
 
 		$amazon_order_id = $amazon_order['amazon_order_id'];
 
-		$log = new Log('amazon.log');
+		$log = new \Log('amazon.log');
 		$log->write("Order's $amazon_order_id status changed to $order_status_string");
 
 		$this->load->model('openbay/amazon');
@@ -307,7 +307,7 @@ class Amazon {
 
 	public function putStockUpdateBulk($product_id_array, $end_inactive = false){
 		$this->load->library('log');
-		$logger = new Log('amazon_stocks.log');
+		$logger = new \Log('amazon_stocks.log');
 		$logger->write('Updating stock using putStockUpdateBulk()');
 		$quantity_data = array();
 		foreach($product_id_array as $product_id) {

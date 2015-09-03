@@ -15,7 +15,7 @@ final class Openbay {
 			$this->{$market} = new $class($registry);
 		}
 
-		$this->logger = new Log('openbay.log');
+		$this->logger = new \Log('openbay.log');
 	}
 
 	public function __get($name) {
