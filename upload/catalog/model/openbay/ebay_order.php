@@ -594,7 +594,7 @@ class ModelOpenbayEbayOrder extends Model{
 
 	public function addOrderHistory($order_id) {
 		$this->openbay->ebay->log('addOrderHistory() - Order id:' . $order_id . ' passed');
-		if (!$this->openbay->ebay->isEbayOrder($order_id)) {
+		if (!$this->openbay->ebay->getOrder($order_id)) {
 			$order_products = $this->openbay->getOrderProducts($order_id);
 
 			foreach($order_products as $order_product) {
