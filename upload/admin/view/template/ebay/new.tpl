@@ -1584,7 +1584,7 @@
         $('#taxEx').val(parseFloat(taxEx).toFixed(2));
     }
 
-    $('#identifier_not_required').on("click", function() {
+    $('#identifier_not_required').click(function() {
       var not_required_text = "<?php echo $setting['product_details']['product_identifier_unavailable_text']; ?>";
 
       if ($('#identifier_not_required:checked').length == 1) {

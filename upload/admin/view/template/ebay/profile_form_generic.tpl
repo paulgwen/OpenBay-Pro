@@ -80,7 +80,7 @@
 <script type="text/javascript"><!--
     $('#tabs a').tabs();
 
-    $('#price_modify').on('change', function(){
+    $('#price_modify').change(function(){
         $(this).text().replace('%', '');
     });
 
