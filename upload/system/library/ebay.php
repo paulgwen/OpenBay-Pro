@@ -4,6 +4,8 @@ final class Ebay
     private $registry;
     private $url    = 'https://uk.openbaypro.com/';
     private $no_log  = array('notification/getPublicNotifications/','setup/getEbayCategories/','item/getItemAllList/', 'account/validate/');
+    private $logger;
+    private $max_log_size = 50; //max log size in Mb
 
     public function __construct($registry) {
         $this->registry     = $registry;
