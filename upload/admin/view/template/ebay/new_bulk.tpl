@@ -511,7 +511,6 @@ function itemFeatures(category_id, id){
 
         var html_inj = '';
         var html_inj2 = '';
-        var specific_count = 0;
         var field_value = '';
         var show_other = false;
         var show_other_value = '';
@@ -556,12 +555,12 @@ function itemFeatures(category_id, id){
                 }
               }
 
-              html_inj += '<select class="ebaySpecificSelect openbayData_' + id + ' left" style="min-with:200px; padding:5px 2px;" name="feat[' + option_specific_value.name + ']" id="spec_sel_' + specific_count + '" onchange="toggleSpecOther(' + specific_count + ');">' + html_inj2 + '</select>';
+              html_inj += '<select class="ebaySpecificSelect openbayData_' + id + ' left" style="min-with:200px; padding:5px 2px;" name="feat[' + option_specific_value.name + ']" id="spec_sel_' + id + '" onchange="toggleSpecOther(' + id + ');">' + html_inj2 + '</select>';
 
               if (show_other === true) {
-                html_inj += '<p id="spec_' + specific_count + '_other">';
+                html_inj += '<p id="spec_' + id + '_other">';
               } else {
-                html_inj += '<p id="spec_' + specific_count + '_other" style="display:none;">';
+                html_inj += '<p id="spec_' + id + '_other" style="display:none;">';
               }
               html_inj += '<input class="ebaySpecificOther openbayData_' + id + ' left" type="text" name="featother[' + option_specific_value.name + ']" value="' + show_other_value + '"/>';
               html_inj += '</p>';
@@ -574,8 +573,6 @@ function itemFeatures(category_id, id){
             }
 
             html_inj += '</td></tr>';
-
-            specific_count++;
           });
 
           $('#featureRow_'+id).append(html_inj);
