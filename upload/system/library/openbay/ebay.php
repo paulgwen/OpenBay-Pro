@@ -359,7 +359,7 @@ final class Ebay {
 	public function notifyAdmin($subject, $message) {
 		$this->log('Sending email to: ' . $this->config->get('config_email') . ' - notifyAdmin()');
 
-		$mail = new Mail();
+		$mail = new \Mail();
 		$mail->protocol = $this->config->get('config_mail_protocol');
 		$mail->parameter = $this->config->get('config_mail_parameter');
 		$mail->smtp_hostname = $this->config->get('config_mail_smtp_hostname');
