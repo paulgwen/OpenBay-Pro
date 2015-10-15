@@ -1714,6 +1714,9 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['condition']          = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
                 $data['auction_type']       = 'FixedPriceItem';
                 $data['catalog_epid']       = (isset($post['catalog_epid']) && $post['catalog_epid'] != 0 ? $post['catalog_epid'] : '');
+                $data['identifier_upc']     = (isset($post['identifier_upc']) && $post['identifier_upc'] != '' ? $post['identifier_upc'] : '');
+                $data['identifier_isbn']    = (isset($post['identifier_isbn']) && $post['identifier_isbn'] != '' ? $post['identifier_isbn'] : '');
+                $data['identifier_ean']     = (isset($post['identifier_ean']) && $post['identifier_ean'] != '' ? $post['identifier_ean'] : '');
 
                 $data['payment_immediate']  = $this->config->get('payment_immediate');
                 $data['paypal_email']       = $this->config->get('field_payment_paypal_address');
@@ -1925,6 +1928,9 @@ class ControllerOpenbayOpenbay extends Controller {
                 $data['condition']          = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
                 $data['auction_type']       = 'FixedPriceItem';
                 $data['catalog_epid']       = (isset($post['catalog_epid']) && $post['catalog_epid'] != 0 ? $post['catalog_epid'] : '');
+                $data['identifier_upc']     = (isset($post['identifier_upc']) && $post['identifier_upc'] != '' ? $post['identifier_upc'] : '');
+                $data['identifier_isbn']    = (isset($post['identifier_isbn']) && $post['identifier_isbn'] != '' ? $post['identifier_isbn'] : '');
+                $data['identifier_ean']     = (isset($post['identifier_ean']) && $post['identifier_ean'] != '' ? $post['identifier_ean'] : '');
 
                 $data['payment_immediate']  = $this->config->get('payment_immediate');
                 $data['paypal_email']       = $this->config->get('field_payment_paypal_address');
