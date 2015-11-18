@@ -5,7 +5,7 @@ final class Etsy {
 	private $token;
 	private $enc1;
 	private $enc2;
-	private $url = 'http://api.openbaypro.io/';
+	private $url = 'https://api.openbaypro.io/';
 	private $registry;
 	private $logger;
 	private $max_log_size = 50; //max log size in Mb
