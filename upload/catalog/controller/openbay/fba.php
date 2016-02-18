@@ -2,7 +2,6 @@
 class ControllerOpenbayFba extends Controller {
 	public function eventAddOrderHistory($order_id) {
 		if (!empty($order_id)) {
-			$this->load->model('openbay/fba_order');
 			$this->load->model('checkout/order');
 			$this->load->model('account/order');
 			$this->load->model('catalog/product');
