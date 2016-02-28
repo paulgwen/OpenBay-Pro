@@ -1810,7 +1810,7 @@ class ControllerExtensionOpenbay extends Controller {
 			if ($market == 'amazon') {
 				$status = $this->config->get('openbay_amazon_status');
 			} elseif ($market == 'amazonus') {
-				$status = $this->config->get('openbay_amazon_status');
+				$status = $this->config->get('openbay_amazonus_status');
 			} else {
 				$status = $this->config->get($market . '_status');
 			}
@@ -1826,7 +1826,7 @@ class ControllerExtensionOpenbay extends Controller {
 			if ($market == 'amazon') {
 				$status = $this->config->get('openbay_amazon_status');
 			} elseif ($market == 'amazonus') {
-				$status = $this->config->get('openbay_amazon_status');
+				$status = $this->config->get('openbay_amazonus_status');
 			} else {
 				$status = $this->config->get($market . '_status');
 			}
