@@ -452,17 +452,13 @@
                 <label class="col-sm-2 control-label" for="entry-tax-listing"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_listing_tax; ?>"><?php echo $entry_tax_listing; ?></span></label>
                 <div class="col-sm-10">
                   <select name="ebay_tax_listing" id="entry-tax-listing" class="form-control">
-                    <?php if ($ebay_tax_listing) { ?>
-                    <option value="1" selected="selected"><?php echo $text_tax_use_listing; ?></option>
-                    <option value="0"><?php echo $text_tax_use_value; ?></option>
-                    <?php } else { ?>
-                    <option value="1"><?php echo $text_tax_use_listing; ?></option>
-                    <option value="0" selected="selected"><?php echo $text_tax_use_value; ?></option>
-                    <?php } ?>
+                    <option value="0" <?php echo ($ebay_tax_listing == 0 ? 'selected' : '' ); ?>><?php echo $text_tax_use_value; ?></option>
+                    <option value="1" <?php echo ($ebay_tax_listing == 1 ? 'selected' : '' ); ?>><?php echo $text_tax_use_listing; ?></option>
+                    <option value="2" <?php echo ($ebay_tax_listing == 2 ? 'selected' : '' ); ?>><?php echo $text_tax_use_product; ?></option>
                   </select>
                 </div>
               </div>
-              <div class="form-group" id="ebay_tax_listing_preset">
+              <div class="form-group" id="entry-tax-listing-preset">
                 <label class="col-sm-2 control-label" for="entry-tax"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_tax; ?>"><?php echo $entry_tax; ?></span></label>
                 <div class="col-sm-10">
                   <div class="input-group col-xs-2">
@@ -479,96 +475,97 @@
   </div>
 </div>
 <script type="text/javascript"><!--
-    $('#button-clear-locks').bind('click', function() {
-      $.ajax({
-        url: 'index.php?route=openbay/ebay/deleteAllLocks&token=<?php echo $token; ?>',
-        type: 'post',
-        dataType: 'json',
-        beforeSend: function() {
-          $('#button-clear-locks').empty().html('<i class="fa fa-cog fa-lg fa-spin"></i>');
-        },
-        success: function(json) {
-          setTimeout(function() {
-            alert(json.msg);
-            $('#button-clear-locks').empty().html('<?php echo $button_clear; ?>');
-          }, 500);
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-          if (xhr.status != 0) { alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText); }
+  $('#button-clear-locks').bind('click', function() {
+    $.ajax({
+      url: 'index.php?route=openbay/ebay/deleteAllLocks&token=<?php echo $token; ?>',
+      type: 'post',
+      dataType: 'json',
+      beforeSend: function() {
+        $('#button-clear-locks').empty().html('<i class="fa fa-cog fa-lg fa-spin"></i>');
+      },
+      success: function(json) {
+        setTimeout(function() {
+          alert(json.msg);
           $('#button-clear-locks').empty().html('<?php echo $button_clear; ?>');
-        }
-      });
+        }, 500);
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        if (xhr.status != 0) { alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText); }
+        $('#button-clear-locks').empty().html('<?php echo $button_clear; ?>');
+      }
     });
+  });
 
-    $('#button-repair-links').bind('click', function() {
-      $.ajax({
-        url: 'index.php?route=openbay/ebay/repairLinks&token=<?php echo $token; ?>',
-        type: 'post',
-        dataType: 'json',
-        beforeSend: function() {
-          $('#button-repair-links').empty().html('<i class="fa fa-cog fa-lg fa-spin"></i>');
-        },
-        success: function(json) {
-          setTimeout(function() {
-            alert(json.msg);
-            $('#button-repair-links').empty().html('<?php echo $button_update; ?>');
-          }, 500);
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-          if (xhr.status != 0) { alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText); }
+  $('#button-repair-links').bind('click', function() {
+    $.ajax({
+      url: 'index.php?route=openbay/ebay/repairLinks&token=<?php echo $token; ?>',
+      type: 'post',
+      dataType: 'json',
+      beforeSend: function() {
+        $('#button-repair-links').empty().html('<i class="fa fa-cog fa-lg fa-spin"></i>');
+      },
+      success: function(json) {
+        setTimeout(function() {
+          alert(json.msg);
           $('#button-repair-links').empty().html('<?php echo $button_update; ?>');
-        }
+        }, 500);
+      },
+      error: function (xhr, ajaxOptions, thrownError) {
+        if (xhr.status != 0) { alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText); }
+        $('#button-repair-links').empty().html('<?php echo $button_update; ?>');
+      }
+    });
+  });
+
+  function validateForm() {
+      $('#form-ebay-settings').submit();
+  }
+
+  function checkCredentials() {
+      $.ajax({
+          url: 'index.php?route=openbay/ebay/verifycredentials&token=<?php echo $token; ?>',
+          type: 'POST',
+          dataType: 'json',
+          data: {token: $('#ebay-token').val(), secret: $('#ebay-secret').val(), string1: $('#ebay-string1').val(), string2: $('#ebay-string2').val()},
+          beforeSend: function() {
+            $('#api-status').removeClass('label-success').removeClass('label-danger').addClass('label-primary').html('<i class="fa fa-cog fa-lg fa-spin"></i> Checking details').show();
+          },
+          success: function(data) {
+              if (data.error == false) {
+                  $('#api-status').removeClass('label-primary').addClass('label-success').html('<i class="fa fa-check-square-o"></i> <?php echo $text_api_ok; ?>: ' + data.data.expire);
+              } else {
+                  $('#api-status').removeClass('label-primary').addClass('label-danger').html('<i class="fa fa-minus-square"></i> ' + data.msg);
+              }
+          },
+          failure: function() {
+            $('#api-status').removeClass('label-primary').addClass('label-danger').html('<i class="fa fa-minus-square"></i> <?php echo $error_api_connect; ?>');
+          },
+          error: function() {
+            $('#api-status').removeClass('label-primary').addClass('label-danger').html('<i class="fa fa-minus-square"></i> <?php echo $error_api_connect; ?>');
+          }
       });
-    });
+  }
 
-    function validateForm() {
-        $('#form-ebay-settings').submit();
+  function changeTaxHandler(){
+    if ($('#entry-tax-listing').val() == 0){
+      $('#entry-tax-listing-preset').show();
+    }else{
+      $('#entry-tax-listing-preset').hide();
     }
+  }
 
-    function checkCredentials() {
-        $.ajax({
-            url: 'index.php?route=openbay/ebay/verifycredentials&token=<?php echo $token; ?>',
-            type: 'POST',
-            dataType: 'json',
-            data: {token: $('#ebay-token').val(), secret: $('#ebay-secret').val(), string1: $('#ebay-string1').val(), string2: $('#ebay-string2').val()},
-            beforeSend: function() {
-              $('#api-status').removeClass('label-success').removeClass('label-danger').addClass('label-primary').html('<i class="fa fa-cog fa-lg fa-spin"></i> Checking details').show();
-            },
-            success: function(data) {
-                if (data.error == false) {
-                    $('#api-status').removeClass('label-primary').addClass('label-success').html('<i class="fa fa-check-square-o"></i> <?php echo $text_api_ok; ?>: ' + data.data.expire);
-                } else {
-                    $('#api-status').removeClass('label-primary').addClass('label-danger').html('<i class="fa fa-minus-square"></i> ' + data.msg);
-                }
-            },
-            failure: function() {
-              $('#api-status').removeClass('label-primary').addClass('label-danger').html('<i class="fa fa-minus-square"></i> <?php echo $error_api_connect; ?>');
-            },
-            error: function() {
-              $('#api-status').removeClass('label-primary').addClass('label-danger').html('<i class="fa fa-minus-square"></i> <?php echo $error_api_connect; ?>');
-            }
-        });
-    }
+  $('.credentials').change(function() {
+    checkCredentials();
+  });
 
-    function changeTaxHandler(){
-        if ($('#ebay_tax_listing').val() == 1){
-            $('#ebay_tax_listing_preset').hide();
-        }else{
-            $('#ebay_tax_listing_preset').show();
-        }
-    }
 
-    $('.credentials').change(function() {
-      checkCredentials();
-    });
+  $('#entry-tax-listing').change(function() {
+    changeTaxHandler();
+  });
 
-    $('#ebay_tax_listing').change(function() {
-      changeTaxHandler();
-    });
-
-    $(document).ready(function() {
-      checkCredentials();
-      changeTaxHandler();
-    });
+  $(document).ready(function() {
+    checkCredentials();
+    changeTaxHandler();
+  });
 //--></script>
 <?php echo $footer; ?>
