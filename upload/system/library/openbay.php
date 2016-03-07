@@ -326,6 +326,16 @@ final class Openbay {
 		}
 	}
 
+	public function getProductTaxClassId($product_id) {
+		$qry = $this->db->query("SELECT `tax_class_id` FROM `" . DB_PREFIX . "product` WHERE `product_id` = '" . (int)$product_id . "' LIMIT 1");
+
+		if($qry->num_rows > 0) {
+			return $qry->row['tax_class_id'];
+		} else {
+			return false;
+		}
+	}
+
 	public function getProductModelNumber($product_id, $sku = null) {
 		if($sku != null) {
 			$qry = $this->db->query("SELECT `sku` FROM `" . DB_PREFIX . "product_option_relation` WHERE `product_id` = '".(int)$product_id."' AND `var` = '".$this->db->escape($sku)."'");

@@ -83,6 +83,7 @@ $_['lang_payment_imediate']     = 'Immediate payment required';
 $_['lang_tax_listing']          = 'Product tax<span class="help">If you use the rate from listings ensure your items have the correct tax in eBay</span>';
 $_['lang_tax_use_listing']      = 'Use tax rate set in eBay listing';
 $_['lang_tax_use_value']        = 'Use a set value for everything';
+$_['lang_tax_use_product']		= 'Calculate tax based on buyer country and product tax group';
 $_['lang_tax']                  = 'Tax % used for everything<span class="help">Used when you import items or orders</span>';
 
 $_['lang_ajax_dev_enter_pw']    = 'Please enter your admin password';

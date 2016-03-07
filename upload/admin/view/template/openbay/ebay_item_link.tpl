@@ -141,7 +141,7 @@ function checkLinkedItems(){
             if(json.data == ''){
                 $('#checking_linked_items').hide();
                 $('.pagination').hide();
-                $('#show_linked_items').html('<tr><td colspan="8"><p><?php echo $lang_ajax_error_listings; ?></p></td></tr>').show();
+                $('#show_linked_items').html('<tr><td colspan="9"><p><?php echo $lang_ajax_error_listings; ?></p></td></tr>').show();
             }else{
                 $.each(json.data, function(key, val){
                     key                 = String(key);

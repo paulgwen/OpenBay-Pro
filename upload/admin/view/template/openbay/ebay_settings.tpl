@@ -514,19 +514,15 @@
                         <tr class="row6">
                             <td><label><?php echo $lang_tax_listing; ?></td>
                             <td>
-                                <select name="ebay_tax_listing" id="ebay_tax_listing" style="width:200px;">
-                                    <?php if ($ebay_tax_listing) { ?>
-                                    <option value="1" selected="selected"><?php echo $lang_tax_use_listing; ?></option>
-                                    <option value="0"><?php echo $lang_tax_use_value; ?></option>
-                                    <?php } else { ?>
-                                    <option value="1"><?php echo $lang_tax_use_listing; ?></option>
-                                    <option value="0" selected="selected"><?php echo $lang_tax_use_value; ?></option>
-                                    <?php } ?>
+                                <select name="ebay_tax_listing" id="ebay-tax-listing" style="width:200px;">
+                                    <option value="0" <?php echo ($ebay_tax_listing == 0 ? 'selected' : '' ); ?>><?php echo $lang_tax_use_value; ?></option>
+                                    <option value="1" <?php echo ($ebay_tax_listing == 1 ? 'selected' : '' ); ?>><?php echo $lang_tax_use_listing; ?></option>
+                                    <option value="2" <?php echo ($ebay_tax_listing == 2 ? 'selected' : '' ); ?>><?php echo $lang_tax_use_product; ?></option>
                                 </select>
                             </td>
                         </tr>
 
-                        <tr class="row6" id="ebay_tax_listing_preset">
+                        <tr class="row6" id="ebay-tax-listing-preset">
                             <td><label><?php echo $lang_tax; ?></td>
                             <td><input type="text" name="tax" id="tax" style="width:30px;" maxlength="" value="<?php echo $tax;?>" /> %</td>
                         </tr>
@@ -647,21 +643,21 @@
     }
 
     function changeTaxHandler(){
-        if($('#ebay_tax_listing').val() == 1){
-            $('#ebay_tax_listing_preset').hide();
+        if ($('#ebay-tax-listing').val() == 0){
+            $('#ebay-tax-listing-preset').show();
         }else{
-            $('#ebay_tax_listing_preset').show();
+            $('#ebay-tax-listing-preset').hide();
         }
     }
+
+    $('#ebay-tax-listing').change(function() {
+        changeTaxHandler();
+    });
 
     $('#tabs a').tabs();
 
     $('.credentials').change(function() {
         checkCredentials();
-    });
-
-    $('#ebay_tax_listing').change(function() {
-        changeTaxHandler();
     });
 
     $(document).ready(function() {
