@@ -231,6 +231,7 @@ class ModelOpenbayEbayOpenbay extends Model{
 		}
 
 		if (empty($currency)) {
+			$this->openbay->ebay->log('create() - Currency not found, fall back from: ' . $order->order->currency_id);
 			$currency = $this->model_localisation_currency->getCurrencyByCode($this->config->get('ebay_def_currency'));
 		}
 
