@@ -79,7 +79,7 @@ class ControllerOpenbayFba extends Controller {
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
             $this->model_setting_setting->editSetting('openbay_fba', $this->request->post);
             $this->session->data['success'] = $this->language->get('text_success');
-            $this->response->redirect($this->url->link('openbay/fba/index&token=' . $this->session->data['token']));
+            $this->response->redirect($this->url->link('openbay/fba/index', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
         $data['breadcrumbs'] = array();
@@ -289,7 +289,7 @@ class ControllerOpenbayFba extends Controller {
         if ($response['error'] == true || $response['response_http'] != 200) {
             $this->session->data['error'] = $this->language->get('error_loading_fulfillment');
 
-            $this->response->redirect($this->url->link('openbay/fba/fulfillmentlist&token=' . $this->session->data['token']));
+            $this->response->redirect($this->url->link('openbay/fba/fulfillmentlist', 'token=' . $this->session->data['token'], 'SSL'));
         }
 
         $data['token'] = $this->session->data['token'];

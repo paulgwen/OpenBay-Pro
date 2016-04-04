@@ -78,7 +78,7 @@ class ControllerOpenbayEtsy extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
 			$this->model_setting_setting->editSetting('etsy', $this->request->post);
 			$this->session->data['success'] = $this->language->get('text_success');
-			$this->response->redirect($this->url->link('openbay/etsy/index&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('openbay/etsy/index', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->document->setTitle($this->language->get('heading_title'));

@@ -73,7 +73,7 @@ class ControllerOpenbayEbayProfile extends Controller {
 
 				$this->model_openbay_ebay_profile->add($this->request->post);
 
-				$this->response->redirect($this->url->link('openbay/ebay_profile/ProfileAll&token=' . $this->session->data['token'], 'SSL'));
+				$this->response->redirect($this->url->link('openbay/ebay_profile/ProfileAll', 'token=' . $this->session->data['token'], 'SSL'));
 			}
 		}
 
@@ -91,7 +91,7 @@ class ControllerOpenbayEbayProfile extends Controller {
 			}
 		}
 
-		$this->response->redirect($this->url->link('openbay/ebay_profile/profileAll&token=' . $this->session->data['token'], 'SSL'));
+		$this->response->redirect($this->url->link('openbay/ebay_profile/profileAll', 'token=' . $this->session->data['token'], 'SSL'));
 	}
 
 	public function edit() {
@@ -104,7 +104,7 @@ class ControllerOpenbayEbayProfile extends Controller {
 
 			$this->model_openbay_ebay_profile->edit($this->request->post['ebay_profile_id'], $this->request->post);
 
-			$this->response->redirect($this->url->link('openbay/ebay_profile/profileAll&token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('openbay/ebay_profile/profileAll', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->profileForm($data);
@@ -128,7 +128,7 @@ class ControllerOpenbayEbayProfile extends Controller {
 
 		if (empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
 			$this->session->data['warning'] = $this->language->get('error_missing_settings');
-			$this->response->redirect($this->url->link('openbay/ebay/syncronise&token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		if (is_array($setting['dispatch_times'])) {
@@ -165,7 +165,7 @@ class ControllerOpenbayEbayProfile extends Controller {
 		if (!array_key_exists($type, $data['types'])) {
 			$this->session->data['error'] = $data['error_no_template'];
 
-			$this->response->redirect($this->url->link('openbay/ebay_profile/profileall&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('openbay/ebay_profile/profileall', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->document->addScript('view/javascript/openbay/js/faq.js');

@@ -73,7 +73,7 @@ class ControllerOpenbayEbayTemplate extends Controller {
 
 			$this->model_openbay_ebay_template->add($this->request->post);
 
-			$this->response->redirect($this->url->link('openbay/ebay_template/listAll&token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('openbay/ebay_template/listAll', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->templateForm($data);
@@ -92,7 +92,7 @@ class ControllerOpenbayEbayTemplate extends Controller {
 				$this->session->data['success'] = $this->language->get('text_deleted');
 			}
 		}
-		$this->response->redirect($this->url->link('openbay/ebay_template/listAll&token=' . $this->session->data['token'], 'SSL'));
+		$this->response->redirect($this->url->link('openbay/ebay_template/listAll', 'token=' . $this->session->data['token'], 'SSL'));
 	}
 
 	public function edit() {
@@ -108,7 +108,7 @@ class ControllerOpenbayEbayTemplate extends Controller {
 
 			$this->model_openbay_ebay_template->edit($this->request->post['template_id'], $this->request->post);
 
-			$this->response->redirect($this->url->link('openbay/ebay_template/listAll&token=' . $this->session->data['token'], 'SSL'));
+			$this->response->redirect($this->url->link('openbay/ebay_template/listAll', 'token=' . $this->session->data['token'], 'SSL'));
 		}
 
 		$this->templateForm($data);
