@@ -1,6 +1,7 @@
 <?php echo $header; ?>
 
 <div id="content">
+  <?php $i = 0; ?>
     <?php if(!isset($error_fail)){ ?>
 
     <?php foreach($error_warning as $warning) { ?>
@@ -22,7 +23,6 @@
                 <tr>
                     <td>
                         <?php if ($products) { ?>
-                        <?php $i = 0; ?>
                         <?php foreach ($products as $product) { ?>
 
                         <div class="box mTop15 listingBox" id="p_row_<?php echo $i; ?>">
@@ -905,7 +905,7 @@ function genericProfileChange(id){
 }
 
 function identifierNotRequired(id) {
-  var not_required_text = "<?php echo $setting['product_details']['product_identifier_unavailable_text']; ?>";
+  var not_required_text = "<?php echo (isset($setting) ? $setting['product_details']['product_identifier_unavailable_text'] : ''); ?>";
 
   if ($('#identifier_not_required_' + id + ':checked').length == 1) {
     if ($('#identifier_ean_required_' + id).val() == 1) {

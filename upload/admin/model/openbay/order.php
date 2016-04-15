@@ -4,27 +4,27 @@ class ModelOpenbayOrder extends Model{
         $sql = "SELECT COUNT(*) AS `total` FROM `" . DB_PREFIX . "order` o";
 
 		if ($this->config->get('openbay_status')) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "ebay_order eo ON o.order_id = eo.order_id";
+			$sql .= " LEFT JOIN `" . DB_PREFIX . "ebay_order` `eo` ON `o`.`order_id` = `eo`.`order_id`";
 		} else {
-			$sql .= " JOIN (SELECT NULL AS order_id) eo ";
+			$sql .= " JOIN (SELECT NULL AS `order_id`) `eo` ";
 		}
 		
 		if ($this->config->get('amazon_status')) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "amazon_order ao ON o.order_id = ao.order_id ";
+			$sql .= " LEFT JOIN `" . DB_PREFIX . "amazon_order` `ao` ON `o`.`order_id` = `ao`.`order_id` ";
 		} else {
-			$sql .= " JOIN (SELECT NULL AS order_id) ao ";
+			$sql .= " JOIN (SELECT NULL AS `order_id`) `ao` ";
 		}
 		
 		if ($this->config->get('amazonus_status')) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "amazonus_order auso ON o.order_id = auso.order_id ";
+			$sql .= " LEFT JOIN `" . DB_PREFIX . "amazonus_order` `auso` ON `o`.`order_id` = `auso`.`order_id` ";
 		} else {
-			$sql .= " JOIN (SELECT NULL AS order_id) auso ";
+			$sql .= " JOIN (SELECT NULL AS `order_id`) `auso` ";
 		}
 		
 		if ($this->config->get('play_status')) {
-			$sql .= " LEFT JOIN " . DB_PREFIX . "play_order p ON o.order_id = p.order_id ";
+			$sql .= " LEFT JOIN `" . DB_PREFIX . "play_order` `p` ON `o`.`order_id` = `p`.`order_id` ";
 		} else {
-			$sql .= " JOIN (SELECT NULL AS order_id) p ";
+			$sql .= " JOIN (SELECT NULL AS `order_id`) `p` ";
 		}
 		
         if (isset($data['filter_order_status_id']) && !is_null($data['filter_order_status_id'])) {
@@ -34,7 +34,7 @@ class ModelOpenbayOrder extends Model{
         }
 
         if (!empty($data['filter_order_id'])) {
-            $sql .= " AND o.`order_id` = '" . (int)$data['filter_order_id'] . "'";
+            $sql .= " AND `o`.`order_id` = '" . (int)$data['filter_order_id'] . "'";
         }
 
         if (!empty($data['filter_customer'])) {
