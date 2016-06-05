@@ -32,25 +32,26 @@ class ModelOpenbayEbayProduct extends Model {
 			$this->openbay->ebay->log('Openstock module not found');
 		}
 
-		$categories     = array();
-		$data['data']   = unserialize(gzuncompress(stripslashes(base64_decode(strtr($data['data'], '-_,', '+/=')))));
-		$newData        = base64_decode($data['data']);
-		$options		= json_decode($data['options'], 1);
-
-		$this->openbay->ebay->log('Options: '.$data['options']);
-
+		$categories = array();
+		$data['data'] = unserialize(gzuncompress(stripslashes(base64_decode(strtr($data['data'], '-_,', '+/=')))));
+		$new_data = base64_decode($data['data']);
 		unset($data['data']);
 
+		$options = json_decode(html_entity_decode($data['options']), 1);
+		$this->openbay->ebay->log('Options data from API');
+		$this->openbay->ebay->log($data['options']);
+		$this->openbay->ebay->log('Decoded options');
+		$this->openbay->ebay->log(print_r($options, 1));
 		$this->openbay->ebay->log('Decoded data');
 
-		$newData1   = unserialize($newData);
-		unset($newData);
+		$new_data_1 = unserialize($new_data);
+		unset($new_data);
 
 		$this->openbay->ebay->log('Data unserialized');
 
 		if ($options['cat'] == 1 || !isset($options['cat'])) {
 			$itemCountLoop = 0;
-			foreach($newData1 as $item) {
+			foreach($new_data_1 as $item) {
 				$itemCountLoop++;
 				$this->openbay->ebay->log('Processing item: '.$itemCountLoop);
 
@@ -203,7 +204,7 @@ class ModelOpenbayEbayProduct extends Model {
 
 		$current = $this->openbay->ebay->getLiveListingArray();
 
-		foreach($newData1 as $item) {
+		foreach($new_data_1 as $item) {
 			if(!in_array($item['ItemID'], $current)) {
 				$this->openbay->ebay->log('New item being created: '.$item['ItemID']);
 
