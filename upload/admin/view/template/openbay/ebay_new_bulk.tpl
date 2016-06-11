@@ -22,6 +22,7 @@
       <h3 class="panel-title"><i class="fa fa-list"></i> <?php echo $text_bulk; ?></h3>
     </div>
     <div class="panel-body" id="page-listing">
+      <?php $i = 0; ?>
       <?php if (!isset($error_fail)) { ?>
         <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
           <div class="well">
@@ -34,7 +35,6 @@
             </div>
           </div>
           <?php if ($products) { ?>
-            <?php $i = 0; ?>
             <?php foreach ($products as $product) { ?>
               <div class="well listingBox" id="p_row_<?php echo $i; ?>">
                 <input type="hidden" class="product_id openbay_data_<?php echo $i; ?>" name="product_id" value="<?php echo $i; ?>" />
