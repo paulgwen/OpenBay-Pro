@@ -339,8 +339,7 @@ class ControllerOpenbayAmazonProduct extends Controller {
 		foreach($saved_products as $saved_product) {
 			$product_data_decoded = (array)json_decode($saved_product['data']);
 
-			$catalog = defined(HTTPS_CATALOG) ? HTTPS_CATALOG : HTTP_CATALOG;
-			$response_data = array("response_url" => $catalog . 'index.php?route=openbay/amazon/product');
+			$response_data = array("response_url" => $this->config->get('config_url') . 'index.php?route=openbay/amazon/product');
 			$category_data = array('category' => (string)$saved_product['category']);
 			$fields_data = array('fields' => (array)$product_data_decoded['fields']);
 
@@ -398,7 +397,7 @@ class ControllerOpenbayAmazonProduct extends Controller {
 							if (empty($field['value'])) {
 								$template['fields'][$key]['thumb'] = '';
 							} else {
-								$template['fields'][$key]['thumb'] = $this->model_tool_image->resize(str_replace(HTTPS_CATALOG . 'image/', '', $field['value']), 100, 100);
+								$template['fields'][$key]['thumb'] = $this->model_tool_image->resize(str_replace($this->config->get('config_url') . 'image/', '', $field['value']), 100, 100);
 							}
 						}
 					}
@@ -435,7 +434,7 @@ class ControllerOpenbayAmazonProduct extends Controller {
 
 		$product_info = $this->model_catalog_product->getProduct($product_id);
 		$product_info['description'] = trim(utf8_encode(strip_tags(html_entity_decode($product_info['description']), "<br>")));
-		$product_info['image'] = HTTPS_CATALOG . 'image/' . $product_info['image'];
+		$product_info['image'] = $this->config->get('config_url') . 'image/' . $product_info['image'];
 
 		$tax_added = isset($openbay_settings['openbay_amazon_listing_tax_added']) ? $openbay_settings['openbay_amazon_listing_tax_added'] : 0;
 		$default_condition =  isset($openbay_settings['openbay_amazon_listing_default_condition']) ? $openbay_settings['openbay_amazon_listing_default_condition'] : '';
@@ -469,7 +468,7 @@ class ControllerOpenbayAmazonProduct extends Controller {
 		$product_images = $this->model_catalog_product->getProductImages($product_id);
 		$image_index = 1;
 		foreach($product_images as $product_image) {
-			$defaults['pt' . $image_index] = HTTPS_CATALOG . 'image/' . $product_image['image'];
+			$defaults['pt' . $image_index] = $this->config->get('config_url') . 'image/' . $product_image['image'];
 			$image_index ++;
 		}
 
@@ -506,7 +505,7 @@ class ControllerOpenbayAmazonProduct extends Controller {
 				$defaults['shippingweight'] = number_format($option['weight'], 2, '.', '');
 
 				if (!empty($option['image'])) {
-					$defaults['mainimage'] = HTTPS_CATALOG . 'image/' . $option['image'];
+					$defaults['mainimage'] = $this->config->get('config_url') . 'image/' . $option['image'];
 				}
 			}
 		}
