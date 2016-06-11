@@ -118,7 +118,7 @@
                 <div class="form-group">
                   <label class="col-sm-2 control-label"><?php echo $text_returns_inst; ?></label>
                   <div class="col-sm-10">
-                    <textarea name="data[returns_policy]" class="form-control" rows="3" maxlength="5000"><?php echo $data['returns_policy'];?></textarea>
+                    <textarea name="data[returns_policy]" class="form-control" rows="3" maxlength="5000"><?php echo $data['returns_policy']; ?></textarea>
                   </div>
                 </div>
               <?php }else{ ?>

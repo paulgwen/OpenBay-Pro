@@ -35,29 +35,29 @@
             <?php if (!empty($products)) { ?>
             <?php foreach ($products as $product) { ?>
             <tr>
-              <td class="text-center"><input class="amazon-listing" type="checkbox" name="product_ids[]" value="<?php echo $product['product_id'] ?>"/></td>
-              <td class="text-center"><img src="<?php echo $product['image'] ?>"/></td>
-              <td class="text-left"><a href="<?php echo $product['href'] ?>" target="_blank"><?php echo $product['name'] ?></a></td>
-              <td class="text-right"><?php echo $product['model'] ?></td>
-              <td class="text-right"><?php echo $product['search_status'] ?></td>
+              <td class="text-center"><input class="amazon-listing" type="checkbox" name="product_ids[]" value="<?php echo $product['product_id']; ?>"/></td>
+              <td class="text-center"><img src="<?php echo $product['image']; ?>"/></td>
+              <td class="text-left"><a href="<?php echo $product['href']; ?>" target="_blank"><?php echo $product['name']; ?></a></td>
+              <td class="text-right"><?php echo $product['model']; ?></td>
+              <td class="text-right"><?php echo $product['search_status']; ?></td>
               <td class="text-right"><?php echo ($product['matches'] !== null ? $product['matches'] : '-'); ?></td>
-              <td class="text-left" id="result-<?php echo $product['product_id'] ?>"><?php if ($product['matches'] !== null) { ?>
+              <td class="text-left" id="result-<?php echo $product['product_id']; ?>"><?php if ($product['matches'] !== null) { ?>
                 <?php $checked = false; ?>
                 <?php if ($product['matches'] > 0) { ?>
-                <input class="amazon-listing" type="radio" name="products[<?php echo $product['product_id'] ?>]" value=""/>
-                <?php echo $text_dont_list ?><br/>
+                <input class="amazon-listing" type="radio" name="products[<?php echo $product['product_id']; ?>]" value=""/>
+                <?php echo $text_dont_list; ?><br/>
                 <?php foreach ($product['search_results'] as $search_result) { ?>
                 <?php if (!$checked) { ?>
-                <input class="amazon-listing" checked="checked" type="radio" name="products[<?php echo $product['product_id'] ?>]" value="<?php echo $search_result['asin'] ?>"/>
+                <input class="amazon-listing" checked="checked" type="radio" name="products[<?php echo $product['product_id']; ?>]" value="<?php echo $search_result['asin']; ?>"/>
                 <?php $checked = true; ?>
                 <?php } else { ?>
-                <input class="amazon-listing" type="radio" name="products[<?php echo $product['product_id'] ?>]" value="<?php echo $search_result['asin'] ?>"/>
+                <input class="amazon-listing" type="radio" name="products[<?php echo $product['product_id']; ?>]" value="<?php echo $search_result['asin']; ?>"/>
                 <?php } ?>
-                <a target="_blank" href="<?php echo $search_result['href'] ?>"><?php echo $search_result['title'] ?></a><br/>
+                <a target="_blank" href="<?php echo $search_result['href']; ?>"><?php echo $search_result['title']; ?></a><br/>
                 <?php } ?>
                 <?php } else { ?>
-                <input class="amazon-listing" checked="checked" type="radio" name="products[<?php echo $product['product_id'] ?>]" value=""/>
-                <?php echo $text_dont_list ?><br/>
+                <input class="amazon-listing" checked="checked" type="radio" name="products[<?php echo $product['product_id']; ?>]" value=""/>
+                <?php echo $text_dont_list; ?><br/>
                 <?php } ?>
                 <?php } ?></td>
             </tr>
@@ -83,9 +83,9 @@
                 <option value=""></option>
                 <?php foreach ($conditions as $value => $name) { ?>
                 <?php if ($value == $default_condition) { ?>
-                <option selected="selected" value="<?php echo $value ?>"><?php echo $name ?></option>
+                <option selected="selected" value="<?php echo $value; ?>"><?php echo $name; ?></option>
                 <?php } else { ?>
-                <option value="<?php echo $value ?>"><?php echo $name ?></option>
+                <option value="<?php echo $value; ?>"><?php echo $name; ?></option>
                 <?php } ?>
                 <?php } ?>
               </select>
@@ -115,7 +115,7 @@
         </div>
       </div>
     <?php } else { ?>
-      <div class="warning"><?php echo $error_bulk_listing_permission ?></div>
+      <div class="warning"><?php echo $error_bulk_listing_permission; ?></div>
     <?php } ?>
   </div>
 </div>
@@ -143,7 +143,7 @@ $('#button-list').bind('click', function(e) {
   var request_data = $('input.amazon-listing:checked').serialize();
 
   if (request_data) {
-    request_data += '&marketplace=<?php echo $filter_marketplace ?>';
+    request_data += '&marketplace=<?php echo $filter_marketplace; ?>';
   }
 
   var condition = $('select[name="condition"]').val();
@@ -160,7 +160,7 @@ $('#button-list').bind('click', function(e) {
   }
 
   $.ajax({
-    url: 'index.php?route=openbay/amazonus/doBulkList&token=<?php echo $token ?>',
+    url: 'index.php?route=openbay/amazonus/doBulkList&token=<?php echo $token; ?>',
     data: request_data,
     dataType: 'json',
     type: 'POST',
@@ -190,10 +190,10 @@ $('#button-search').bind('click', function(e) {
   var request_data = $('input[name="product_ids[]"]:checked').serialize();
 
   if (request_data != '') {
-    request_data += '&marketplace=<?php echo $filter_marketplace ?>';
+    request_data += '&marketplace=<?php echo $filter_marketplace; ?>';
 
     $.ajax({
-      url: 'index.php?route=openbay/amazonus/dobulksearch&token=<?php echo $token ?>',
+      url: 'index.php?route=openbay/amazonus/dobulksearch&token=<?php echo $token; ?>',
       data: request_data,
       dataType: 'json',
       type: 'POST',

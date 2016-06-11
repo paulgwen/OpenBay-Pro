@@ -329,7 +329,7 @@
                   </div>
                 </div>
               </div>
-              <?php $i++;?>
+              <?php $i++; ?>
             <?php } ?>
           <?php } else { ?>
             <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $text_no_results; ?></div>

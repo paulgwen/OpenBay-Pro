@@ -105,7 +105,7 @@
                 <label class="col-sm-2 control-label" for="openbay_fba_order_prefix"><span data-toggle="tooltip" data-container="#tab-content" title="<?php echo $help_order_id_prefix; ?>"><?php echo $entry_order_id_prefix; ?></span></label>
                 <div class="col-sm-10">
                   <p class="alert alert-warning"><i class="fa fa-exclamation-circle"></i> <?php echo $text_prefix_warning; ?></p>
-                  <input <?php echo ($prefix_can_edit === false ? 'disabled' : ''); ?> type="text" name="openbay_fba_order_prefix" value="<?php echo $openbay_fba_order_prefix ?>" placeholder="<?php echo $entry_order_id_prefix; ?>" id="openbay_fba_order_prefix" class="form-control" />
+                  <input <?php echo ($prefix_can_edit === false ? 'disabled' : ''); ?> type="text" name="openbay_fba_order_prefix" value="<?php echo $openbay_fba_order_prefix; ?>" placeholder="<?php echo $entry_order_id_prefix; ?>" id="openbay_fba_order_prefix" class="form-control" />
                 </div>
               </div>
               <div class="form-group">
@@ -113,7 +113,7 @@
                 <div class="col-sm-10">
                   <select name="openbay_fba_fulfill_policy" id="openbay_fba_fulfill_policy" class="form-control ftpsetting">
                     <?php foreach ($fulfillment_policy as $code => $fulfillment_policy_option) { ?>
-                    <option value="<?php echo $code;?>" <?php echo ($openbay_fba_fulfill_policy == $code ? 'selected="selected"' : '') ?>><?php echo $fulfillment_policy_option; ?></option>
+                    <option value="<?php echo $code; ?>" <?php echo ($openbay_fba_fulfill_policy == $code ? 'selected="selected"' : '') ?>><?php echo $fulfillment_policy_option; ?></option>
                     <?php } ?>
                   </select>
                 </div>
@@ -123,7 +123,7 @@
                 <div class="col-sm-10">
                   <select name="openbay_fba_shipping_speed" id="openbay_fba_shipping_speed" class="form-control ftpsetting">
                     <?php foreach ($shipping_speed as $code => $shipping_speed_option) { ?>
-                      <option value="<?php echo $code;?>" <?php echo ($openbay_fba_shipping_speed == $code ? 'selected="selected"' : '') ?>><?php echo $shipping_speed_option; ?></option>
+                      <option value="<?php echo $code; ?>" <?php echo ($openbay_fba_shipping_speed == $code ? 'selected="selected"' : '') ?>><?php echo $shipping_speed_option; ?></option>
                     <?php } ?>
                   </select>
                 </div>

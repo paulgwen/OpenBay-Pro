@@ -697,7 +697,7 @@
                 <div class="col-sm-10">
                   <select name="country" id="country" class="form-control">
                     <?php foreach ($setting['countries'] as $country) { ?>
-                    <option value="<?php echo $country['code'];?>"><?php echo $country['name'];?></option>
+                    <option value="<?php echo $country['code']; ?>"><?php echo $country['name']; ?></option>
                     <?php } ?>
                   </select>
                   <span class="help-block"><?php echo $text_despatch_country_help; ?></span>
@@ -708,7 +708,7 @@
                 <div class="col-sm-10">
                   <select name="dispatch_time" id="dispatch_time" class="form-control">
                     <?php foreach ($setting['dispatch_times'] as $dis) { ?>
-                    <option value="<?php echo $dis['DispatchTimeMax'];?>"><?php echo $dis['Description'];?></option>
+                    <option value="<?php echo $dis['DispatchTimeMax']; ?>"><?php echo $dis['Description']; ?></option>
                     <?php } ?>
                   </select>
                 </div>
