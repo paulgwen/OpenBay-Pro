@@ -90,7 +90,7 @@ class ControllerOpenbayEbay extends Controller {
 		if (($this->request->server['REQUEST_METHOD'] == 'POST') && ($this->validate())) {
 			$this->model_setting_setting->editSetting('ebay', $this->request->post);
 			$this->session->data['success'] = $this->language->get('text_success');
-			$this->response->redirect($this->url->link('openbay/ebay&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('openbay/ebay', 'token=' . $this->session->data['token'], true));
 		}
 
 		$this->document->setTitle($this->language->get('heading_title'));
@@ -1334,12 +1334,12 @@ class ControllerOpenbayEbay extends Controller {
 
 				if (!isset($setting['product_details']['product_identifier_unavailable_text'])) {
 					$this->session->data['warning'] = $this->language->get('error_missing_settings');
-					$this->response->redirect($this->url->link('openbay/ebay/syncronise&token=' . $this->session->data['token'], true));
+					$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
 				}
 
 				if (empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
 					$this->session->data['warning'] = $this->language->get('error_missing_settings');
-					$this->response->redirect($this->url->link('openbay/ebay/syncronise&token=' . $this->session->data['token'], true));
+					$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
 				}
 
 				$data['setting'] = $setting;
@@ -1489,7 +1489,7 @@ class ControllerOpenbayEbay extends Controller {
 
 				$this->response->setOutput($this->load->view('openbay/ebay_new', $data));
 			} else {
-				$this->response->redirect($this->url->link('extension/openbay/items&token=' . $this->session->data['token']));
+				$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 			}
 		}
 	}
@@ -1588,7 +1588,7 @@ class ControllerOpenbayEbay extends Controller {
 
 							if (!isset($setting['product_details']['product_identifier_unavailable_text'])) {
 								$this->session->data['warning'] = $this->language->get('error_missing_settings');
-								$this->response->redirect($this->url->link('openbay/ebay/syncronise&token=' . $this->session->data['token'], true));
+								$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
 							}
 
 							$setting['dispatch_times'] = $this->openbay->ebay->getSetting('dispatch_time_max');
@@ -1605,7 +1605,7 @@ class ControllerOpenbayEbay extends Controller {
 
 							if (empty($setting['dispatch_times']) || empty($setting['countries']) || empty($setting['returns'])){
 								$this->session->data['warning'] = $this->language->get('error_missing_settings');
-								$this->response->redirect($this->url->link('openbay/ebay/syncronise&token=' . $this->session->data['token'], true));
+								$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
 							}
 
 							$data['setting'] = $setting;
@@ -1686,7 +1686,7 @@ class ControllerOpenbayEbay extends Controller {
 			} else {
 				$this->load->language('openbay/ebay_newbulk');
 				$this->session->data['warning'] = $this->language->get('text_error_no_selection');
-				$this->response->redirect($this->url->link('extension/openbay/items&token=' . $this->session->data['token']));
+				$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 			}
 		}
 	}
@@ -1766,7 +1766,7 @@ class ControllerOpenbayEbay extends Controller {
 				}
 			}
 		} else {
-			$this->response->redirect($this->url->link('extension/openbay/items&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 		}
 	}
 
@@ -2008,7 +2008,7 @@ class ControllerOpenbayEbay extends Controller {
 				$this->response->setOutput(json_encode($json));
 			}
 		} else {
-			$this->response->redirect($this->url->link('extension/openbay/items&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 		}
 	}
 
@@ -2076,7 +2076,7 @@ class ControllerOpenbayEbay extends Controller {
 			$this->response->addHeader('Content-Type: application/json');
 			$this->response->setOutput(json_encode($json));
 		} else {
-			$this->response->redirect($this->url->link('extension/openbay/items&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 		}
 	}
 
@@ -2316,7 +2316,7 @@ class ControllerOpenbayEbay extends Controller {
 				$this->response->setOutput(json_encode($json));
 			}
 		} else {
-			$this->response->redirect($this->url->link('extension/openbay/items&token=' . $this->session->data['token']));
+			$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 		}
 	}
 
