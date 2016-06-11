@@ -135,7 +135,7 @@ final class Openbay {
 		 */
 
 		foreach ($this->installed_markets as $market) {
-			if ($this->config->get($market . '_status') == 1) {
+			if ($this->config->get($market . '_status') == 1 || $this->config->get('openbay_' .$market . '_status') == 1) {
 				$this->{$market}->putStockUpdateBulk($product_id_array, $end_inactive);
 			}
 		}
