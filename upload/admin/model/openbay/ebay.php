@@ -113,7 +113,7 @@ class ModelOpenbayEbay extends Model{
 					  `shipping_location` varchar(100) NOT NULL,
 					  `update_time` varchar(100) NOT NULL,
 					  PRIMARY KEY (`ebay_shipping_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=InnoDB  DEFAULT CHARSET=latin1;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_payment_method` (
@@ -121,7 +121,7 @@ class ModelOpenbayEbay extends Model{
 					  `ebay_name` char(50) NOT NULL,
 					  `local_name` char(50) NOT NULL,
 					  PRIMARY KEY (`ebay_payment_method_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5;");
+					) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_transaction` (
@@ -141,7 +141,7 @@ class ModelOpenbayEbay extends Model{
   						KEY `product_id` (`product_id`),
   						KEY `order_id` (`order_id`),
   						KEY `smp_id` (`smp_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=InnoDB  DEFAULT CHARSET=latin1;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_order` (
@@ -155,7 +155,7 @@ class ModelOpenbayEbay extends Model{
   						KEY `order_id` (`order_id`),
   						KEY `smp_id` (`smp_id`),
   						KEY `parent_ebay_order_id` (`parent_ebay_order_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=InnoDB  DEFAULT CHARSET=latin1;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_profile` (
@@ -175,7 +175,7 @@ class ModelOpenbayEbay extends Model{
 					`last_updated` DATETIME NOT NULL,
 					`data` TEXT NOT NULL,
 					PRIMARY KEY (`ebay_setting_option_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+				) ENGINE=InnoDB  DEFAULT CHARSET=latin1;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_image_import` (
@@ -212,7 +212,7 @@ class ModelOpenbayEbay extends Model{
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_order_lock` (
 				  `smp_id` int(11) NOT NULL,
 				  PRIMARY KEY (`smp_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_template` (
@@ -220,7 +220,7 @@ class ModelOpenbayEbay extends Model{
 				  `name` VARCHAR(100) NOT NULL,
 				  `html` MEDIUMTEXT NOT NULL,
 				  PRIMARY KEY (`template_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_business_policy` (
