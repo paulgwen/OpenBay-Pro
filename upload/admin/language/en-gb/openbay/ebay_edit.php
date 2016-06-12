@@ -54,3 +54,5 @@ $_['error_reserve']					= 'You cannot set the reserve higher than the local stoc
 $_['error_no_sku']          		= 'No SKU found!';
 $_['error_no_item_id']              = 'Item ID is missing from the request';
 $_['error_recommendations_load']    = 'Unable to load item recommendations';
+$_['error_get_policy']    			= 'Unable to load business policy';
+$_['error_no_profile_id']   		= 'Profile ID is missing from the request';

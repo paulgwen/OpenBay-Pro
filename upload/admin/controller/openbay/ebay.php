@@ -1331,6 +1331,19 @@ class ControllerOpenbayEbay extends Controller {
 				$setting['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
 				$setting['product_details'] = $this->openbay->ebay->getSetting('product_details');
 				$setting['listing_restrictions'] = $this->openbay->ebay->getSetting('listing_restrictions');
+				$setting['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
+
+				if ($setting['business_policies_optin'] == 1) {
+					$setting['business_policies'] = $this->openbay->ebay->getBusinessPolicies();
+					// get the eBay business policies for the user
+
+					/**
+					 * Might be better to ajax load them and have a refresh button
+					 * incase the user is half was through a new listing and needs to add one?
+					 * maybe a lightbox to add profiles?
+					 * editing profiles should be restricted since it affects all accociated listings
+					 */
+				}
 
 				if (!isset($setting['product_details']['product_identifier_unavailable_text'])) {
 					$this->session->data['warning'] = $this->language->get('error_missing_settings');
@@ -1713,6 +1726,13 @@ class ControllerOpenbayEbay extends Controller {
 						$data['template_html'] = '';
 					}
 
+					if ($this->openbay->ebay->getSetting('business_policies_optin') != 1) {
+						// set shipping data
+						$data['national'] = $data['data']['national'];
+						$data['international'] = $data['data']['international'];
+						unset($data['data']);
+					}
+
 					// set shipping data
 					$data['national'] = $data['data']['national'];
 					$data['international'] = $data['data']['international'];
@@ -2028,10 +2048,12 @@ class ControllerOpenbayEbay extends Controller {
 				$data['template_html'] = '';
 			}
 
-			// set shipping data
-			$data['national'] = $data['data']['national'];
-			$data['international'] = $data['data']['international'];
-			unset($data['data']);
+			if ($this->openbay->ebay->getSetting('business_policies_optin') != 1) {
+				// set shipping data
+				$data['national'] = $data['data']['national'];
+				$data['international'] = $data['data']['international'];
+				unset($data['data']);
+			}
 
 			if (!empty($data['img_tpl'])) {
 				$tmp_gallery_array = array();
@@ -2404,6 +2426,29 @@ class ControllerOpenbayEbay extends Controller {
 			}
 
 			$json = $this->model_openbay_ebay_product->getItemRecommendations($filters);
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
+
+	public function getBusinessPolicy() {
+		$this->load->language('openbay/ebay_edit');
+
+		$json = array('data' => '', 'error' => false, 'msg' => '');
+
+		if (isset($this->request->get['profile_id']) && !empty($this->request->get['profile_id'])){
+			$data = $this->openbay->ebay->getBusinessPolicy($this->request->get['profile_id']);
+
+			if ($data) {
+				$json['data'] = $data;
+			} else {
+				$json['msg'] = $this->language->get('error_get_policy');
+				$json['error'] = true;
+			}
+		} else {
+			$json['msg'] = $this->language->get('error_no_profile_id');
+			$json['error'] = true;
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

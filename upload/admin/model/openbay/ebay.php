@@ -221,6 +221,19 @@ class ModelOpenbayEbay extends Model{
 				  `html` MEDIUMTEXT NOT NULL,
 				  PRIMARY KEY (`template_id`)
 				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+
+		$this->db->query("
+				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_business_policy` (
+				  `profile_id` BIGINT NOT NULL,
+				  `type` CHAR(100) NOT NULL,
+				  `name` TEXT NOT NULL,
+				  `description` TEXT NOT NULL,
+				  `site_id` SMALLINT(11) NOT NULL,
+				  `category_groups` TEXT NOT NULL,
+				  `policy_info` TEXT NOT NULL,
+				  PRIMARY KEY (`profile_id`),
+				  KEY `type` (`type`)
+				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
 	}
 
 	public function uninstall() {
@@ -234,6 +247,7 @@ class ModelOpenbayEbay extends Model{
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_transaction`;");
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_order`;");
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_profile`;");
+		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_business_policy`;");
 
 		$this->load->model('extension/event');
 		$this->model_extension_event->deleteEvent('openbaypro_ebay');
@@ -241,7 +255,20 @@ class ModelOpenbayEbay extends Model{
 
 	public function patch() {
 		if ($this->config->get('ebay_status') == 1) {
-
+			if (!$this->openbay->testDbTable(DB_PREFIX . "ebay_business_policy")) {
+				$this->db->query("
+				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_business_policy` (
+				  `profile_id` BIGINT NOT NULL,
+				  `type` CHAR(100) NOT NULL,
+				  `name` TEXT NOT NULL,
+				  `description` TEXT NOT NULL,
+				  `site_id` SMALLINT(11) NOT NULL,
+				  `category_groups` TEXT NOT NULL,
+				  `policy_info` TEXT NOT NULL,
+				  PRIMARY KEY (`profile_id`),
+				  KEY `type` (`type`)
+				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
+			}
 		}
 	}
 
