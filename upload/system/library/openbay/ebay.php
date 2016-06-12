@@ -131,8 +131,8 @@ final class Ebay {
 	}
 
 	private function setLogger() {
-		if(file_exists(DIR_LOGS . 'ebaylog.log')) {
-			if(filesize(DIR_LOGS . 'ebaylog.log') > ($this->max_log_size * 1000000)) {
+		if (file_exists(DIR_LOGS . 'ebaylog.log')) {
+			if (filesize(DIR_LOGS . 'ebaylog.log') > ($this->max_log_size * 1000000)) {
 				rename(DIR_LOGS . 'ebaylog.log', DIR_LOGS . '_ebaylog_' . date('Y-m-d_H-i-s') . '.log');
 			}
 		}
@@ -504,7 +504,7 @@ final class Ebay {
 		} else {
 			$this->removeItemByItemId($item_id);
 
-			if($sku == null) {
+			if ($sku == null) {
 				if ($stock <= 0 && $this->config->get('ebay_disable_nostock') == 1) {
 					$this->disableProduct($product_id);
 				}
@@ -962,7 +962,7 @@ final class Ebay {
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_NOBODY, true);
 
-		if(curl_exec($ch) === false) {
+		if (curl_exec($ch) === false) {
 			$this->log('Curl Error: ' . curl_error($ch));
 		}
 

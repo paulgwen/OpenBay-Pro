@@ -27,7 +27,7 @@ final class Etsy {
 	}
 
 	public function call($uri, $method, $data = array()) {
-		if($this->config->get('etsy_status') == 1) {
+		if ($this->config->get('etsy_status') == 1) {
 			$headers = array ();
 			$headers[] = 'X-Auth-Token: ' . $this->token;
 			$headers[] = 'X-Auth-Enc: ' . $this->enc1;
@@ -68,7 +68,7 @@ final class Etsy {
 
 				$encoding = mb_detect_encoding($result);
 
-				if($encoding == 'UTF-8') {
+				if ($encoding == 'UTF-8') {
 					$result = preg_replace('/[^(\x20-\x7F)]*/', '', $result);
 				}
 
@@ -76,9 +76,9 @@ final class Etsy {
 
 				$response['header_code'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
-				if(!empty($result)) {
+				if (!empty($result)) {
 					$response['data'] = $result;
-				}else{
+				} else {
 					$response['data'] = '';
 				}
 			}
@@ -86,7 +86,7 @@ final class Etsy {
 			curl_close($ch);
 
 			return $response;
-		}else{
+		} else {
 			$this->log('call() - OpenBay Pro / Etsy not active');
 
 			return false;
@@ -94,8 +94,8 @@ final class Etsy {
 	}
 
 	private function setLogger() {
-		if(file_exists(DIR_LOGS . 'etsylog.log')) {
-			if(filesize(DIR_LOGS . 'etsylog.log') > ($this->max_log_size * 1000000)) {
+		if (file_exists(DIR_LOGS . 'etsylog.log')) {
+			if (filesize(DIR_LOGS . 'etsylog.log') > ($this->max_log_size * 1000000)) {
 				rename(DIR_LOGS . 'etsylog.log', DIR_LOGS . '_etsylog_' . date('Y-m-d_H-i-s') . '.log');
 			}
 		}
@@ -160,9 +160,9 @@ final class Etsy {
 	public function getSetting($key) {
 		$qry = $this->db->query("SELECT `data` FROM `" . DB_PREFIX . "etsy_setting_option` WHERE `key` = '" . $this->db->escape($key) . "' LIMIT 1");
 
-		if($qry->num_rows > 0) {
+		if ($qry->num_rows > 0) {
 			return unserialize($qry->row['data']);
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -193,9 +193,9 @@ final class Etsy {
 	public function getLinkedProduct($etsy_item_id) {
 		$qry = $this->db->query("SELECT `p`.`quantity`, `p`.`product_id`, `p`.`model`, `el`.`etsy_listing_id`, `el`.`status` AS `link_status` FROM `" . DB_PREFIX . "etsy_listing` `el` LEFT JOIN `" . DB_PREFIX . "product` `p` ON `p`.`product_id` = `el`.`product_id` WHERE `el`.`etsy_item_id` = '" . (int)$etsy_item_id . "' AND `el`.`status` = 1");
 
-		if($qry->num_rows) {
+		if ($qry->num_rows) {
 			return $qry->row;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -281,21 +281,21 @@ final class Etsy {
 			$this->log('Find order id: ' . $order_id);
 			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "etsy_order` WHERE `order_id` = '" . (int)$order_id . "' LIMIT 1");
 
-			if($query->num_rows > 0) {
+			if ($query->num_rows > 0) {
 				$this->log('Found');
 				return $query->row;
-			}else{
+			} else {
 				$this->log('Not found');
 				return false;
 			}
-		} elseif($receipt_id != null) {
+		} elseif ($receipt_id != null) {
 			$this->log('Find receipt id: ' . $receipt_id);
 			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "etsy_order` WHERE `receipt_id` = '" . (int)$receipt_id . "' LIMIT 1");
 
-			if($query->num_rows > 0) {
+			if ($query->num_rows > 0) {
 				$this->log('Found');
 				return $query->row;
-			}else{
+			} else {
 				$this->log('Not found');
 				return false;
 			}
@@ -303,10 +303,10 @@ final class Etsy {
 	}
 
 	public function orderDelete($order_id) {
-		if(!$this->orderFind($order_id)) {
+		if (!$this->orderFind($order_id)) {
 			$query = $this->db->query("SELECT `p`.`product_id` FROM `" . DB_PREFIX . "order_product` `op` LEFT JOIN `" . DB_PREFIX . "product` `p` ON `op`.`product_id` = `p`.`product_id` WHERE `op`.`order_id` = '" . (int)$order_id . "'");
 
-			if($query->num_rows > 0) {
+			if ($query->num_rows > 0) {
 				foreach ($query->rows as $product) {
 					$this->productUpdateListen((int)$product['product_id']);
 				}

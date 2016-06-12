@@ -126,10 +126,10 @@
           htmlInj += '<td>'+val.description+'</td>';
           if (val.myplan == 1){
             htmlInj += '<td><a class="btn btn-success" disabled="disabled"><i class="fa fa-check-circle-o fa-lg"></i> <?php echo $column_current; ?></a></td>';
-          }else{
+          } else {
             if (val.user_plan_id == 1) {
               htmlInj += '<td></td>';
-            }else{
+            } else {
               htmlInj += '<td>';
               htmlInj += '<a href="https://uk.openbaypro.com/account/live/subscription_setup.php?plan_id='+val.user_plan_id+'&subscriber_id=<?php echo $obp_token; ?>" class="btn btn-primary" target="_BLANK"><i class="fa fa-arrow-right fa-lg"></i> <?php echo $button_plan_change; ?></a>';
               htmlInj += '</td>';

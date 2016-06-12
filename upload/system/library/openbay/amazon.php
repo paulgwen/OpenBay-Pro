@@ -136,7 +136,7 @@ class Amazon {
 				}
 			}
 
-			if(!empty($quantity_data)) {
+			if (!empty($quantity_data)) {
 				$logger->write('Updating with: ' . print_r($quantity_data, true));
 				$this->updateQuantities($quantity_data);
 			} else {
@@ -215,7 +215,7 @@ class Amazon {
 
 		$amazon_order = $this->getOrder($order_id);
 
-		if(!$amazon_order) {
+		if (!$amazon_order) {
 			return;
 		}
 
@@ -232,8 +232,8 @@ class Amazon {
 		$request_node->addChild('AmazonOrderId', $amazon_order_id);
 		$request_node->addChild('Status', $order_status_string);
 
-		if(!empty($courier_id)) {
-			if($courier_from_list) {
+		if (!empty($courier_id)) {
+			if ($courier_from_list) {
 				$request_node->addChild('CourierId', $courier_id);
 			} else {
 				$request_node->addChild('CourierOther', $courier_id);
@@ -262,7 +262,7 @@ class Amazon {
 
 	public function getCategoryTemplates() {
 		$result = $this->call("productv2/RequestTemplateList");
-		if(isset($result)) {
+		if (isset($result)) {
 			return (array)json_decode($result);
 		} else {
 			return array();
@@ -271,7 +271,7 @@ class Amazon {
 
 	public function registerInsertion($data) {
 		$result = $this->call("productv2/RegisterInsertionRequest", $data);
-		if(isset($result)) {
+		if (isset($result)) {
 			return (array)json_decode($result);
 		} else {
 			return array();
@@ -280,7 +280,7 @@ class Amazon {
 
 	public function insertProduct($data) {
 		$result = $this->call("productv2/InsertProductRequest", $data);
-		if(isset($result)) {
+		if (isset($result)) {
 			return (array)json_decode($result);
 		} else {
 			return array();
@@ -289,7 +289,7 @@ class Amazon {
 
 	public function updateQuantities($data) {
 		$result = $this->call("product/UpdateQuantityRequest", $data);
-		if(isset($result)) {
+		if (isset($result)) {
 			return (array)json_decode($result);
 		} else {
 			return array();
@@ -298,7 +298,7 @@ class Amazon {
 
 	public function getStockUpdatesStatus($data) {
 		$result = $this->call("status/StockUpdates", $data);
-		if(isset($result)) {
+		if (isset($result)) {
 			return $result;
 		} else {
 			return false;
@@ -314,8 +314,8 @@ class Amazon {
 			foreach($amazon_rows as $amazon_row) {
 				$product_row = $this->db->query("SELECT `quantity`, `status` FROM `" . DB_PREFIX . "product` WHERE `product_id` = '" . (int)$product_id . "'")->row;
 
-				if(!empty($product_row)) {
-					if($end_inactive && $product_row['status'] == '0') {
+				if (!empty($product_row)) {
+					if ($end_inactive && $product_row['status'] == '0') {
 						$quantity_data[$amazon_row['amazon_sku']] = 0;
 					} else {
 						$quantity_data[$amazon_row['amazon_sku']] = $product_row['quantity'];
@@ -323,7 +323,7 @@ class Amazon {
 				}
 			}
 		}
-		if(!empty($quantity_data)) {
+		if (!empty($quantity_data)) {
 			$logger->write('Quantity data to be sent:' . print_r($quantity_data, true));
 			$response = $this->updateQuantities($quantity_data);
 			$logger->write('Submit to API. Response: ' . print_r($response, true));
@@ -341,12 +341,12 @@ class Amazon {
 	}
 
 	public function validate(){
-		if($this->config->get('openbay_amazon_status') != 0 &&
+		if ($this->config->get('openbay_amazon_status') != 0 &&
 			$this->config->get('openbay_amazon_token') != '' &&
 			$this->config->get('openbay_amazon_enc_string1') != '' &&
 			$this->config->get('openbay_amazon_enc_string2') != ''){
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -364,9 +364,9 @@ class Amazon {
 	public function getOrder($order_id) {
 		$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "amazon_order` WHERE `order_id` = '" . (int)$order_id . "' LIMIT 1");
 
-		if($qry->num_rows > 0){
+		if ($qry->num_rows > 0){
 			return $qry->row;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -429,7 +429,7 @@ class Amazon {
 		$simplexml = null;
 
 		libxml_use_internal_errors(true);
-		if(($simplexml = simplexml_load_string($xml)) == false) {
+		if (($simplexml = simplexml_load_string($xml)) == false) {
 			return false;
 		}
 
@@ -490,11 +490,11 @@ class Amazon {
 	}
 
 	private static function compareFields($field1, $field2) {
-		if($field1['order'] == $field2['order']) {
+		if ($field1['order'] == $field2['order']) {
 			return ($field1['unordered_index'] < $field2['unordered_index']) ? -1 : 1;
-		} else if(!empty($field1['order']) && empty($field2['order'])) {
+		} else if (!empty($field1['order']) && empty($field2['order'])) {
 			return -1;
-		} else if(!empty($field2['order']) && empty($field1['order'])) {
+		} else if (!empty($field2['order']) && empty($field1['order'])) {
 			return 1;
 		} else {
 			return ($field1['order'] < $field2['order']) ? -1 : 1;

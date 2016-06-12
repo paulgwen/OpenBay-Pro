@@ -163,7 +163,7 @@
                         $('#form').hide();
                         $('#btn-end-item').hide();
                         $('#error_box').html('<p><?php echo $error_ended; ?></p>').fadeIn('slow');
-                    }else{
+                    } else {
                         $('#title').val(data.data.listing.title);
                         $('#item-id').val(data.data.listing.itemId);
 
@@ -246,7 +246,7 @@
                                     i++;
                                 });
                             }
-                        }else{
+                        } else {
                             $('#variantMatrix').remove();
                             $('#price').val(data.data.listing.price);
                             $('#qty-instock').val(data.data.stock.quantity);
@@ -324,7 +324,7 @@
           if (data.Errors){
               if (data.Errors.ShortMessage){
                   $('#error_box').append('<p class="m3">' + data.Errors.LongMessage + '</p>');
-              }else{
+              } else {
                   $.each(data.Errors, function(key,val){
                       $('#error_box').append('<p class="m3">' + val.LongMessage + '</p>');
                   });

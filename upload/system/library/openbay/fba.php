@@ -144,8 +144,8 @@ class fba {
 	}
 
 	private function setLogger() {
-		if(file_exists(DIR_LOGS . 'fulfillment_by_amazon.log')) {
-			if(filesize(DIR_LOGS . 'fulfillment_by_amazon.log') > ($this->max_log_size * 1000000)) {
+		if (file_exists(DIR_LOGS . 'fulfillment_by_amazon.log')) {
+			if (filesize(DIR_LOGS . 'fulfillment_by_amazon.log') > ($this->max_log_size * 1000000)) {
 				rename(DIR_LOGS . 'fulfillment_by_amazon.log', DIR_LOGS . '_fulfillment_by_amazon_' . date('Y-m-d_H-i-s') . '.log');
 			}
 		}

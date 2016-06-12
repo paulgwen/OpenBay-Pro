@@ -62,7 +62,7 @@ class ModelOpenbayEbayProfile extends Model{
 			}
 
 			return $profiles;
-		}else{
+		} else {
 			return false;
 		}
 	}

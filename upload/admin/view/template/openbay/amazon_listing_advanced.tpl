@@ -643,7 +643,7 @@ function loadBrowseNode(field) {
                 html += '</div>';
 
                 $('#browse-node-content').empty().html(html);
-            }else{
+            } else {
               alert(data.node.error);
             }
         },
@@ -690,7 +690,7 @@ function nodeSelect(field, original_field) {
                   html += '</select></p>';
                 html += '</div>';
               html += '</div>';
-            }else{
+            } else {
               html += '<div class="row">';
                 html += '<div class="col-sm-12 text-right">';
                   html += '<a onclick="saveNode('+data.node.id+', \''+original_field+'\', \''+nodeStringSimple+'\')" class="btn btn-primary"><i class="fa fa-save fa-lg"></i> <?php echo $button_save; ?></a>';
@@ -699,7 +699,7 @@ function nodeSelect(field, original_field) {
             }
 
             $('#browse-node-content').empty().html(html);
-          }else{
+          } else {
               alert(data.node.error);
           }
         },

@@ -45,7 +45,7 @@
               </div>
             </div>
           </form>
-        <?php }else{ ?>
+        <?php } else { ?>
           <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_validation; ?>
             <button type="button" class="close" data-dismiss="alert">&times;</button>
           </div>
@@ -88,7 +88,7 @@
 
         if (json.error == false){
             alert('<?php echo $text_setting_import; ?>');
-        }else{
+        } else {
             alert('<?php echo $error_settings; ?>');
         }
       },
@@ -112,7 +112,7 @@
 
         if (json.error == 'false'){
           alert('<?php echo $text_category_import; ?>');
-        }else{
+        } else {
           alert(json.msg);
         }
       },

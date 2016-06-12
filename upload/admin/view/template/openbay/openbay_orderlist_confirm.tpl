@@ -119,7 +119,7 @@
 
     if(value_checked == true) {
       $('.notify_checkbox').prop('checked', true);
-    }else{
+    } else {
       $('.notify_checkbox').prop('checked', false);
     }
   }
@@ -164,7 +164,7 @@
 
     if(error == false) {
       $('#form').submit();
-    }else{
+    } else {
       return false;
     }
   }

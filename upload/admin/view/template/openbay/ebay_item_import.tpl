@@ -54,7 +54,7 @@
           </form>
         </div>
       </div>
-    <?php }else{ ?>
+    <?php } else { ?>
       <div class="alert alert-danger"> <i class="fa fa-exclamation-circle"></i> <?php echo $error_validation; ?> </div>
     <?php } ?>
   </div>
@@ -68,9 +68,9 @@
       var import_description = $('#import-description:checked').val();
       var import_advanced = $('#import_advanced:checked').val();
       var import_categories = $('#import_categories:checked').val();
-      if (import_description == undefined){ import_description = 0; }else{ import_description = 1; }
-      if (import_advanced == undefined){ import_advanced = 0; }else{ import_advanced = 1; }
-      if (import_categories == undefined){ import_categories = 0; }else{ import_categories = 1; }
+      if (import_description == undefined){ import_description = 0; } else { import_description = 1; }
+      if (import_advanced == undefined){ import_advanced = 0; } else { import_advanced = 1; }
+      if (import_categories == undefined){ import_categories = 0; } else { import_categories = 1; }
 
       $.ajax({
         url: 'index.php?route=openbay/ebay/importItems&token=<?php echo $token; ?>&desc='+import_description+'&note='+note_import+'&advanced='+import_advanced+'&categories='+import_categories,
