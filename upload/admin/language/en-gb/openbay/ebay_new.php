@@ -161,12 +161,14 @@ $_['entry_policy_return'] 			= 'Return policy';
 
 // Tab
 $_['tab_feature']              		= 'Features';
-$_['tab_ebay_catalog']              = 'eBay catalog';
+$_['tab_ebay_catalog']              = 'eBay Catalog';
 $_['tab_description']          		= 'Description';
-$_['tab_price']                		= 'Price &amp; details';
+$_['tab_price']                		= 'Price &amp; Stock';
 $_['tab_payment']              		= 'Payment';
 $_['tab_returns']              		= 'Returns';
 $_['tab_business_policies']         = 'Business Policies';
+$_['tab_image_theme']               = 'Images &amp; Theme';
+$_['tab_category']                  = 'Category';
 
 // Help
 $_['help_quantity_reserve']         = 'Enter a lower amount if you want to maintain a lower stock level on eBay';

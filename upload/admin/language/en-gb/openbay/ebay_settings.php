@@ -15,7 +15,7 @@ $_['text_token_register']			= 'Register for your eBay token';
 $_['text_token_renew']				= 'Renew your eBay token';
 $_['text_application_settings']		= 'Your application settings allow you to configure the way OpenBay Pro works and integrates with your system.';
 $_['text_import_description']		= 'Customise the status of an order during different stages. You cannot use a status on an eBay order that does not exist in this list.';
-$_['text_payments_description']		= 'Pre populate your payment options for new listings, this will save you entering them for every new listing you create.';
+$_['text_prefill_description']		= 'Pre populate your options for new listings, this will save you entering them for every new listing you create.';
 $_['text_allocate_1']				= 'When customer buys';
 $_['text_allocate_2']				= 'When customer had paid';
 $_['text_developer_description']	= 'You should not use this area unless instructed to do so';
@@ -44,6 +44,7 @@ $_['text_create_date_1']            = 'When created on eBay';
 $_['text_obp_detail_update']        = 'Update your store URL &amp; contact email';
 $_['text_success']					= 'Your settings have been saved';
 $_['text_edit']						= 'Edit eBay settings';
+$_['text_tax']						= 'Tax';
 
 // Entry
 $_['entry_status']					= 'Status';
@@ -80,6 +81,9 @@ $_['entry_import_shipped_id']		= 'Shipped status:';
 $_['entry_import_cancelled_id']		= 'Cancelled status:';
 $_['entry_import_refund_id']		= 'Refunded status:';
 $_['entry_import_part_refund_id']	= 'Partially refunded status:';
+$_['entry_item_postcode']           = 'Postcode/Zip of location';
+$_['entry_item_location']           = 'Town or State of location';
+$_['entry_despatch_country']        = 'Dispatch country';
 
 // Tabs
 $_['tab_api_info']					= 'API details';
@@ -105,6 +109,9 @@ $_['help_notify_admin']   			= 'Notify the store admin with the default new orde
 $_['help_notify_order_update']		= 'This is for automated updates, for example if you update an order in eBay and the new status is updated in your store automatically.';
 $_['help_notify_buyer']        		= 'Notify the user with the default new order email';
 $_['help_measurement']        		= 'Choose what measurement system you want to use for listings';
+$_['help_item_postcode']            = 'A postcode will help eBay choose a correct location for your listing';
+$_['help_item_location']            = 'Entering a town is less reliable than a postcode';
+$_['help_despatch_country']         = 'This is the country the item will be sent from';
 
 // Buttons
 $_['button_update']             	= 'Update';

@@ -381,6 +381,7 @@
           <div class="tab-pane" id="tab-defaults">
             <fieldset>
               <legend><?php echo $text_listing; ?></legend>
+              <p><?php echo $text_prefill_description; ?></p>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="entry-duration"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_duration; ?>"><?php echo $entry_duration; ?></span></label>
                 <div class="col-sm-10">
@@ -406,48 +407,78 @@
                 </div>
               </div>
             </fieldset>
-            <fieldset>
-              <legend><?php echo $text_payments; ?></legend>
-              <p><?php echo $text_payments_description; ?></p>
-              <div class="form-group">
-                <label class="col-sm-2 control-label" for="entry-payment-instruction"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_payment_instruction; ?>"><?php echo $entry_payment_instruction; ?></span></label>
-                <div class="col-sm-10">
-                  <textarea name="ebay_payment_instruction" class="form-control" rows="3" id="entry-payment-instruction"><?php echo $ebay_payment_instruction; ?></textarea>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label" for="ebay_payment_paypal_address"><?php echo $text_payment_paypal_add; ?></label>
-                <div class="col-sm-10">
-                  <input type="text" name="ebay_payment_paypal_address" value="<?php echo $ebay_payment_paypal_address; ?>" placeholder="<?php echo $text_payment_paypal_add; ?>" id="ebay_payment_paypal_address" class="form-control" />
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label"><?php echo $entry_payment_types; ?></label>
-                <div class="col-sm-10">
-                  <?php foreach($payment_options as $payment){ ?>
-                  <div class="checkbox">
-                    <label>
-                      <input type="hidden" name="ebay_payment_types[<?php echo $payment['ebay_name']; ?>]" value="0" />
-                      <input type="checkbox" name="ebay_payment_types[<?php echo $payment['ebay_name']; ?>]" value="1" <?php echo (isset($ebay_payment_types[(string)$payment['ebay_name']]) && $ebay_payment_types[(string)$payment['ebay_name']] == 1 ? 'checked="checked"' : ''); ?> />
-                      <?php echo $payment['local_name']; ?> </label>
+            <?php if ($business_policies_optin == 1) { ?>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="ebay-item-postcode"><?php echo $entry_item_postcode; ?></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="ebay_item_postcode" id="ebay-item-postcode" class="form-control" value="<?php echo $ebay_item_postcode; ?>" />
+                    <span class="help-block"><?php echo $help_item_postcode; ?></span>
                   </div>
-                  <?php } ?>
                 </div>
-              </div>
-              <div class="form-group">
-                <label class="col-sm-2 control-label" for="entry-payment-immediate"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_payment_immediate; ?>"><?php echo $entry_payment_immediate; ?></span></label>
-                <div class="col-sm-10">
-                  <select name="ebay_payment_immediate" id="entry-payment-immediate" class="form-control">
-                    <?php if ($ebay_payment_immediate) { ?>
-                    <option value="1" selected="selected"><?php echo $text_yes; ?></option>
-                    <option value="0"><?php echo $text_no; ?></option>
-                    <?php } else { ?>
-                    <option value="1"><?php echo $text_yes; ?></option>
-                    <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="ebay-item-location"><?php echo $entry_item_location; ?></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="ebay_item_location" id="ebay-item-location" class="form-control" value="<?php echo $ebay_item_location; ?>" />
+                    <span class="help-block"><?php echo $help_item_location; ?></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="ebay-item-country"><?php echo $entry_despatch_country; ?></label>
+                  <div class="col-sm-10">
+                    <select name="ebay_item_country" id="ebay-item-country" class="form-control">
+                      <?php foreach ($countries as $country) { ?>
+                        <?php echo '<option value="' . $country['code'] . '"' . ($ebay_item_country == $country['code'] ? "selected" : "") . '>' . $country['name'] . '</option>'; ?>
+                      <?php } ?>
+                    </select>
+                    <span class="help-block"><?php echo $help_despatch_country; ?></span>
+                  </div>
+                </div>
+            <?php } else { ?>
+              <fieldset>
+                <legend><?php echo $text_payments; ?></legend>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="entry-payment-instruction"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_payment_instruction; ?>"><?php echo $entry_payment_instruction; ?></span></label>
+                  <div class="col-sm-10">
+                    <textarea name="ebay_payment_instruction" class="form-control" rows="3" id="entry-payment-instruction"><?php echo $ebay_payment_instruction; ?></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="ebay_payment_paypal_address"><?php echo $text_payment_paypal_add; ?></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="ebay_payment_paypal_address" value="<?php echo $ebay_payment_paypal_address; ?>" placeholder="<?php echo $text_payment_paypal_add; ?>" id="ebay_payment_paypal_address" class="form-control" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><?php echo $entry_payment_types; ?></label>
+                  <div class="col-sm-10">
+                    <?php foreach($payment_options as $payment){ ?>
+                    <div class="checkbox">
+                      <label>
+                        <input type="hidden" name="ebay_payment_types[<?php echo $payment['ebay_name']; ?>]" value="0" />
+                        <input type="checkbox" name="ebay_payment_types[<?php echo $payment['ebay_name']; ?>]" value="1" <?php echo (isset($ebay_payment_types[(string)$payment['ebay_name']]) && $ebay_payment_types[(string)$payment['ebay_name']] == 1 ? 'checked="checked"' : ''); ?> />
+                        <?php echo $payment['local_name']; ?> </label>
+                    </div>
                     <?php } ?>
-                  </select>
+                  </div>
                 </div>
-              </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label" for="entry-payment-immediate"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_payment_immediate; ?>"><?php echo $entry_payment_immediate; ?></span></label>
+                  <div class="col-sm-10">
+                    <select name="ebay_payment_immediate" id="entry-payment-immediate" class="form-control">
+                      <?php if ($ebay_payment_immediate) { ?>
+                      <option value="1" selected="selected"><?php echo $text_yes; ?></option>
+                      <option value="0"><?php echo $text_no; ?></option>
+                      <?php } else { ?>
+                      <option value="1"><?php echo $text_yes; ?></option>
+                      <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                      <?php } ?>
+                    </select>
+                  </div>
+                </div>
+              </fieldset>
+            <?php } ?>
+            <fieldset>
+              <legend><?php echo $text_tax; ?></legend>
               <div class="form-group">
                 <label class="col-sm-2 control-label" for="entry-tax-listing"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_listing_tax; ?>"><?php echo $entry_tax_listing; ?></span></label>
                 <div class="col-sm-10">

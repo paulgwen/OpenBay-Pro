@@ -5,37 +5,36 @@ class ModelOpenbayEbay extends Model{
 
 		$this->model_extension_event->addEvent('openbaypro_ebay', 'catalog/model/checkout/order/addOrderHistory/before', 'openbay/ebay/eventAddOrderHistory');
 
-		$value                                  = array();
-		$value["ebay_token"]              = '';
-		$value["ebay_secret"]             = '';
-		$value["ebay_string1"]            = '';
-		$value["ebay_string2"]            = '';
-		$value["ebay_enditems"]           = '0';
-		$value["ebay_logging"]            = '1';
-		$value["ebay_payment_instruction"]     = '';
-		$value["entry_payment_paypal_address"]  = '';
-		$value["field_payment_paypal"]          = '0';
-		$value["field_payment_cheque"]          = '0';
-		$value["field_payment_card"]            = '0';
-		$value["tax"]                           = '0';
-		$value["postcode"]                      = '';
-		$value["dispatch_time"]                 = '1';
-		$value["ebay_status_import_id"]            = '1';
-		$value["ebay_status_shipped_id"]           = '3';
-		$value["ebay_status_paid_id"]              = '2';
-		$value["ebay_status_cancelled_id"]         = '7';
-		$value["ebay_status_refunded_id"]          = '11';
-		$value["ebay_def_currency"]          = 'GBP';
-		$value["openbay_admin_directory"]       = 'admin';
-		$value["ebay_stock_allocate"]     = '0';
-		$value["ebay_update_notify"]      = '1';
-		$value["ebay_confirm_notify"]     = '1';
-		$value["ebay_confirmadmin_notify"]= '1';
-		$value["ebay_created_hours"]      = '48';
-		$value["ebay_create_date"]        = '0';
-		$value["ebay_itm_link"]      = 'http://www.ebay.com/itm/';
-		$value["ebay_relistitems"]        = 0;
-		$value["ebay_time_offset"]        = 0;
+		$value = array();
+		$value["ebay_token"] = '';
+		$value["ebay_secret"] = '';
+		$value["ebay_string1"] = '';
+		$value["ebay_string2"] = '';
+		$value["ebay_enditems"] = '0';
+		$value["ebay_logging"] = '1';
+		$value["ebay_payment_instruction"] = '';
+		$value["entry_payment_paypal_address"] = '';
+		$value["field_payment_paypal"] = '0';
+		$value["field_payment_cheque"] = '0';
+		$value["field_payment_card"] = '0';
+		$value["tax"] = '0';
+		$value["dispatch_time"] = '1';
+		$value["ebay_status_import_id"] = '1';
+		$value["ebay_status_shipped_id"] = '3';
+		$value["ebay_status_paid_id"] = '2';
+		$value["ebay_status_cancelled_id"] = '7';
+		$value["ebay_status_refunded_id"] = '11';
+		$value["ebay_def_currency"] = 'GBP';
+		$value["openbay_admin_directory"] = 'admin';
+		$value["ebay_stock_allocate"] = '0';
+		$value["ebay_update_notify"] = '1';
+		$value["ebay_confirm_notify"] = '1';
+		$value["ebay_confirmadmin_notify"] = '1';
+		$value["ebay_created_hours"] = '48';
+		$value["ebay_create_date"] = '0';
+		$value["ebay_itm_link"] = 'http://www.ebay.com/itm/';
+		$value["ebay_relistitems"] = 0;
+		$value["ebay_time_offset"] = 0;
 		$value["ebay_default_addressformat"] = '{firstname} {lastname}
 {company}
 {address_1}
@@ -44,6 +43,9 @@ class ModelOpenbayEbay extends Model{
 {zone}
 {postcode}
 {country}';
+		$value["ebay_item_postcode"] = '';
+		$value["ebay_item_location"] = '';
+		$value["ebay_item_country"] = '';
 
 		$this->model_setting_setting->editSetting('ebay', $value);
 
@@ -78,7 +80,7 @@ class ModelOpenbayEbay extends Model{
 					  PRIMARY KEY (`ebay_listing_id`),
   						KEY `product_id` (`product_id`)
 					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
-		;
+
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_listing_pending` (
 					  `ebay_listing_pending_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -234,6 +236,15 @@ class ModelOpenbayEbay extends Model{
 				  PRIMARY KEY (`profile_id`),
 				  KEY `type` (`type`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
+
+		$this->db->query("
+				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_business_policy_group` (
+				  `profile_id` BIGINT NOT NULL,
+				  `default` TINYINT(1) NOT NULL,
+				  `name` CHAR(50) NOT NULL,
+				  PRIMARY KEY (`profile_id`),
+				  KEY `name` (`name`)
+				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
 	}
 
 	public function uninstall() {
@@ -248,6 +259,7 @@ class ModelOpenbayEbay extends Model{
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_order`;");
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_profile`;");
 		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_business_policy`;");
+		$this->db->query("DROP TABLE IF EXISTS `" . DB_PREFIX . "ebay_business_policy_group`;");
 
 		$this->load->model('extension/event');
 		$this->model_extension_event->deleteEvent('openbaypro_ebay');
@@ -263,10 +275,20 @@ class ModelOpenbayEbay extends Model{
 				  `name` TEXT NOT NULL,
 				  `description` TEXT NOT NULL,
 				  `site_id` SMALLINT(11) NOT NULL,
-				  `category_groups` TEXT NOT NULL,
 				  `policy_info` TEXT NOT NULL,
 				  PRIMARY KEY (`profile_id`),
 				  KEY `type` (`type`)
+				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
+			}
+
+			if (!$this->openbay->testDbTable(DB_PREFIX . "ebay_business_policy_group")) {
+				$this->db->query("
+				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_business_policy_group` (
+				  `profile_id` BIGINT NOT NULL,
+				  `default` TINYINT(1) NOT NULL,
+				  `name` CHAR(50) NOT NULL,
+				  PRIMARY KEY (`profile_id`),
+				  KEY `name` (`name`)
 				) ENGINE=InnoDB  DEFAULT CHARSET=utf8;");
 			}
 		}

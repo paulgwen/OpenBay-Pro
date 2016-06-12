@@ -28,12 +28,12 @@
           <input type="hidden" name="attributes" value="<?php echo $product['attributes']; ?>" />
 
           <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab-listing-general" data-toggle="tab"><?php echo $tab_general; ?></a></li>
+            <li class="active"><a href="#tab-listing-category" data-toggle="tab"><?php echo $tab_category; ?></a></li>
             <li><a href="#tab-listing-feature" data-toggle="tab"><?php echo $tab_feature; ?></a></li>
             <li style="display: none;" id="listing-compatibility"><a href="#tab-listing-compatibility" data-toggle="tab"><?php echo $entry_compatibility; ?></a></li>
             <li><a href="#tab-listing-catalog" data-toggle="tab"><?php echo $tab_ebay_catalog; ?></a></li>
             <li><a href="#tab-listing-description" data-toggle="tab"><?php echo $tab_description; ?></a></li>
-            <li><a href="#tab-listing-images" data-toggle="tab"><?php echo $tab_image; ?></a></li>
+            <li><a href="#tab-listing-images" data-toggle="tab"><?php echo $tab_image_theme; ?></a></li>
             <li><a href="#tab-listing-price" data-toggle="tab"><?php echo $tab_price; ?></a></li>
             <?php if ($setting['business_policies_optin'] == 1) { ?>
               <li><a href="#tab-listing-business-policies" data-toggle="tab"><?php echo $tab_business_policies; ?></a></li>
@@ -44,7 +44,7 @@
             <?php } ?>
           </ul>
           <div class="tab-content">
-            <div id="tab-listing-general" class="tab-pane active">
+            <div id="tab-listing-category" class="tab-pane active">
               <?php if ($product['store_cats'] != false) { ?>
                 <div class="form-group">
                   <label class="col-sm-2 control-label">
@@ -286,6 +286,105 @@
                   <textarea name="description" id="description-field" class="form-control summernote"><?php echo $product['description']; ?></textarea>
                 </div>
               </div>
+
+              <?php if ($setting['business_policies_optin'] == 1) { ?>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><?php echo $entry_item_postcode; ?></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="postcode" id="postcode" class="form-control" value="<?php echo $product['defaults']['ebay_item_postcode']; ?>" />
+                    <span class="help-block"><?php echo $text_item_postcode_help; ?></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><?php echo $entry_item_location; ?></label>
+                  <div class="col-sm-10">
+                    <input type="text" name="location" id="location" class="form-control" value="<?php echo $product['defaults']['ebay_item_location']; ?>" />
+                    <span class="help-block"><?php echo $text_item_location_help; ?></span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="col-sm-2 control-label"><?php echo $entry_despatch_country; ?></label>
+                  <div class="col-sm-10">
+                    <select name="country" id="country" class="form-control">
+                      <?php foreach ($setting['countries'] as $country) { ?>
+                        <?php echo '<option value="' . $country['code'] . '"' . ($product['defaults']['ebay_item_country'] == $country['code'] ? "selected" : "") . '>' . $country['name'] . '</option>'; ?>
+                      <?php } ?>
+                    </select>
+                    <span class="help-block"><?php echo $text_despatch_country_help; ?></span>
+                  </div>
+                </div>
+              <?php } ?>
+
+              <div class="well">
+                  <div class="row form-group">
+                    <div class="col-sm-3">
+                      <label class="control-label"><?php echo $text_unit; ?></label>
+                      <select name="package[unit]" class="form-control" id="measure-unit">
+                        <?php foreach ($setting['measurement_types'] as $measurement_key => $measurement_value) { ?>
+                        <?php echo '<option value="' . $measurement_key . '"'.($product['defaults']['ebay_measurement'] == $measurement_key ? ' selected="selected"' : '').'>' . $measurement_value . '</option>'; ?>
+                        <?php } ?>
+                      </select>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="row">
+                        <div class="col-sm-6">
+                          <label class="control-label"><?php echo $text_weight_major; ?></label>
+                          <div class="input-group col-xs-12">
+                            <input type="text" name="package[weight_major]" class="form-control" value="<?php echo $product['weight_major']; ?>">
+                            <span class="input-group-addon" id="weight-major-text"></span>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <label class="control-label"><?php echo $text_weight_minor; ?></label>
+                          <div class="input-group col-xs-12">
+                            <input type="text" name="package[weight_minor]" class="form-control" value="<?php echo $product['weight_minor']; ?>">
+                            <span class="input-group-addon" id="weight-minor-text"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <?php if (!empty($setting['package_type'])) { ?>
+                    <div class="col-sm-3">
+                      <label class="control-label"><?php echo $text_package; ?></label>
+                      <select name="package[package]" class="form-control">
+                        <?php foreach ($setting['package_type'] as $package) { ?>
+                        <?php echo '<option value="' . $package['code'] . '"'.($package['default'] == 1 ? ' selected="selected"' : '').'>' . $package['description'] . '</option>'; ?>
+                        <?php } ?>
+                      </select>
+                    </div>
+                    <?php } ?>
+                  </div>
+                  <div class="row form-group">
+                    <div class="col-sm-3">
+                      <label class="control-label"><?php echo $text_depth; ?></label>
+                      <div class="input-group col-xs-12">
+                        <input type="text" name="package[depth]" class="form-control" value="<?php echo $product['height']; ?>">
+                        <span class="input-group-addon size-unit-text"></span>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <label class="control-label"><?php echo $text_length; ?></label>
+                      <div class="input-group col-xs-12">
+                        <input type="text" name="package[length]" class="form-control" value="<?php echo $product['length']; ?>">
+                        <span class="input-group-addon size-unit-text"></span>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <label class="control-label"><?php echo $text_width; ?></label>
+                      <div class="input-group col-xs-12">
+                        <input type="text" name="package[width]" class="form-control" value="<?php echo $product['width']; ?>">
+                        <span class="input-group-addon size-unit-text"></span>
+                      </div>
+                    </div>
+                    <div class="col-sm-3">
+                      <label class="control-label"><?php echo $text_shape; ?></label>
+                      <select name="package[irregular]" class="form-control">
+                        <option value="0"><?php echo $text_no; ?></option>
+                        <option value="1"><?php echo $text_yes; ?></option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
             </div>
 
             <div id="tab-listing-images" class="tab-pane">
@@ -623,137 +722,43 @@
 
             <?php if ($setting['business_policies_optin'] == 1) { ?>
               <div id="tab-listing-business-policies" class="tab-pane">
-                <div class="form-group">
+                <div class="form-group" id="container-business-policy-shipping">
                   <label class="col-sm-2 control-label"><?php echo $entry_policy_shipping; ?></label>
                   <div class="col-sm-10">
-                    <select name="seller_profiles[shipping_profile][shipping_profile_id]" class="form-control">
+                    <select name="seller_profiles[shipping_profile][shipping_profile_id]" class="form-control" id="input-business-policy-shipping">
+                      <option disabled selected value=""><?php echo $text_select; ?></option>
                       <?php if (!empty($setting['business_policies']['shipping'])) { ?>
                         <?php foreach ($setting['business_policies']['shipping'] as $policy) { ?>
-                          <option value="<?php echo $policy['profile_id']; ?>"><?php echo $policy['name']; ?></option>
+                          <option value="<?php echo $policy['profile_id']; ?>" <?php ($policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $policy['name']; ?></option>
                         <?php } ?>
                       <?php } ?>
                     </select>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="container-business-policy-payment">
                   <label class="col-sm-2 control-label"><?php echo $entry_policy_payment; ?></label>
                   <div class="col-sm-10">
-                    <select name="seller_profiles[payment_profile][payment_profile_id]" class="form-control">
+                    <select name="seller_profiles[payment_profile][payment_profile_id]" class="form-control" id="input-business-policy-payment">
+                      <option disabled selected value=""><?php echo $text_select; ?></option>
                       <?php if (!empty($setting['business_policies']['payment'])) { ?>
-                      <?php foreach ($setting['business_policies']['payment'] as $policy) { ?>
-                      <option value="<?php echo $policy['profile_id']; ?>"><?php echo $policy['name']; ?></option>
-                      <?php } ?>
+                        <?php foreach ($setting['business_policies']['payment'] as $policy) { ?>
+                          <option value="<?php echo $policy['profile_id']; ?>" <?php ($policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $policy['name']; ?></option>
+                        <?php } ?>
                       <?php } ?>
                     </select>
                   </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="container-business-policy-returns">
                   <label class="col-sm-2 control-label"><?php echo $entry_policy_return; ?></label>
                   <div class="col-sm-10">
-                    <select name="seller_profiles[return_profile][return_profile_id]" class="form-control">
+                    <select name="seller_profiles[return_profile][return_profile_id]" class="form-control" id="input-business-policy-returns">
+                      <option disabled selected value=""><?php echo $text_select; ?></option>
                       <?php if (!empty($setting['business_policies']['return_policy'])) { ?>
-                      <?php foreach ($setting['business_policies']['return_policy'] as $policy) { ?>
-                      <option value="<?php echo $policy['profile_id']; ?>"><?php echo $policy['name']; ?></option>
-                      <?php } ?>
+                        <?php foreach ($setting['business_policies']['return_policy'] as $policy) { ?>
+                          <option value="<?php echo $policy['profile_id']; ?>" <?php ($policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $policy['name']; ?></option>
+                        <?php } ?>
                       <?php } ?>
                     </select>
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="col-sm-2 control-label"><?php echo $entry_item_postcode; ?></label>
-                  <div class="col-sm-10">
-                    <input type="text" name="postcode" id="postcode" class="form-control" />
-                    <span class="help-block"><?php echo $text_item_postcode_help; ?></span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-2 control-label"><?php echo $entry_item_location; ?></label>
-                  <div class="col-sm-10">
-                    <input type="text" name="location" id="location" class="form-control" />
-                    <span class="help-block"><?php echo $text_item_location_help; ?></span>
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label class="col-sm-2 control-label"><?php echo $entry_despatch_country; ?></label>
-                  <div class="col-sm-10">
-                    <select name="country" id="country" class="form-control">
-                      <?php foreach ($setting['countries'] as $country) { ?>
-                      <option value="<?php echo $country['code'];?>"><?php echo $country['name'];?></option>
-                      <?php } ?>
-                    </select>
-                    <span class="help-block"><?php echo $text_despatch_country_help; ?></span>
-                  </div>
-                </div>
-
-                <div class="well">
-                  <div class="row form-group">
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_unit; ?></label>
-                      <select name="package[unit]" class="form-control" id="measure-unit">
-                        <?php foreach ($setting['measurement_types'] as $measurement_key => $measurement_value) { ?>
-                        <?php echo '<option value="' . $measurement_key . '"'.($product['defaults']['ebay_measurement'] == $measurement_key ? ' selected="selected"' : '').'>' . $measurement_value . '</option>'; ?>
-                        <?php } ?>
-                      </select>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="row">
-                        <div class="col-sm-6">
-                          <label class="control-label"><?php echo $text_weight_major; ?></label>
-                          <div class="input-group col-xs-12">
-                            <input type="text" name="package[weight_major]" class="form-control" value="<?php echo $product['weight_major']; ?>">
-                            <span class="input-group-addon" id="weight-major-text"></span>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="control-label"><?php echo $text_weight_minor; ?></label>
-                          <div class="input-group col-xs-12">
-                            <input type="text" name="package[weight_minor]" class="form-control" value="<?php echo $product['weight_minor']; ?>">
-                            <span class="input-group-addon" id="weight-minor-text"></span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <?php if (!empty($setting['package_type'])) { ?>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_package; ?></label>
-                      <select name="package[package]" class="form-control">
-                        <?php foreach ($setting['package_type'] as $package) { ?>
-                        <?php echo '<option value="' . $package['code'] . '"'.($package['default'] == 1 ? ' selected="selected"' : '').'>' . $package['description'] . '</option>'; ?>
-                        <?php } ?>
-                      </select>
-                    </div>
-                    <?php } ?>
-                  </div>
-                  <div class="row form-group">
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_depth; ?></label>
-                      <div class="input-group col-xs-12">
-                        <input type="text" name="package[depth]" class="form-control" value="<?php echo $product['height']; ?>">
-                        <span class="input-group-addon size-unit-text"></span>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_length; ?></label>
-                      <div class="input-group col-xs-12">
-                        <input type="text" name="package[length]" class="form-control" value="<?php echo $product['length']; ?>">
-                        <span class="input-group-addon size-unit-text"></span>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_width; ?></label>
-                      <div class="input-group col-xs-12">
-                        <input type="text" name="package[width]" class="form-control" value="<?php echo $product['width']; ?>">
-                        <span class="input-group-addon size-unit-text"></span>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_shape; ?></label>
-                      <select name="package[irregular]" class="form-control">
-                        <option value="0"><?php echo $text_no; ?></option>
-                        <option value="1"><?php echo $text_yes; ?></option>
-                      </select>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -1040,77 +1045,6 @@
                       <div class="row">
                         <div class="col-sm-12" id="options-international-calculated"></div>
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="well">
-                  <div class="row form-group">
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_unit; ?></label>
-                      <select name="package[unit]" class="form-control" id="measure-unit">
-                        <?php foreach ($setting['measurement_types'] as $measurement_key => $measurement_value) { ?>
-                        <?php echo '<option value="' . $measurement_key . '"'.($product['defaults']['ebay_measurement'] == $measurement_key ? ' selected="selected"' : '').'>' . $measurement_value . '</option>'; ?>
-                        <?php } ?>
-                      </select>
-                    </div>
-                    <div class="col-sm-6">
-                      <div class="row">
-                        <div class="col-sm-6">
-                          <label class="control-label"><?php echo $text_weight_major; ?></label>
-                          <div class="input-group col-xs-12">
-                            <input type="text" name="package[weight_major]" class="form-control" value="<?php echo $product['weight_major']; ?>">
-                            <span class="input-group-addon" id="weight-major-text"></span>
-                          </div>
-                        </div>
-                        <div class="col-sm-6">
-                          <label class="control-label"><?php echo $text_weight_minor; ?></label>
-                          <div class="input-group col-xs-12">
-                            <input type="text" name="package[weight_minor]" class="form-control" value="<?php echo $product['weight_minor']; ?>">
-                            <span class="input-group-addon" id="weight-minor-text"></span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <?php if (!empty($setting['package_type'])) { ?>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_package; ?></label>
-                      <select name="package[package]" class="form-control">
-                        <?php foreach ($setting['package_type'] as $package) { ?>
-                        <?php echo '<option value="' . $package['code'] . '"'.($package['default'] == 1 ? ' selected="selected"' : '').'>' . $package['description'] . '</option>'; ?>
-                        <?php } ?>
-                      </select>
-                    </div>
-                    <?php } ?>
-                  </div>
-                  <div class="row form-group">
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_depth; ?></label>
-                      <div class="input-group col-xs-12">
-                        <input type="text" name="package[depth]" class="form-control" value="<?php echo $product['height']; ?>">
-                        <span class="input-group-addon size-unit-text"></span>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_length; ?></label>
-                      <div class="input-group col-xs-12">
-                        <input type="text" name="package[length]" class="form-control" value="<?php echo $product['length']; ?>">
-                        <span class="input-group-addon size-unit-text"></span>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_width; ?></label>
-                      <div class="input-group col-xs-12">
-                        <input type="text" name="package[width]" class="form-control" value="<?php echo $product['width']; ?>">
-                        <span class="input-group-addon size-unit-text"></span>
-                      </div>
-                    </div>
-                    <div class="col-sm-3">
-                      <label class="control-label"><?php echo $text_shape; ?></label>
-                      <select name="package[irregular]" class="form-control">
-                        <option value="0"><?php echo $text_no; ?></option>
-                        <option value="1"><?php echo $text_yes; ?></option>
-                      </select>
                     </div>
                   </div>
                 </div>
@@ -1547,6 +1481,8 @@
                       $('#identifier_upc_required').val(1);
                     }
                   }
+
+                  <?php if ($setting['business_policies_optin'] == 1) { echo "businessPolicyDisplay(data.data.shipping_profile_category_group, data.data.payment_profile_category_group, data.data.return_policy_profile_category_group);"; } ?>
                 } else {
                     if (data.msg == null) {
                         alert('<?php echo $error_features; ?>');
@@ -2466,7 +2402,35 @@
 
 <?php if ($setting['business_policies_optin'] == 1) { ?>
   <script type="text/javascript"><!--
+    function businessPolicyDisplay(shipping, payment, returns) {
+      if (shipping == "None") {
+        $('#container-business-policy-shipping').hide();
+        $('#input-business-policy-shipping').val('');
+      }
 
+      if (payment == "None") {
+        $('#container-business-policy-payment').hide();
+        $('#input-business-policy-payment').val('');
+      }
+
+      if (returns == "None") {
+        $('#container-business-policy-returns').hide();
+        $('#input-business-policy-returns').val('');
+      }
+    }
+
+    // show profile options based on category choice
+
+    // load payment business profiles
+      // set default
+
+    // load shipping business profiles
+      // set default
+
+  // load return business profiles
+      // set default
+
+  // show profile info once chosen
 
   //--></script>
 <?php } else { ?>

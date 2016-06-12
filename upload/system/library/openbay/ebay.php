@@ -1520,7 +1520,6 @@ final class Ebay {
 				'description' => $qry->row['description'],
 				'type' => $qry->row['type'],
 				'default' => '', // @todo - check for default profile for the group, currently ebay bug
-				'category_groups' => json_decode($qry->row['category_groups'], true),
 				'policy_info' => json_decode($qry->row['policy_info'], true),
 			);
 
@@ -1549,10 +1548,10 @@ final class Ebay {
 
 			if ($type != '') {
 				$this->log("getBusinessPolicies() - Get type: " . $type);
-				$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_business_policy` WHERE `type` = '" . $this->db->escape(strtolower($type)) . "' ORDER BY `name` ASC");
+				$qry = $this->db->query("SELECT `ebp`.*, `ebpg`.`default` FROM `" . DB_PREFIX . "ebay_business_policy` `ebp` LEFT JOIN `" . DB_PREFIX . "ebay_business_policy_group` `ebpg` ON `ebp`.`profile_id` = `ebpg`.`profile_id` WHERE  `ebp`.`type` = '" . $this->db->escape(strtolower($type)) . "' ORDER BY  `ebp`.`name` ASC");
 			} else {
 				$this->log("getBusinessPolicies() - Get all");
-				$qry = $this->db->query("SELECT * FROM `" . DB_PREFIX . "ebay_business_policy` WHERE 1 ORDER BY `type`, `name` ASC");
+				$qry = $this->db->query("SELECT `ebp`.*, `ebpg`.`default` FROM `" . DB_PREFIX . "ebay_business_policy` `ebp` LEFT JOIN `" . DB_PREFIX . "ebay_business_policy_group` `ebpg` ON `ebp`.`profile_id` = `ebpg`.`profile_id`  WHERE 1 ORDER BY  `ebp`.`type`,  `ebp`.`name` ASC");
 			}
 
 			if ($qry->num_rows) {
@@ -1563,8 +1562,7 @@ final class Ebay {
 						'profile_id' => $row['profile_id'],
 						'name' => $row['name'],
 						'description' => $row['description'],
-						'default' => '', // @todo - check for default profile for the group, currently ebay bug
-						'category_groups' => json_decode($qry->row['category_groups'], true),
+						'default' => '', $row['default'],
 						'policy_info' => json_decode($qry->row['policy_info'], true),
 					);
 				}
@@ -1577,12 +1575,13 @@ final class Ebay {
 	public function pullBusinessPolicies() {
 		$this->log("pullBusinessPolicies() - Start");
 
-		if ($this->openbay->testDbTable(DB_PREFIX . "ebay_business_policy")) {
+		if ($this->openbay->testDbTable(DB_PREFIX . "ebay_business_policy") && $this->openbay->testDbTable(DB_PREFIX . "ebay_business_policy_group")) {
 			$response = $this->call('businesspolicy/get/', array(), array(), 'json', true);
 
 			if ($this->lasterror === false) {
 				$this->log("pullBusinessPolicies() - Empty table");
 				$this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "ebay_business_policy`");
+				$this->db->query("TRUNCATE TABLE `" . DB_PREFIX . "ebay_business_policy_group`");
 
 				$this->log("pullBusinessPolicies() - Add latest profiles");
 
@@ -1592,11 +1591,14 @@ final class Ebay {
 							`profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "',
 							`type` = 'payment',
 							`name` = '" . $this->db->escape((string)$profile['profileName']) . "',
-							`description` = '" . $this->db->escape((string)$profile['profileDesc']) . "',
+							`description` = '" . (isset($profile['profileDesc']) ? $this->db->escape((string)$profile['profileDesc']) : '') . "',
 							`site_id` = '" . (int)$profile['siteId'] . "',
-							`category_groups` = '" . $this->db->escape(json_encode($profile['categoryGroups'])) . "',
 							`policy_info`  = '" . $this->db->escape(json_encode($profile['paymentInfo'])) . "'
 					");
+
+					foreach ($profile['categoryGroups'] as $category_group) {
+						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+					}
 				}
 
 				foreach ($response['returnPolicyProfileList']['ReturnPolicyProfile'] as $profile) {
@@ -1605,11 +1607,14 @@ final class Ebay {
 							`profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "',
 							`type` = 'return_policy',
 							`name` = '" . $this->db->escape((string)$profile['profileName']) . "',
-							`description` = '" . $this->db->escape((string)$profile['profileDesc']) . "',
+							`description` = '" . (isset($profile['profileDesc']) ? $this->db->escape((string)$profile['profileDesc']) : '') . "',
 							`site_id` = '" . (int)$profile['siteId'] . "',
-							`category_groups` = '" . $this->db->escape(json_encode($profile['categoryGroups'])) . "',
 							`policy_info`  = '" . $this->db->escape(json_encode($profile['returnPolicyInfo'])) . "'
 					");
+
+					foreach ($profile['categoryGroups'] as $category_group) {
+						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+					}
 				}
 
 				foreach ($response['shippingPolicyProfile']['ShippingPolicyProfile'] as $profile) {
@@ -1618,15 +1623,18 @@ final class Ebay {
 							`profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "',
 							`type` = 'shipping',
 							`name` = '" . $this->db->escape((string)$profile['profileName']) . "',
-							`description` = '" . $this->db->escape((string)$profile['profileDesc']) . "',
+							`description` = '" . (isset($profile['profileDesc']) ? $this->db->escape((string)$profile['profileDesc']) : '') . "',
 							`site_id` = '" . (int)$profile['siteId'] . "',
-							`category_groups` = '" . $this->db->escape(json_encode($profile['categoryGroups'])) . "',
 							`policy_info`  = '" . $this->db->escape(json_encode($profile['shippingPolicyInfo'])) . "'
 					");
+
+					foreach ($profile['categoryGroups'] as $category_group) {
+						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+					}
 				}
 			}
 		} else {
-			$this->log("pullBusinessPolicies() - " . DB_PREFIX . "ebay_business_policy table does not exist!");
+			$this->log("pullBusinessPolicies() - " . DB_PREFIX . "ebay_business_policy OR " . DB_PREFIX . "ebay_business_policy_group table does not exist!");
 
 			// patch has not been run
 		}

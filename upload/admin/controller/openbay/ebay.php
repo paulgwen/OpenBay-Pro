@@ -350,10 +350,35 @@ class ControllerOpenbayEbay extends Controller {
 			$data['ebay_status_refunded_id'] = $this->config->get('ebay_status_refunded_id');
 		}
 
-		$data['api_server']       = $this->openbay->ebay->getServer();
-		$data['order_statuses']   = $this->model_localisation_order_status->getOrderStatuses();
-		$data['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
+		if (isset($this->request->post['ebay_item_postcode'])) {
+			$data['ebay_item_postcode'] = $this->request->post['ebay_item_postcode'];
+		} else {
+			$data['ebay_item_postcode'] = $this->config->get('ebay_item_postcode');
+		}
 
+		if (isset($this->request->post['ebay_item_location'])) {
+			$data['ebay_item_location'] = $this->request->post['ebay_item_location'];
+		} else {
+			$data['ebay_item_location'] = $this->config->get('ebay_item_location');
+		}
+
+		if (isset($this->request->post['ebay_item_country'])) {
+			$data['ebay_item_country'] = $this->request->post['ebay_item_country'];
+		} else {
+			$data['ebay_item_country'] = $this->config->get('ebay_item_country');
+		}
+
+		$data['api_server'] = $this->openbay->ebay->getServer();
+		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
+		$data['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
+		$data['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
+
+		$data['countries'] = $this->openbay->ebay->getSetting('countries');
+
+		if (is_array($data['countries'])) {
+			ksort($data['countries']);
+		}
+		
 		$data['header'] = $this->load->controller('common/header');
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['footer'] = $this->load->controller('common/footer');
@@ -1345,6 +1370,10 @@ class ControllerOpenbayEbay extends Controller {
 					 */
 				}
 
+//				echo '<pre>';
+//				print_r($setting);
+//				die();
+
 				if (!isset($setting['product_details']['product_identifier_unavailable_text'])) {
 					$this->session->data['warning'] = $this->language->get('error_missing_settings');
 					$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
@@ -1465,6 +1494,9 @@ class ControllerOpenbayEbay extends Controller {
 				$product_info['defaults']['paypal_address']         = $this->config->get('ebay_payment_paypal_address');
 				$product_info['defaults']['payment_instruction']    = $this->config->get('ebay_payment_instruction');
 				$product_info['defaults']['ebay_payment_immediate'] = $this->config->get('ebay_payment_immediate');
+				$product_info['defaults']['ebay_item_postcode'] 	= $this->config->get('ebay_item_postcode');
+				$product_info['defaults']['ebay_item_location'] 	= $this->config->get('ebay_item_location');
+				$product_info['defaults']['ebay_item_country'] 		= $this->config->get('ebay_item_country');
 
 				$product_info['defaults']['gallery_height']         = '400';
 				$product_info['defaults']['gallery_width']          = '400';
