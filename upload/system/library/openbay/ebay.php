@@ -1519,7 +1519,7 @@ final class Ebay {
 				'name' => $qry->row['name'],
 				'description' => $qry->row['description'],
 				'type' => $qry->row['type'],
-				'default' => '', // @todo - check for default profile for the group, currently ebay bug
+				'default' => '', $qry->row['default'],
 				'policy_info' => json_decode($qry->row['policy_info'], true),
 			);
 
@@ -1562,7 +1562,7 @@ final class Ebay {
 						'profile_id' => $row['profile_id'],
 						'name' => $row['name'],
 						'description' => $row['description'],
-						'default' => '', $row['default'],
+						'default' => $row['default'],
 						'policy_info' => json_decode($qry->row['policy_info'], true),
 					);
 				}

@@ -728,8 +728,8 @@
                     <select name="seller_profiles[shipping_profile][shipping_profile_id]" class="form-control" id="input-business-policy-shipping">
                       <option disabled selected value=""><?php echo $text_select; ?></option>
                       <?php if (!empty($setting['business_policies']['shipping'])) { ?>
-                        <?php foreach ($setting['business_policies']['shipping'] as $policy) { ?>
-                          <option value="<?php echo $policy['profile_id']; ?>" <?php ($policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $policy['name']; ?></option>
+                        <?php foreach ($setting['business_policies']['shipping'] as $ebay_business_policy) { ?>
+                          <option value="<?php echo $ebay_business_policy['profile_id']; ?>" <?php echo ($ebay_business_policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $ebay_business_policy['name']; ?></option>
                         <?php } ?>
                       <?php } ?>
                     </select>
@@ -741,8 +741,8 @@
                     <select name="seller_profiles[payment_profile][payment_profile_id]" class="form-control" id="input-business-policy-payment">
                       <option disabled selected value=""><?php echo $text_select; ?></option>
                       <?php if (!empty($setting['business_policies']['payment'])) { ?>
-                        <?php foreach ($setting['business_policies']['payment'] as $policy) { ?>
-                          <option value="<?php echo $policy['profile_id']; ?>" <?php ($policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $policy['name']; ?></option>
+                        <?php foreach ($setting['business_policies']['payment'] as $ebay_business_policy) { ?>
+                          <option value="<?php echo $ebay_business_policy['profile_id']; ?>" <?php echo ($ebay_business_policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $ebay_business_policy['name']; ?></option>
                         <?php } ?>
                       <?php } ?>
                     </select>
@@ -754,8 +754,8 @@
                     <select name="seller_profiles[return_profile][return_profile_id]" class="form-control" id="input-business-policy-returns">
                       <option disabled selected value=""><?php echo $text_select; ?></option>
                       <?php if (!empty($setting['business_policies']['return_policy'])) { ?>
-                        <?php foreach ($setting['business_policies']['return_policy'] as $policy) { ?>
-                          <option value="<?php echo $policy['profile_id']; ?>" <?php ($policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $policy['name']; ?></option>
+                        <?php foreach ($setting['business_policies']['return_policy'] as $ebay_business_policy) { ?>
+                          <option value="<?php echo $ebay_business_policy['profile_id']; ?>" <?php echo ($ebay_business_policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $ebay_business_policy['name']; ?></option>
                         <?php } ?>
                       <?php } ?>
                     </select>

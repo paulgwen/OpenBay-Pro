@@ -24,7 +24,7 @@
     <div class="panel-body" id="page-listing">
       <?php $i = 0; ?>
       <?php if (!isset($error_fail)) { ?>
-        <form action="<?php echo $action; ?>" method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
+        <form method="post" enctype="multipart/form-data" id="form" class="form-horizontal">
           <div class="well">
             <div class="row">
               <div class="col-sm-12 text-right">
@@ -46,10 +46,10 @@
                     <h4 id="product_title_<?php echo $i; ?>" style="display:none;"></h4>
                   </div>
                   <div class="col-sm-5 form-group text-right" id="p_row_buttons_<?php echo $i; ?>">
-                    <a class="btn btn-primary" onclick="showCategory('<?php echo $i; ?>');" id="editCategory_<?php echo $i; ?>" ><i class="fa fa-pencil"></i> <?php echo $text_category; ?></a>
-                    <a class="btn btn-primary" onclick="showProfiles('<?php echo $i; ?>');" id="editProfiles_<?php echo $i; ?>" ><i class="fa fa-pencil"></i> <?php echo $text_profile; ?></a>
-                    <a class="btn btn-primary" style="display:none;" onclick="showCatalog('<?php echo $i; ?>');" id="editCatalog_<?php echo $i; ?>" ><i class="fa fa-pencil"></i> <?php echo $text_catalog; ?></a>
-                    <a class="btn btn-primary" style="display:none;" onclick="showFeatures('<?php echo $i; ?>');" id="editFeature_<?php echo $i; ?>"><i class="fa fa-pencil"></i> <?php echo $text_features; ?></a>
+                    <a class="btn btn-primary item-input" onclick="showCategory('<?php echo $i; ?>');" id="editCategory_<?php echo $i; ?>" ><i class="fa fa-pencil"></i> <?php echo $text_category; ?></a>
+                    <a class="btn btn-primary item-input" onclick="showProfiles('<?php echo $i; ?>');" id="editProfiles_<?php echo $i; ?>" ><i class="fa fa-pencil"></i> <?php echo $text_profile; ?></a>
+                    <a class="btn btn-primary item-input" style="display:none;" onclick="showCatalog('<?php echo $i; ?>');" id="editCatalog_<?php echo $i; ?>" ><i class="fa fa-pencil"></i> <?php echo $text_catalog; ?></a>
+                    <a class="btn btn-primary item-input" style="display:none;" onclick="showFeatures('<?php echo $i; ?>');" id="editFeature_<?php echo $i; ?>"><i class="fa fa-pencil"></i> <?php echo $text_features; ?></a>
                     <a class="btn btn-danger" onclick="removeBox('<?php echo $i; ?>')"> <i class="fa fa-minus-circle"></i> <?php echo $button_remove; ?></a>
                   </div>
                 </div>
@@ -252,19 +252,12 @@
                                   <div class="panel panel-default">
                                     <div class="panel-body">
                                     <div class="well">
+                                      <h2><?php echo $text_profile_standard; ?></h2>
                                       <div class="form-group">
                                         <label class="col-sm-2 control-label"><?php echo $text_profile_theme; ?></label>
                                         <div class="col-sm-10">
                                           <select name="theme_profile" class="openbay_data_<?php echo $i; ?> form-control">
                                             <?php foreach($default['profiles_theme'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_theme_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
-                                          </select>
-                                        </div>
-                                      </div>
-                                      <div class="form-group">
-                                        <label class="col-sm-2 control-label"><?php echo $text_profile_shipping; ?></label>
-                                        <div class="col-sm-10">
-                                          <select name="shipping_profile" class="openbay_data_<?php echo $i; ?> form-control">
-                                            <?php foreach($default['profiles_shipping'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_shipping_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
                                           </select>
                                         </div>
                                       </div>
@@ -276,14 +269,62 @@
                                           </select>
                                         </div>
                                       </div>
+                                      <?php if ($setting['business_policies_optin'] == 0) { ?>
+                                        <div class="form-group">
+                                          <label class="col-sm-2 control-label"><?php echo $text_profile_shipping; ?></label>
+                                          <div class="col-sm-10">
+                                            <select name="shipping_profile" class="openbay_data_<?php echo $i; ?> form-control">
+                                              <?php foreach($default['profiles_shipping'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_shipping_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
+                                            </select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group">
+                                          <label class="col-sm-2 control-label"><?php echo $text_profile_returns; ?></label>
+                                          <div class="col-sm-10">
+                                            <select name="return_profile" class="openbay_data_<?php echo $i; ?> form-control">
+                                              <?php foreach($default['profiles_returns'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_returns_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
+                                            </select>
+                                          </div>
+                                        </div>
+                                      <?php } else { ?>
+                                        <h2><?php echo $text_profile_ebay_policy; ?></h2>
+                                        <div class="form-group">
+                                          <label class="col-sm-2 control-label"><?php echo $text_policy_shipping; ?></label>
+                                          <div class="col-sm-10">
+                                            <select name="seller_profiles[shipping_profile][shipping_profile_id]" class="openbay_data_<?php echo $i; ?> form-control">
+                                              <?php if (!empty($default['business_policies']['shipping'])) { ?>
+                                                <?php foreach ($default['business_policies']['shipping'] as $ebay_business_policy) { ?>
+                                                  <option value="<?php echo $ebay_business_policy['profile_id']; ?>" <?php echo ($ebay_business_policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $ebay_business_policy['name']; ?></option>
+                                                <?php } ?>
+                                              <?php } ?>
+                                            </select>
+                                          </div>
+                                        </div>
+                                        <div class="form-group">
+                                          <label class="col-sm-2 control-label"><?php echo $text_policy_payment; ?></label>
+                                          <div class="col-sm-10">
+                                            <select name="seller_profiles[payment_profile][payment_profile_id]" class="openbay_data_<?php echo $i; ?> form-control">
+                                              <?php if (!empty($default['business_policies']['payment'])) { ?>
+                                                <?php foreach ($default['business_policies']['payment'] as $ebay_business_policy) { ?>
+                                                  <option value="<?php echo $ebay_business_policy['profile_id']; ?>" <?php echo ($ebay_business_policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $ebay_business_policy['name']; ?></option>
+                                                <?php } ?>
+                                              <?php } ?>
+                                            </select>
+                                          </div>
+                                        </div>
                                       <div class="form-group">
-                                        <label class="col-sm-2 control-label"><?php echo $text_profile_returns; ?></label>
+                                        <label class="col-sm-2 control-label"><?php echo $text_policy_return; ?></label>
                                         <div class="col-sm-10">
-                                          <select name="return_profile" class="openbay_data_<?php echo $i; ?> form-control">
-                                            <?php foreach($default['profiles_returns'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_returns_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
+                                          <select name="seller_profiles[return_profile][return_profile_id]" class="openbay_data_<?php echo $i; ?> form-control">
+                                            <?php if (!empty($default['business_policies']['return_policy'])) { ?>
+                                              <?php foreach ($default['business_policies']['return_policy'] as $ebay_business_policy) { ?>
+                                                <option value="<?php echo $ebay_business_policy['profile_id']; ?>" <?php echo ($ebay_business_policy['default'] == 1 ? 'selected' : ''); ?>><?php echo $ebay_business_policy['name']; ?></option>
+                                              <?php } ?>
+                                            <?php } ?>
                                           </select>
                                         </div>
                                       </div>
+                                      <?php } ?>
                                     </div>
                                   </div>
                                   </div>
@@ -310,18 +351,14 @@
                         <div class="form-group" id="conditionContainer_<?php echo $i; ?>" style="display:none;">
                           <label class="col-sm-2 control-label"><?php echo $entry_condition; ?></label>
                           <div class="col-sm-10">
-                            <select name="condition" class="openbay_data_<?php echo $i; ?> form-control" id="conditionRow_<?php echo $i; ?>">
-                              <?php foreach($default['profiles_returns'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_returns_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
-                            </select>
+                            <select name="condition" class="openbay_data_<?php echo $i; ?> form-control" id="conditionRow_<?php echo $i; ?>"></select>
                           </div>
                         </div>
                         <div class="alert alert-info" id="durationLoading_<?php echo $i; ?>"><i class="fa fa-cog fa-lg fa-spin"></i> <?php echo $text_loading_duration; ?></div>
                         <div class="form-group" id="durationContainer_<?php echo $i; ?>" style="display:none;">
                           <label class="col-sm-2 control-label"><?php echo $text_duration; ?></label>
                           <div class="col-sm-10">
-                            <select name="duration" class="openbay_data_<?php echo $i; ?> form-control" id="durationRow_<?php echo $i; ?>">
-                              <?php foreach($default['profiles_returns'] as $s) { echo '<option value="'.$s['ebay_profile_id'].'"'.($default['profiles_returns_def'] == $s['ebay_profile_id'] ? ' selected' : '').'>'.$s['name'].'</option>'; } ?>
-                            </select>
+                            <select name="duration" class="openbay_data_<?php echo $i; ?> form-control" id="durationRow_<?php echo $i; ?>"></select>
                           </div>
                         </div>
                       </div>
@@ -905,6 +942,7 @@
           $('#product_messages_'+id).html('<div class="alert alert-info"><i class="fa fa-cog fa-lg fa-spin"></i> <?php echo $text_loading; ?></div>').show();
           $('.product_content_'+id).hide();
           $('#product_title_'+id).text(name).show();
+          $('.item-input').hide();
 
           $('#catalog_epid_'+id).val($("input[type='radio'][name='catalog_epid_"+id+"']:checked").val());
 
@@ -973,6 +1011,7 @@
       name = $('#title_'+$(this).val()).val();
       $('#product_messages_'+$(this).val()).empty().hide();
       $('.product_content_'+$(this).val()).show();
+      $('.item-input').show();
       $('#product_title_'+$(this).val()).text(name).hide();
     });
   });

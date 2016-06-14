@@ -1653,6 +1653,43 @@ class ControllerOpenbayEbay extends Controller {
 								$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
 							}
 
+							$setting['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
+
+							if ($setting['business_policies_optin'] == 1) {
+								$product_info['business_policies'] = $this->openbay->ebay->getBusinessPolicies();
+
+								// get the business policies and check that they are imported or exist, forward to sync page if not.
+
+
+
+								// get the eBay business policies for the user
+
+								/**
+								 * Might be better to ajax load them and have a refresh button
+								 * incase the user is half was through a new listing and needs to add one?
+								 * maybe a lightbox to add profiles?
+								 * editing profiles should be restricted since it affects all accociated listings
+								 */
+							} else {
+								//get shipping profiles
+								$product_info['profiles_shipping'] = $this->model_openbay_ebay_profile->getAll(0);
+								//get default shipping profile
+								$product_info['profiles_shipping_def'] = $this->model_openbay_ebay_profile->getDefault(0);
+								//check it has a default profile
+								if ($product_info['profiles_shipping_def'] === false) {
+									$data['error_fail'][] = $this->language->get('text_error_ship_profile');
+								}
+
+								//get returns profiles
+								$product_info['profiles_returns'] = $this->model_openbay_ebay_profile->getAll(1);
+								//get default returns profile
+								$product_info['profiles_returns_def'] = $this->model_openbay_ebay_profile->getDefault(1);
+								//check it has a default profile
+								if ($product_info['profiles_returns_def'] === false) {
+									$data['error_fail'][] = $this->language->get('text_error_return_profile');
+								}
+							}
+
 							$data['setting'] = $setting;
 
 							//get generic profiles
@@ -1663,27 +1700,9 @@ class ControllerOpenbayEbay extends Controller {
 								$data['error_fail'][] = $this->language->get('text_error_generic_profile');
 							}
 
-							//get shipping profiles
-							$product_info['profiles_shipping'] = $this->model_openbay_ebay_profile->getAll(0);
-							//get default shipping profile
-							$product_info['profiles_shipping_def'] = $this->model_openbay_ebay_profile->getDefault(0);
-							//check it has a default profile
-							if ($product_info['profiles_shipping_def'] === false) {
-								$data['error_fail'][] = $this->language->get('text_error_ship_profile');
-							}
-
-							//get returns profiles
-							$product_info['profiles_returns'] = $this->model_openbay_ebay_profile->getAll(1);
-							//get default returns profile
-							$product_info['profiles_returns_def'] = $this->model_openbay_ebay_profile->getDefault(1);
-							//check it has a default profile
-							if ($product_info['profiles_returns_def'] === false) {
-								$data['error_fail'][] = $this->language->get('text_error_return_profile');
-							}
-
-							//get returns profiles
+							//get themes profiles
 							$product_info['profiles_theme'] = $this->model_openbay_ebay_profile->getAll(2);
-							//get default returns profile
+							//get default themes profiles
 							$product_info['profiles_theme_def'] = $this->model_openbay_ebay_profile->getDefault(2);
 							//check it has a default profile
 							if ($product_info['profiles_theme_def'] === false) {
@@ -1835,23 +1854,169 @@ class ControllerOpenbayEbay extends Controller {
 				$post = $this->request->post;
 				$data = array();
 
-				//load all of the listing defaults and assign to correct variable names
-				$profile_shipping = $this->model_openbay_ebay_profile->get($post['shipping_profile']);
-				$profile_return = $this->model_openbay_ebay_profile->get($post['return_profile']);
-				$profile_template = $this->model_openbay_ebay_profile->get($post['theme_profile']);
-				$profile_generic = $this->model_openbay_ebay_profile->get($post['generic_profile']);
-
-				$payments = $this->model_openbay_ebay->getPaymentTypes();
-				$payments_accepted = $this->config->get('ebay_payment_types');
-				$product_info = $this->model_catalog_product->getProduct($post['product_id']);
-
-				// set shipping data
-				$data['national'] = $profile_shipping['data']['national'];
-				$data['international'] = $profile_shipping['data']['international'];
-
-				$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$post['product_id'] . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+                $query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$post['product_id'] . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
 
 				$data['product_info'] = $query->row;
+                
+                $product_info = $this->model_catalog_product->getProduct($post['product_id']);
+                
+                if ($this->openbay->ebay->getSetting('business_policies_optin') == 0) {
+                    /**
+                     * Shipping profile information
+                     */
+                    $profile_shipping = $this->model_openbay_ebay_profile->get($post['shipping_profile']);
+    
+                    $data['location'] = $profile_shipping['data']['location'];
+                    $data['postcode'] = $profile_shipping['data']['postcode'];
+                    $data['dispatch_time'] = $profile_shipping['data']['dispatch_time'];
+                    $data['national'] = $profile_shipping['data']['national'];
+                    $data['international'] = $profile_shipping['data']['international'];
+    
+                    if (isset($profile_shipping['data']['country'])) {
+                        $data['country'] = $profile_shipping['data']['country'];
+                    }
+    
+                    if (isset($profile_shipping['data']['eligible_for_pickup_dropoff'])) {
+                        $data['eligible_for_pickup_dropoff'] = $profile_shipping['data']['eligible_for_pickup_dropoff'];
+                    }
+    
+                    if (isset($profile_shipping['data']['eligible_for_pickup_instore'])) {
+                        $data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
+                    }
+    
+                    if (isset($profile_shipping['data']['global_shipping'])) {
+                        $data['global_shipping'] = $profile_shipping['data']['global_shipping'];
+                    }
+    
+                    if (isset($profile_shipping['data']['promotional_shipping_discount'])) {
+                        $data['promotional_shipping_discount'] = $profile_shipping['data']['promotional_shipping_discount'];
+                    }
+    
+                    if (isset($profile_shipping['data']['promotional_shipping_discount_international'])) {
+                        $data['promotional_shipping_discount_international'] = $profile_shipping['data']['promotional_shipping_discount_international'];
+                    }
+    
+                    $data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
+                    
+                    $data = array_merge($data, $profile_shipping['data']);
+    
+                    /**
+                     * Returns profile information
+                     */
+                    $profile_return = $this->model_openbay_ebay_profile->get($post['return_profile']);
+    
+                    if (isset($profile_return['data']['returns_accepted'])) {
+                        $data['returns_accepted'] = $profile_return['data']['returns_accepted'];
+                    }
+                    if (isset($profile_return['data']['returns_policy'])) {
+                        $data['return_policy'] = $profile_return['data']['returns_policy'];
+                    }
+                    if (isset($profile_return['data']['returns_option'])) {
+                        $data['returns_option'] = $profile_return['data']['returns_option'];
+                    }
+                    if (isset($profile_return['data']['returns_within'])) {
+                        $data['returns_within'] = $profile_return['data']['returns_within'];
+                    }
+                    if (isset($profile_return['data']['returns_shipping'])) {
+                        $data['returns_shipping'] = $profile_return['data']['returns_shipping'];
+                    }
+                    if (isset($profile_return['data']['returns_restocking_fee'])) {
+                        $data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
+                    }
+    
+                    /**
+                     * Payment information
+                     */
+                    $payments = $this->model_openbay_ebay->getPaymentTypes();
+                    $payments_accepted = $this->config->get('ebay_payment_types');
+                    
+                    $data['payments'] = array();
+                    foreach($payments as $payment) {
+                        if ($payments_accepted[$payment['ebay_name']] == 1) {
+                            $data['payments'][$payment['ebay_name']] = 1;
+                        }
+                    }
+    
+                    $data['ebay_payment_immediate'] = $this->config->get('ebay_payment_immediate');
+                    $data['paypal_email'] = $this->config->get('ebay_payment_paypal_address');
+                    $data['payment_instruction'] = $this->config->get('ebay_payment_instruction');
+                } else {
+                    /**
+                     * Seller has opted in to use business policies from eBay
+                     * Now use the only preset options needed
+                     */
+                    $data['postcode'] = $this->config->get('ebay_item_postcode');
+                    $data['location'] = $this->config->get('ebay_item_location');
+                    $data['country'] = $this->config->get('ebay_item_country');
+                    $data['seller_profiles']['payment_profile']['payment_profile_id]'] = $post['seller_profiles']['payment_profile']['payment_profile_id'];
+                    $data['seller_profiles']['shipping_profile']['shipping_profile_id]'] = $post['seller_profiles']['shipping_profile']['shipping_profile_id'];
+                    $data['seller_profiles']['return_profile']['return_profile_id]'] = $post['seller_profiles']['return_profile']['return_profile_id'];
+
+                }
+                
+                /**
+                 * Template profile information
+                 */
+                $profile_template = $this->model_openbay_ebay_profile->get($post['theme_profile']);
+
+                if (isset($profile_template['data']['ebay_template_id'])) {
+                    $template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
+                    $data['template_html'] = (isset($template['html']) ? base64_encode($template['html']) : '');
+                    $data['template'] = $profile_template['data']['ebay_template_id'];
+                } else {
+                    $data['template_html'] = '';
+                    $data['template'] = '';
+                }
+
+                $data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
+                $data['gallery_super'] = $profile_template['data']['ebay_supersize'];
+
+                $data['main_image'] = 0;
+                $data['img'] = array();
+
+                $product_images = $this->model_catalog_product->getProductImages($post['product_id']);
+
+                $product_info['product_images'] = array();
+
+                if (!empty($product_info['image'])) {
+                    $data['img'][] = $product_info['image'];
+                }
+
+                if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
+                    foreach ($product_images as $product_image) {
+                        if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
+                            $data['img'][] =  $product_image['image'];
+                        }
+                    }
+                }
+
+                if (isset($profile_template['data']['ebay_img_template']) && $profile_template['data']['ebay_img_template'] == 1) {
+                    $tmp_gallery_array = array();
+                    $tmp_thumbnail_array = array();
+
+                    //if the user has not set the exclude default image, add it to the array for theme images.
+                    $key_offset = 0;
+                    if (!isset($profile_template['data']['default_img_exclude']) || $profile_template['data']['default_img_exclude'] != 1) {
+                        $tmp_gallery_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
+                        $tmp_thumbnail_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
+                        $key_offset = 1;
+                    }
+
+                    //loop through the product images and add them.
+                    foreach ($product_images as $k => $v) {
+                        $tmp_gallery_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
+                        $tmp_thumbnail_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
+                    }
+
+                    $data['img_tpl'] = $tmp_gallery_array;
+                    $data['img_tpl_thumb'] = $tmp_thumbnail_array;
+                }
+
+                /**
+                 * General Profile information
+                 */
+                $profile_generic = $this->model_openbay_ebay_profile->get($post['generic_profile']);
+                $data['private_listing'] = $profile_generic['data']['private_listing'];
 
 				$data['product_info']['product_filters'] = array();
 
@@ -1868,182 +2033,44 @@ class ControllerOpenbayEbay extends Controller {
 						);
 					}
 				}
-
-
-				$data['description'] = $product_info['description'];
-				$data['name'] = $post['title'];
-				$data['sub_name'] = '';
-				$data['bestoffer'] = 0;
-				$data['finalCat'] = $post['finalCat'];
-				$data['price'][0] = $post['price'];
-				$data['qty'][0] = (int)$post['qty'];
-				$data['product_id'] = (int)$post['product_id'];
-
-				$data['feat'] = $post['feat'];
-				$data['featother'] = $post['featother'];
-
-				if (!empty($product_info['sku'])){
-					$data['sku'] = $product_info['sku'];
-				}
-
-				if (isset($post['identifier_ean']) && !empty($post['identifier_ean'])){
-					$data['identifier_ean'] = $post['identifier_ean'];
-				}
-
-				if (isset($post['identifier_isbn']) && !empty($post['identifier_isbn'])){
-					$data['identifier_isbn'] = $post['identifier_isbn'];
-				}
-
-				if (isset($post['identifier_upc']) && !empty($post['identifier_upc'])){
-					$data['identifier_upc'] = $post['identifier_upc'];
-				}
-
-				$data['auction_duration'] = $post['duration'];
-				$data['condition'] = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
-				$data['auction_type'] = 'FixedPriceItem';
-				$data['catalog_epid'] = (isset($post['catalog_epid']) && $post['catalog_epid'] != 0 ? $post['catalog_epid'] : '');
+                
+				$data['description']        = $product_info['description'];
+				$data['name']               = $post['title'];
+				$data['sub_name']           = '';
+				$data['bestoffer']          = 0;
+				$data['finalCat']           = $post['finalCat'];
+				$data['price'][0]           = $post['price'];
+				$data['qty'][0]             = (int)$post['qty'];
+				$data['product_id']         = (int)$post['product_id'];
+				$data['feat']               = (isset($post['feat']) && $post['feat'] != 0 ? $post['feat'] : '');
+				$data['featother']          = (isset($post['featother']) && $post['featother'] != 0 ? $post['featother'] : '');
+				$data['auction_duration']   = $post['duration'];
+				$data['condition']          = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
+				$data['auction_type']       = 'FixedPriceItem';
+				$data['catalog_epid']       = (isset($post['catalog_epid']) && $post['catalog_epid'] != 0 ? $post['catalog_epid'] : '');
 				$data['identifier_upc']     = (isset($post['identifier_upc']) && $post['identifier_upc'] != '' ? $post['identifier_upc'] : '');
 				$data['identifier_isbn']    = (isset($post['identifier_isbn']) && $post['identifier_isbn'] != '' ? $post['identifier_isbn'] : '');
 				$data['identifier_ean']     = (isset($post['identifier_ean']) && $post['identifier_ean'] != '' ? $post['identifier_ean'] : '');
+				$data['sku']                = (isset($product_info['sku']) && !empty($product_info['sku']) ? $product_info['sku'] : '');
+                $data['attributes']         = base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($post['product_id'])));
 
-				$data['ebay_payment_immediate'] = $this->config->get('ebay_payment_immediate');
-				$data['paypal_email'] = $this->config->get('ebay_payment_paypal_address');
-				$data['payment_instruction'] = $this->config->get('ebay_payment_instruction');
+                // package size and weights
+                $weight_parts                   = explode('.', $product_info['weight']);
+                $data['package']['depth']       = $product_info['height'];
+                $data['package']['irregular']   = 0;
+                $data['package']['length']      = $product_info['length'];
+                $data['package']['unit']        = $this->config->get('ebay_measurement');
+                $data['package']['width']       = $product_info['width'];
+                $data['package']['weight_major'] = (int)$weight_parts[0];
+                $data['package']['weight_minor'] = (int)substr($weight_parts[1], 0, 3);
 
-				if (isset($profile_return['data']['returns_accepted'])) {
-					$data['returns_accepted'] = $profile_return['data']['returns_accepted'];
-				}
-				if (isset($profile_return['data']['returns_policy'])) {
-					$data['return_policy'] = $profile_return['data']['returns_policy'];
-				}
-				if (isset($profile_return['data']['returns_option'])) {
-					$data['returns_option'] = $profile_return['data']['returns_option'];
-				}
-				if (isset($profile_return['data']['returns_within'])) {
-					$data['returns_within'] = $profile_return['data']['returns_within'];
-				}
-				if (isset($profile_return['data']['returns_shipping'])) {
-					$data['returns_shipping'] = $profile_return['data']['returns_shipping'];
-				}
-				if (isset($profile_return['data']['returns_restocking_fee'])) {
-					$data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
-				}
+                $package_types = $this->openbay->ebay->getSetting('package_type');
 
-				$data['location'] = $profile_shipping['data']['location'];
-				$data['postcode'] = $profile_shipping['data']['postcode'];
-				$data['dispatch_time'] = $profile_shipping['data']['dispatch_time'];
-
-				if (isset($profile_shipping['data']['country'])) {
-					$data['country'] = $profile_shipping['data']['country'];
-				}
-
-				if (isset($profile_shipping['data']['eligible_for_pickup_dropoff'])) {
-					$data['eligible_for_pickup_dropoff'] = $profile_shipping['data']['eligible_for_pickup_dropoff'];
-				}
-
-				if (isset($profile_shipping['data']['eligible_for_pickup_instore'])) {
-					$data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
-				}
-
-				if (isset($profile_shipping['data']['global_shipping'])) {
-					$data['global_shipping'] = $profile_shipping['data']['global_shipping'];
-				}
-
-				if (isset($profile_shipping['data']['promotional_shipping_discount'])) {
-					$data['promotional_shipping_discount'] = $profile_shipping['data']['promotional_shipping_discount'];
-				}
-
-				if (isset($profile_shipping['data']['promotional_shipping_discount_international'])) {
-					$data['promotional_shipping_discount_international'] = $profile_shipping['data']['promotional_shipping_discount_international'];
-				}
-
-				$data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
-
-				if (isset($profile_template['data']['ebay_template_id'])) {
-					$template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
-					$data['template_html'] = (isset($template['html']) ? base64_encode($template['html']) : '');
-					$data['template'] = $profile_template['data']['ebay_template_id'];
-				} else {
-					$data['template_html'] = '';
-					$data['template'] = '';
-				}
-
-				$data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
-				$data['gallery_super'] = $profile_template['data']['ebay_supersize'];
-
-				$data['private_listing'] = $profile_generic['data']['private_listing'];
-
-				//product attributes - this is just a direct pass through used with the template tag
-				$data['attributes'] = base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($post['product_id'])));
-
-				$data['payments'] = array();
-				foreach($payments as $payment) {
-					if ($payments_accepted[$payment['ebay_name']] == 1) {
-						$data['payments'][$payment['ebay_name']] = 1;
-					}
-				}
-
-				$data['main_image'] = 0;
-				$data['img'] = array();
-
-				$product_images = $this->model_catalog_product->getProductImages($post['product_id']);
-
-				$product_info['product_images'] = array();
-
-				if (!empty($product_info['image'])) {
-					$data['img'][] = $product_info['image'];
-				}
-
-				if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
-					foreach ($product_images as $product_image) {
-						if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-							$data['img'][] =  $product_image['image'];
-						}
-					}
-				}
-
-				if (isset($profile_template['data']['ebay_img_template']) && $profile_template['data']['ebay_img_template'] == 1) {
-					$tmp_gallery_array = array();
-					$tmp_thumbnail_array = array();
-
-					//if the user has not set the exclude default image, add it to the array for theme images.
-					$key_offset = 0;
-					if (!isset($profile_template['data']['default_img_exclude']) || $profile_template['data']['default_img_exclude'] != 1) {
-						$tmp_gallery_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
-						$tmp_thumbnail_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
-						$key_offset = 1;
-					}
-
-					//loop through the product images and add them.
-					foreach ($product_images as $k => $v) {
-						$tmp_gallery_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
-						$tmp_thumbnail_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
-					}
-
-					$data['img_tpl']        = $tmp_gallery_array;
-					$data['img_tpl_thumb']  = $tmp_thumbnail_array;
-				}
-
-				$weight_parts = explode('.', $product_info['weight']);
-
-				// package size and weights
-				$data['package']['depth'] = $product_info['height'];
-				$data['package']['irregular'] = 0;
-				$data['package']['length'] = $product_info['length'];
-				$data['package']['unit'] = $this->config->get('ebay_measurement');
-				$data['package']['weight_major'] = (int)$weight_parts[0];
-				$data['package']['weight_minor'] = (int)substr($weight_parts[1], 0, 3);
-				$data['package']['width'] = $product_info['width'];
-
-				$package_types = $this->openbay->ebay->getSetting('package_type');
-
-				foreach ($package_types as $package_type) {
-					if ($package_type['default'] == 1) {
-						$data['package']['package']	= $package_type['code'];
-					}
-				}
-
-				$data = array_merge($data, $profile_shipping['data']);
+                foreach ($package_types as $package_type) {
+                    if ($package_type['default'] == 1) {
+                        $data['package']['package']	= $package_type['code'];
+                    }
+                }
 
 				$verify_response = $this->model_openbay_ebay->ebayVerifyAddItem($data, 'no');
 
@@ -2147,22 +2174,169 @@ class ControllerOpenbayEbay extends Controller {
 				$post = $this->request->post;
 				$data = array();
 
-				//load all of the listing defaults and assign to correct variable names
-				$profile_shipping = $this->model_openbay_ebay_profile->get($post['shipping_profile']);
-				$profile_return = $this->model_openbay_ebay_profile->get($post['return_profile']);
-				$profile_template = $this->model_openbay_ebay_profile->get($post['theme_profile']);
-				$profile_generic = $this->model_openbay_ebay_profile->get($post['generic_profile']);
-				$payments = $this->model_openbay_ebay->getPaymentTypes();
-				$payments_accepted = $this->config->get('ebay_payment_types');
-				$product_info = $this->model_catalog_product->getProduct($post['product_id']);
-
-				// set shipping data
-				$data['national'] = $profile_shipping['data']['national'];
-				$data['international'] = $profile_shipping['data']['international'];
-
-				$query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$post['product_id'] . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+                $query = $this->db->query("SELECT DISTINCT *, pd.name AS name, p.image, m.name AS manufacturer, (SELECT wcd.unit FROM " . DB_PREFIX . "weight_class_description wcd WHERE p.weight_class_id = wcd.weight_class_id AND wcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS weight_class, (SELECT lcd.unit FROM " . DB_PREFIX . "length_class_description lcd WHERE p.length_class_id = lcd.length_class_id AND lcd.language_id = '" . (int)$this->config->get('config_language_id') . "') AS length_class, p.sort_order FROM " . DB_PREFIX . "product p LEFT JOIN " . DB_PREFIX . "product_description pd ON (p.product_id = pd.product_id) LEFT JOIN " . DB_PREFIX . "product_to_store p2s ON (p.product_id = p2s.product_id) LEFT JOIN " . DB_PREFIX . "manufacturer m ON (p.manufacturer_id = m.manufacturer_id) WHERE p.product_id = '" . (int)$post['product_id'] . "' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
 
 				$data['product_info'] = $query->row;
+
+                $product_info = $this->model_catalog_product->getProduct($post['product_id']);
+
+                if ($this->openbay->ebay->getSetting('business_policies_optin') == 0) {
+                    /**
+                     * Shipping profile information
+                     */
+                    $profile_shipping = $this->model_openbay_ebay_profile->get($post['shipping_profile']);
+
+                    $data['location'] = $profile_shipping['data']['location'];
+                    $data['postcode'] = $profile_shipping['data']['postcode'];
+                    $data['dispatch_time'] = $profile_shipping['data']['dispatch_time'];
+                    $data['national'] = $profile_shipping['data']['national'];
+                    $data['international'] = $profile_shipping['data']['international'];
+
+                    if (isset($profile_shipping['data']['country'])) {
+                        $data['country'] = $profile_shipping['data']['country'];
+                    }
+
+                    if (isset($profile_shipping['data']['eligible_for_pickup_dropoff'])) {
+                        $data['eligible_for_pickup_dropoff'] = $profile_shipping['data']['eligible_for_pickup_dropoff'];
+                    }
+
+                    if (isset($profile_shipping['data']['eligible_for_pickup_instore'])) {
+                        $data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
+                    }
+
+                    if (isset($profile_shipping['data']['global_shipping'])) {
+                        $data['global_shipping'] = $profile_shipping['data']['global_shipping'];
+                    }
+
+                    if (isset($profile_shipping['data']['promotional_shipping_discount'])) {
+                        $data['promotional_shipping_discount'] = $profile_shipping['data']['promotional_shipping_discount'];
+                    }
+
+                    if (isset($profile_shipping['data']['promotional_shipping_discount_international'])) {
+                        $data['promotional_shipping_discount_international'] = $profile_shipping['data']['promotional_shipping_discount_international'];
+                    }
+
+                    $data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
+
+                    $data = array_merge($data, $profile_shipping['data']);
+
+                    /**
+                     * Returns profile information
+                     */
+                    $profile_return = $this->model_openbay_ebay_profile->get($post['return_profile']);
+
+                    if (isset($profile_return['data']['returns_accepted'])) {
+                        $data['returns_accepted'] = $profile_return['data']['returns_accepted'];
+                    }
+                    if (isset($profile_return['data']['returns_policy'])) {
+                        $data['return_policy'] = $profile_return['data']['returns_policy'];
+                    }
+                    if (isset($profile_return['data']['returns_option'])) {
+                        $data['returns_option'] = $profile_return['data']['returns_option'];
+                    }
+                    if (isset($profile_return['data']['returns_within'])) {
+                        $data['returns_within'] = $profile_return['data']['returns_within'];
+                    }
+                    if (isset($profile_return['data']['returns_shipping'])) {
+                        $data['returns_shipping'] = $profile_return['data']['returns_shipping'];
+                    }
+                    if (isset($profile_return['data']['returns_restocking_fee'])) {
+                        $data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
+                    }
+
+                    /**
+                     * Payment information
+                     */
+                    $payments = $this->model_openbay_ebay->getPaymentTypes();
+                    $payments_accepted = $this->config->get('ebay_payment_types');
+
+                    $data['payments'] = array();
+                    foreach($payments as $payment) {
+                        if ($payments_accepted[$payment['ebay_name']] == 1) {
+                            $data['payments'][$payment['ebay_name']] = 1;
+                        }
+                    }
+
+                    $data['ebay_payment_immediate'] = $this->config->get('ebay_payment_immediate');
+                    $data['paypal_email'] = $this->config->get('ebay_payment_paypal_address');
+                    $data['payment_instruction'] = $this->config->get('ebay_payment_instruction');
+                } else {
+                     /**
+                     * Seller has opted in to use business policies from eBay
+                     * Now use the only preset options needed
+                     */
+                    $data['postcode'] = $this->config->get('ebay_item_postcode');
+                    $data['location'] = $this->config->get('ebay_item_location');
+                    $data['country'] = $this->config->get('ebay_item_country');
+                    $data['seller_profiles']['payment_profile']['payment_profile_id]'] = $post['seller_profiles']['payment_profile']['payment_profile_id'];
+                    $data['seller_profiles']['shipping_profile']['shipping_profile_id]'] = $post['seller_profiles']['shipping_profile']['shipping_profile_id'];
+                    $data['seller_profiles']['return_profile']['return_profile_id]'] = $post['seller_profiles']['return_profile']['return_profile_id'];
+                }
+
+                /**
+                 * Template profile information
+                 */
+				$profile_template = $this->model_openbay_ebay_profile->get($post['theme_profile']);
+
+                if (isset($profile_template['data']['ebay_template_id'])) {
+                    $template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
+                    $data['template_html'] = (isset($template['html']) ? base64_encode($template['html']) : '');
+                    $data['template'] = $profile_template['data']['ebay_template_id'];
+                } else {
+                    $data['template_html'] = '';
+                    $data['template'] = '';
+                }
+
+                $data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
+                $data['gallery_super'] = $profile_template['data']['ebay_supersize'];
+
+                $data['main_image'] = 0;
+                $data['img'] = array();
+
+                $product_images = $this->model_catalog_product->getProductImages($post['product_id']);
+
+                $product_info['product_images'] = array();
+
+                if (!empty($product_info['image'])) {
+                    $data['img'][] = $product_info['image'];
+                }
+
+                if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
+                    foreach ($product_images as $product_image) {
+                        if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
+                            $data['img'][] =  $product_image['image'];
+                        }
+                    }
+                }
+
+                if (isset($profile_template['data']['ebay_img_template']) && $profile_template['data']['ebay_img_template'] == 1) {
+                    $tmp_gallery_array = array();
+                    $tmp_thumbnail_array = array();
+
+                    //if the user has not set the exclude default image, add it to the array for theme images.
+                    $key_offset = 0;
+                    if (!isset($profile_template['data']['default_img_exclude']) || $profile_template['data']['default_img_exclude'] != 1) {
+                        $tmp_gallery_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
+                        $tmp_thumbnail_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
+                        $key_offset = 1;
+                    }
+
+                    //loop through the product images and add them.
+                    foreach ($product_images as $k => $v) {
+                        $tmp_gallery_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
+                        $tmp_thumbnail_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
+                    }
+
+                    $data['img_tpl']        = $tmp_gallery_array;
+                    $data['img_tpl_thumb']  = $tmp_thumbnail_array;
+                }
+
+                /**
+                 * General Profile information
+                 */
+                $profile_generic = $this->model_openbay_ebay_profile->get($post['generic_profile']);
+
+                $data['private_listing'] = $profile_generic['data']['private_listing'];
 
 				$data['product_info']['product_filters'] = array();
 
@@ -2180,163 +2354,28 @@ class ControllerOpenbayEbay extends Controller {
 					}
 				}
 
-				$data['description'] = $product_info['description'];
-				$data['name'] = $post['title'];
-				$data['sub_name'] = '';
-				$data['bestoffer'] = 0;
-				$data['finalCat'] = $post['finalCat'];
-				$data['price'][0] = $post['price'];
-				$data['qty'][0] = $post['qty'];
-				$data['product_id'] = $post['product_id'];
+				$data['description']        = $product_info['description'];
+				$data['name']               = $post['title'];
+				$data['sub_name']           = '';
+				$data['bestoffer']          = 0;
+				$data['finalCat']           = $post['finalCat'];
+				$data['price'][0]           = $post['price'];
+				$data['qty'][0]             = $post['qty'];
+				$data['product_id']         = $post['product_id'];
+                $data['feat']               = (isset($post['feat']) && $post['feat'] != 0 ? $post['feat'] : '');
+                $data['featother']          = (isset($post['featother']) && $post['featother'] != 0 ? $post['featother'] : '');
+                $data['auction_duration']   = $post['duration'];
+                $data['condition']          = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
+                $data['auction_type']       = 'FixedPriceItem';
+                $data['catalog_epid']       = (isset($post['catalog_epid']) && $post['catalog_epid'] != 0 ? $post['catalog_epid'] : '');
+                $data['identifier_upc']     = (isset($post['identifier_upc']) && $post['identifier_upc'] != '' ? $post['identifier_upc'] : '');
+                $data['identifier_isbn']    = (isset($post['identifier_isbn']) && $post['identifier_isbn'] != '' ? $post['identifier_isbn'] : '');
+                $data['identifier_ean']     = (isset($post['identifier_ean']) && $post['identifier_ean'] != '' ? $post['identifier_ean'] : '');
+                $data['sku']                = (isset($product_info['sku']) && !empty($product_info['sku']) ? $product_info['sku'] : '');
+				$data['attributes']         = base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($post['product_id'])));
 
-				$data['feat'] = $post['feat'];
-				$data['featother'] = $post['featother'];
-
-				if (!empty($product_info['sku'])){
-					$data['sku'] = $product_info['sku'];
-				}
-
-				if (isset($post['identifier_ean']) && !empty($post['identifier_ean'])){
-					$data['identifier_ean'] = $post['identifier_ean'];
-				}
-
-				if (isset($post['identifier_isbn']) && !empty($post['identifier_isbn'])){
-					$data['identifier_isbn'] = $post['identifier_isbn'];
-				}
-
-				if (isset($post['identifier_upc']) && !empty($post['identifier_upc'])){
-					$data['identifier_upc'] = $post['identifier_upc'];
-				}
-
-				$data['auction_duration'] = $post['duration'];
-				$data['condition'] = (isset($post['condition']) && $post['condition'] != 0 ? $post['condition'] : '');
-				$data['auction_type'] = 'FixedPriceItem';
-				$data['catalog_epid'] = (isset($post['catalog_epid']) && $post['catalog_epid'] != 0 ? $post['catalog_epid'] : '');
-				$data['identifier_upc'] = (isset($post['identifier_upc']) && $post['identifier_upc'] != '' ? $post['identifier_upc'] : '');
-				$data['identifier_isbn'] = (isset($post['identifier_isbn']) && $post['identifier_isbn'] != '' ? $post['identifier_isbn'] : '');
-				$data['identifier_ean']  = (isset($post['identifier_ean']) && $post['identifier_ean'] != '' ? $post['identifier_ean'] : '');
-
-				$data['ebay_payment_immediate'] = $this->config->get('ebay_payment_immediate');
-				$data['paypal_email'] = $this->config->get('ebay_payment_paypal_address');
-				$data['payment_instruction'] = $this->config->get('ebay_payment_instruction');
-
-				if (isset($profile_return['data']['returns_accepted'])) {
-					$data['returns_accepted'] = $profile_return['data']['returns_accepted'];
-				}
-				if (isset($profile_return['data']['returns_policy'])) {
-					$data['return_policy'] = $profile_return['data']['returns_policy'];
-				}
-				if (isset($profile_return['data']['returns_option'])) {
-					$data['returns_option'] = $profile_return['data']['returns_option'];
-				}
-				if (isset($profile_return['data']['returns_within'])) {
-					$data['returns_within'] = $profile_return['data']['returns_within'];
-				}
-				if (isset($profile_return['data']['returns_shipping'])) {
-					$data['returns_shipping'] = $profile_return['data']['returns_shipping'];
-				}
-				if (isset($profile_return['data']['returns_restocking_fee'])) {
-					$data['returns_restocking_fee'] = $profile_return['data']['returns_restocking_fee'];
-				}
-
-				$data['location'] = $profile_shipping['data']['location'];
-				$data['postcode'] = $profile_shipping['data']['postcode'];
-				$data['dispatch_time'] = $profile_shipping['data']['dispatch_time'];
-
-				if (isset($profile_shipping['data']['country'])) {
-					$data['country'] = $profile_shipping['data']['country'];
-				}
-
-				if (isset($profile_shipping['data']['eligible_for_pickup_dropoff'])) {
-					$data['eligible_for_pickup_dropoff'] = $profile_shipping['data']['eligible_for_pickup_dropoff'];
-				}
-
-				if (isset($profile_shipping['data']['eligible_for_pickup_instore'])) {
-					$data['eligible_for_pickup_instore'] = $profile_shipping['data']['eligible_for_pickup_instore'];
-				}
-
-				if (isset($profile_shipping['data']['global_shipping'])) {
-					$data['global_shipping'] = $profile_shipping['data']['global_shipping'];
-				}
-
-				if (isset($profile_shipping['data']['promotional_shipping_discount'])) {
-					$data['promotional_shipping_discount'] = $profile_shipping['data']['promotional_shipping_discount'];
-				}
-
-				if (isset($profile_shipping['data']['promotional_shipping_discount_international'])) {
-					$data['promotional_shipping_discount_international'] = $profile_shipping['data']['promotional_shipping_discount_international'];
-				}
-
-				$data['get_it_fast'] = (isset($profile_shipping['data']['get_it_fast']) ? $profile_shipping['data']['get_it_fast'] : 0);
-
-				if (isset($profile_template['data']['ebay_template_id'])) {
-					$template = $this->model_openbay_ebay_template->get($profile_template['data']['ebay_template_id']);
-					$data['template_html'] = (isset($template['html']) ? base64_encode($template['html']) : '');
-					$data['template'] = $profile_template['data']['ebay_template_id'];
-				} else {
-					$data['template_html'] = '';
-					$data['template'] = '';
-				}
-
-				$data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
-				$data['gallery_super'] = $profile_template['data']['ebay_supersize'];
-
-				$data['private_listing'] = $profile_generic['data']['private_listing'];
-
-				//product attributes - this is just a direct pass through used with the template tag
-				$data['attributes'] = base64_encode(json_encode($this->model_openbay_ebay->getProductAttributes($post['product_id'])));
-
-				$data['payments'] = array();
-				foreach($payments as $payment) {
-					if ($payments_accepted[$payment['ebay_name']] == 1) {
-						$data['payments'][$payment['ebay_name']] = 1;
-					}
-				}
-
-				$data['main_image'] = 0;
-				$data['img'] = array();
-
-				$product_images = $this->model_catalog_product->getProductImages($post['product_id']);
-
-				$product_info['product_images'] = array();
-
-				if (!empty($product_info['image'])) {
-					$data['img'][] = $product_info['image'];
-				}
-
-				if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
-					foreach ($product_images as $product_image) {
-						if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-							$data['img'][] =  $product_image['image'];
-						}
-					}
-				}
-
-				if (isset($profile_template['data']['ebay_img_template']) && $profile_template['data']['ebay_img_template'] == 1) {
-					$tmp_gallery_array = array();
-					$tmp_thumbnail_array = array();
-
-					//if the user has not set the exclude default image, add it to the array for theme images.
-					$key_offset = 0;
-					if (!isset($profile_template['data']['default_img_exclude']) || $profile_template['data']['default_img_exclude'] != 1) {
-						$tmp_gallery_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
-						$tmp_thumbnail_array[0] = $this->model_tool_image->resize($product_info['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
-						$key_offset = 1;
-					}
-
-					//loop through the product images and add them.
-					foreach ($product_images as $k => $v) {
-						$tmp_gallery_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_gallery_width'], $profile_template['data']['ebay_gallery_height']);
-						$tmp_thumbnail_array[$k+$key_offset] = $this->model_tool_image->resize($v['image'], $profile_template['data']['ebay_thumb_width'], $profile_template['data']['ebay_thumb_height']);
-					}
-
-					$data['img_tpl']        = $tmp_gallery_array;
-					$data['img_tpl_thumb']  = $tmp_thumbnail_array;
-				}
-
+                // package size and weights
 				$weight_parts = explode('.', $product_info['weight']);
-
-				// package size and weights
 				$data['package']['depth'] = $product_info['height'];
 				$data['package']['irregular'] = 0;
 				$data['package']['length'] = $product_info['length'];
@@ -2352,8 +2391,6 @@ class ControllerOpenbayEbay extends Controller {
 						$data['package']['package']	= $package_type['code'];
 					}
 				}
-
-				$data = array_merge($data, $profile_shipping['data']);
 
 				$verify_response = $this->model_openbay_ebay->ebayAddItem($data, 'no');
 

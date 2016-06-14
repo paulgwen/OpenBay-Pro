@@ -63,6 +63,11 @@ $_['text_ean']    					= 'EAN';
 $_['text_upc']    					= 'UPC';
 $_['text_isbn']    					= 'ISBN';
 $_['text_identifier_not_required']  = 'Not required';
+$_['text_profile_standard']         = 'Standard profiles';
+$_['text_profile_ebay_policy']      = 'eBay Business Policies';
+$_['text_policy_shipping'] 		    = 'Shipping policy';
+$_['text_policy_payment'] 			= 'Payment policy';
+$_['text_policy_return'] 			= 'Return policy';
 
 //Errors
 $_['text_error_ship_profile']       = 'You need to have a default shipping profile set up';
@@ -73,5 +78,5 @@ $_['text_error_variants']           = 'Items with variations cannot be bulk list
 $_['text_error_stock']              = 'Some items are not in stock and have been removed';
 $_['text_error_no_product']         = 'There is no eligible products selected to use the bulk upload feature';
 $_['text_error_reverify']           = 'There was an error, you should edit and re-verify the items';
-$_['error_missing_settings']   = 'You cannot bulk list items until you syncronise your eBay settings';
+$_['error_missing_settings']        = 'You cannot bulk list items until you syncronise your eBay settings';
 $_['text_error_no_selection']   	= 'You must select at least 1 item to list';
