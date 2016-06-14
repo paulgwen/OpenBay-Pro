@@ -45,6 +45,9 @@ $_['text_obp_detail_update']        = 'Update your store URL &amp; contact email
 $_['text_success']					= 'Your settings have been saved';
 $_['text_edit']						= 'Edit eBay settings';
 $_['text_tax']						= 'Tax';
+$_['text_ebay_policy_info']		    = 'eBay now uses Business policies to manage Shipping, Payments and Returns - saving you time on each listing. It is currently optional to use.';
+$_['text_ebay_policy_optin']		= 'Your eBay account is already setup to use eBay Business Policies';
+$_['text_ebay_policy_optout']		= 'Your eBay account has this feature disabled, contact eBay to have it enabled.';
 
 // Entry
 $_['entry_status']					= 'Status';
@@ -84,6 +87,7 @@ $_['entry_import_part_refund_id']	= 'Partially refunded status:';
 $_['entry_item_postcode']           = 'Postcode/Zip of location';
 $_['entry_item_location']           = 'Town or State of location';
 $_['entry_despatch_country']        = 'Dispatch country';
+$_['entry_force_policies_on']       = 'Enable eBay Business Policies';
 
 // Tabs
 $_['tab_api_info']					= 'API details';

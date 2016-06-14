@@ -720,7 +720,7 @@
               </div>
             </div>
 
-            <?php if ($setting['business_policies_optin'] == 1) { ?>
+            <?php if ($setting['business_policies_optin'] == true) { ?>
               <div id="tab-listing-business-policies" class="tab-pane">
                 <div class="form-group" id="container-business-policy-shipping">
                   <label class="col-sm-2 control-label"><?php echo $entry_policy_shipping; ?></label>
@@ -2400,7 +2400,7 @@
   }
 //--></script>
 
-<?php if ($setting['business_policies_optin'] == 1) { ?>
+<?php if ($setting['business_policies_optin'] == true) { ?>
   <script type="text/javascript"><!--
     function businessPolicyDisplay(shipping, payment, returns) {
       if (shipping == "None") {

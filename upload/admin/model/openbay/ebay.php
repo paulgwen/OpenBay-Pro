@@ -46,6 +46,7 @@ class ModelOpenbayEbay extends Model{
 		$value["ebay_item_postcode"] = '';
 		$value["ebay_item_location"] = '';
 		$value["ebay_item_country"] = '';
+		$value["ebay_business_policies_on"] = 0;
 
 		$this->model_setting_setting->editSetting('ebay', $value);
 

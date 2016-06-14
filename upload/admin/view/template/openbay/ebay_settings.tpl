@@ -383,6 +383,24 @@
               <legend><?php echo $text_listing; ?></legend>
               <p><?php echo $text_prefill_description; ?></p>
               <div class="form-group">
+                <label class="col-sm-2 control-label" for="entry-ebay-business-policies-on"><?php echo $entry_force_policies_on; ?></label>
+                <div class="col-sm-10">
+                  <select name="ebay_business_policies_on" id="entry-ebay-business-policies-on" class="form-control">
+                    <?php if ($ebay_business_policies_on) { ?>
+                    <option value="1" selected="selected"><?php echo $text_yes; ?></option>
+                    <option value="0"><?php echo $text_no; ?></option>
+                    <?php } else { ?>
+                    <option value="1"><?php echo $text_yes; ?></option>
+                    <option value="0" selected="selected"><?php echo $text_no; ?></option>
+                    <?php } ?>
+                  </select>
+                  <span class="help-block">
+                    <?php echo $text_ebay_policy_info; ?><br />
+                    <strong><?php echo ($business_policies_optin == true ? $text_ebay_policy_optin : $text_ebay_policy_optout); ?></strong>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group">
                 <label class="col-sm-2 control-label" for="entry-duration"><span data-toggle="tooltip" data-container="#tab-setup" title="<?php echo $help_duration; ?>"><?php echo $entry_duration; ?></span></label>
                 <div class="col-sm-10">
                   <select name="ebay_duration" id="entry-duration" class="form-control">
@@ -407,7 +425,7 @@
                 </div>
               </div>
             </fieldset>
-            <?php if ($business_policies_optin == 1) { ?>
+            <?php if ($business_policies_optin == true) { ?>
                 <div class="form-group">
                   <label class="col-sm-2 control-label" for="ebay-item-postcode"><?php echo $entry_item_postcode; ?></label>
                   <div class="col-sm-10">

@@ -1635,10 +1635,14 @@ final class Ebay {
 			}
 		} else {
 			$this->log("pullBusinessPolicies() - " . DB_PREFIX . "ebay_business_policy OR " . DB_PREFIX . "ebay_business_policy_group table does not exist!");
-
-			// patch has not been run
 		}
+	}
 
-
+	public function useBusinessPolicies() {
+		if ($this->getSetting('business_policies_optin') == 1 && $this->config->get('ebay_business_policies_on') == 1) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

@@ -269,7 +269,7 @@
                                           </select>
                                         </div>
                                       </div>
-                                      <?php if ($setting['business_policies_optin'] == 0) { ?>
+                                      <?php if ($setting['business_policies_optin'] == false) { ?>
                                         <div class="form-group">
                                           <label class="col-sm-2 control-label"><?php echo $text_profile_shipping; ?></label>
                                           <div class="col-sm-10">

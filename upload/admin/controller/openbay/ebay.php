@@ -368,10 +368,16 @@ class ControllerOpenbayEbay extends Controller {
 			$data['ebay_item_country'] = $this->config->get('ebay_item_country');
 		}
 
+		if (isset($this->request->post['ebay_business_policies_on'])) {
+			$data['ebay_business_policies_on'] = $this->request->post['ebay_business_policies_on'];
+		} else {
+			$data['ebay_business_policies_on'] = $this->config->get('ebay_business_policies_on');
+		}
+
 		$data['api_server'] = $this->openbay->ebay->getServer();
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 		$data['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
-		$data['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
+		$data['business_policies_optin'] = $this->openbay->ebay->useBusinessPolicies();
 
 		$data['countries'] = $this->openbay->ebay->getSetting('countries');
 
@@ -1356,9 +1362,9 @@ class ControllerOpenbayEbay extends Controller {
 				$setting['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
 				$setting['product_details'] = $this->openbay->ebay->getSetting('product_details');
 				$setting['listing_restrictions'] = $this->openbay->ebay->getSetting('listing_restrictions');
-				$setting['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
+				$setting['business_policies_optin'] = $this->openbay->ebay->useBusinessPolicies();
 
-				if ($setting['business_policies_optin'] == 1) {
+				if ($setting['business_policies_optin'] == true) {
 					$setting['business_policies'] = $this->openbay->ebay->getBusinessPolicies();
 					// get the eBay business policies for the user
 
@@ -1653,9 +1659,9 @@ class ControllerOpenbayEbay extends Controller {
 								$this->response->redirect($this->url->link('openbay/ebay/syncronise', 'token=' . $this->session->data['token'], true));
 							}
 
-							$setting['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
+							$setting['business_policies_optin'] = $this->openbay->ebay->useBusinessPolicies();
 
-							if ($setting['business_policies_optin'] == 1) {
+							if ($setting['business_policies_optin'] == true) {
 								$product_info['business_policies'] = $this->openbay->ebay->getBusinessPolicies();
 
 								// get the business policies and check that they are imported or exist, forward to sync page if not.
@@ -1777,17 +1783,12 @@ class ControllerOpenbayEbay extends Controller {
 						$data['template_html'] = '';
 					}
 
-					if ($this->openbay->ebay->getSetting('business_policies_optin') != 1) {
+					if ($this->openbay->ebay->useBusinessPolicies() == false) {
 						// set shipping data
 						$data['national'] = $data['data']['national'];
 						$data['international'] = $data['data']['international'];
 						unset($data['data']);
 					}
-
-					// set shipping data
-					$data['national'] = $data['data']['national'];
-					$data['international'] = $data['data']['international'];
-					unset($data['data']);
 
 					if (!empty($data['img_tpl'])) {
 						$tmp_gallery_array = array();
@@ -1860,7 +1861,7 @@ class ControllerOpenbayEbay extends Controller {
                 
                 $product_info = $this->model_catalog_product->getProduct($post['product_id']);
                 
-                if ($this->openbay->ebay->getSetting('business_policies_optin') == 0) {
+                if ($this->openbay->ebay->useBusinessPolicies() == false) {
                     /**
                      * Shipping profile information
                      */
@@ -2107,7 +2108,7 @@ class ControllerOpenbayEbay extends Controller {
 				$data['template_html'] = '';
 			}
 
-			if ($this->openbay->ebay->getSetting('business_policies_optin') != 1) {
+			if ($this->openbay->ebay->useBusinessPolicies() == false) {
 				// set shipping data
 				$data['national'] = $data['data']['national'];
 				$data['international'] = $data['data']['international'];
@@ -2180,7 +2181,7 @@ class ControllerOpenbayEbay extends Controller {
 
                 $product_info = $this->model_catalog_product->getProduct($post['product_id']);
 
-                if ($this->openbay->ebay->getSetting('business_policies_optin') == 0) {
+                if ($this->openbay->ebay->useBusinessPolicies() == false) {
                     /**
                      * Shipping profile information
                      */
