@@ -46,8 +46,10 @@ class ModelOpenbayEbayProfile extends Model{
 	public function getAll($type = '') {
 		$sql = "SELECT * FROM `" . DB_PREFIX . "ebay_profile`";
 
-		if($type !== '') {
+		if ($type !== '') {
 			$sql .= " WHERE `type` = '" . (int)$type . "'";
+		} elseif ($type == '' && $this->openbay->ebay->useBusinessPolicies() == true) {
+			$sql .= " WHERE `type` = 2 OR `type` = 3";
 		}
 
 		$qry = $this->db->query($sql);
@@ -68,23 +70,26 @@ class ModelOpenbayEbayProfile extends Model{
 	}
 
 	public function getTypes() {
-		$types = array(
-			0 => array(
-				'name'          => $this->language->get('text_type_shipping'),
-				'template'      => 'openbay/ebay_profile_form_shipping'
-			),
-			1 => array(
-				'name'          => $this->language->get('text_type_returns'),
-				'template'      => 'openbay/ebay_profile_form_returns'
-			),
-			2 => array(
-				'name'          => $this->language->get('text_type_template'),
-				'template'      => 'openbay/ebay_profile_form_template'
-			),
-			3 => array(
-				'name'          => $this->language->get('text_type_general'),
-				'template'      => 'openbay/ebay_profile_form_generic'
-			)
+		$types = array();
+
+		if ($this->openbay->ebay->useBusinessPolicies() == false) {
+			$types[0] = array(
+				'name' => $this->language->get('text_type_shipping'),
+				'template' => 'openbay/ebay_profile_form_shipping'
+			);
+			$types[1] = array(
+				'name' => $this->language->get('text_type_returns'),
+				'template' => 'openbay/ebay_profile_form_returns'
+			);
+		}
+
+		$types[2] = array(
+			'name' => $this->language->get('text_type_template'),
+			'template' => 'openbay/ebay_profile_form_template'
+		);
+		$types[3] = array(
+			'name' => $this->language->get('text_type_general'),
+			'template' => 'openbay/ebay_profile_form_generic'
 		);
 
 		return $types;

@@ -46,7 +46,7 @@ $_['text_success']					= 'Your settings have been saved';
 $_['text_edit']						= 'Edit eBay settings';
 $_['text_tax']						= 'Tax';
 $_['text_ebay_policy_info']		    = 'eBay now uses Business policies to manage Shipping, Payments and Returns - saving you time on each listing. It is currently optional to use.';
-$_['text_ebay_policy_optin']		= 'Your eBay account is already setup to use eBay Business Policies';
+$_['text_ebay_policy_optin']		= 'Your eBay account is already setup to use eBay Business Policies. To manage them log in to eBay and go to Business Policies under My Account area';
 $_['text_ebay_policy_optout']		= 'Your eBay account has this feature disabled, contact eBay to have it enabled.';
 
 // Entry

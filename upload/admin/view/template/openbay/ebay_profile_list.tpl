@@ -17,6 +17,9 @@
     <?php if ($success) { ?>
       <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?></div>
     <?php } ?>
+    <?php if ($business_policies_use) { ?>
+      <div class="alert alert-info"><i class="fa fa-info-circle"></i> <?php echo $text_business_policies_use; ?></div>
+    <?php } ?>
   </div>
   <div class="container-fluid">
     <div class="panel panel-default">

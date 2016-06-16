@@ -10,6 +10,9 @@ $_['tab_template']         				= 'Template';
 $_['tab_gallery']          				= 'Gallery';
 $_['tab_settings']         				= 'Settings';
 
+// Text
+$_['text_business_policies_use']        = 'Your account is using eBay Business Policies - to edit eBay policies please login to your eBay account';
+
 //Shipping Profile
 $_['text_shipping_dispatch_country']    = 'Shipping from country';
 $_['text_shipping_postcode']            = 'Postal/Zip code location';

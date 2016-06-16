@@ -377,7 +377,8 @@ class ControllerOpenbayEbay extends Controller {
 		$data['api_server'] = $this->openbay->ebay->getServer();
 		$data['order_statuses'] = $this->model_localisation_order_status->getOrderStatuses();
 		$data['measurement_types'] = $this->openbay->ebay->getSetting('measurement_types');
-		$data['business_policies_optin'] = $this->openbay->ebay->useBusinessPolicies();
+		$data['business_policies_use'] = $this->openbay->ebay->useBusinessPolicies();
+		$data['business_policies_optin'] = $this->openbay->ebay->getSetting('business_policies_optin');
 
 		$data['countries'] = $this->openbay->ebay->getSetting('countries');
 

@@ -425,7 +425,7 @@
                 </div>
               </div>
             </fieldset>
-            <?php if ($business_policies_optin == true) { ?>
+            <?php if ($business_policies_use == true) { ?>
                 <div class="form-group">
                   <label class="col-sm-2 control-label" for="ebay-item-postcode"><?php echo $entry_item_postcode; ?></label>
                   <div class="col-sm-10">

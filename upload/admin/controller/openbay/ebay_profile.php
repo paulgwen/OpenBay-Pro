@@ -31,6 +31,8 @@ class ControllerOpenbayEbayProfile extends Controller {
 		$data['profiles'] = $this->model_openbay_ebay_profile->getAll();
 		$data['token'] = $this->session->data['token'];
 
+		$data['business_policies_use'] = $this->openbay->ebay->useBusinessPolicies();
+
 		$data['breadcrumbs'] = array();
 
 		$data['breadcrumbs'][] = array(
