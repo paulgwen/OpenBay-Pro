@@ -507,16 +507,16 @@
                           </td>
                           <td class="text-center"><input type="checkbox" id="imgUrl<?php echo $i; ?>" name="img_tpl[<?php echo $i; ?>]" value="<?php echo $img['image']; ?>" class="check-template-image" /></td>
                           <td class="text-center">
-                            <input type="hidden" name="img[<?php echo $i; ?>]" value="null" />
+                            <input type="hidden" name="image_locations[<?php echo $i; ?>]" value="null" />
                             <?php if ($img['width'] >= 500 || $img['height'] >= 500) { ?>
-                              <input type="checkbox" class="checkbox-ebay-image" onchange="toggleRad(<?php echo $i; ?>);" id="image-checkbox-<?php echo $i; ?>" name="img[<?php echo $i; ?>]" value="<?php echo $img['image']; ?>" <?php echo ( ($i == 0) ? 'checked="checked" ' : ''); ?> />
+                              <input type="checkbox" class="checkbox-ebay-image" onchange="toggleRad(<?php echo $i; ?>);" id="image-checkbox-<?php echo $i; ?>" name="image_locations[<?php echo $i; ?>]" value="<?php echo $img['full']; ?>" <?php echo ( ($i == 0) ? 'checked="checked" ' : ''); ?> />
                             <?php } else { ?>
                               -
                             <?php } ?>
                           </td>
                           <td class="text-center">
                             <?php if ($img['width'] >= 500 || $img['height'] >= 500) { ?>
-                              <input type="radio" name="main_image"<?php echo (($i_valid !== null) && ($i == $i_valid) ? ' checked' : ''); ?> value="<?php echo $i; ?>" id="image-radio-<?php echo $i; ?>" <?php echo ( ($i == 0) ? '' : 'disabled="disabled"'); ?> />
+                              <input type="radio" name="main_image_location"<?php echo (($i_valid !== null) && ($i == $i_valid) ? ' checked' : ''); ?> value="<?php echo $i; ?>" id="image-radio-<?php echo $i; ?>" <?php echo ( ($i == 0) ? '' : 'disabled="disabled"'); ?> />
                             <?php } else { ?>
                               -
                             <?php } ?>
@@ -1894,8 +1894,8 @@
     $('.listing-error').remove();
 
     if ($('.checkbox-ebay-image:checked').length > 0) {
-      var main_image = $('[name=main_image]:checked').val();
-      var check_main_selected = '#image-checkbox-' + main_image.toString();
+      var main_image_location = $('[name=main_image_location]:checked').val();
+      var check_main_selected = '#image-checkbox-' + main_image_location.toString();
 
       if (!$(check_main_selected).is(':checked')) {
         $('#page-listing').prepend('<div class="alert alert-warning listing-error"><?php echo $error_main_image; ?></div>');

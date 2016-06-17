@@ -1973,21 +1973,21 @@ class ControllerOpenbayEbay extends Controller {
                 $data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
                 $data['gallery_super'] = $profile_template['data']['ebay_supersize'];
 
-                $data['main_image'] = 0;
-                $data['img'] = array();
+                $data['main_image_location'] = 0;
+                $data['image_locations'] = array();
 
                 $product_images = $this->model_catalog_product->getProductImages($post['product_id']);
 
                 $product_info['product_images'] = array();
 
                 if (!empty($product_info['image'])) {
-                    $data['img'][] = $product_info['image'];
+                    $data['image_locations'][] = $this->config->get('config_url') . 'image/' . $product_info['image'];
                 }
 
                 if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
                     foreach ($product_images as $product_image) {
                         if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-                            $data['img'][] =  $product_image['image'];
+                            $data['image_locations'][] =  $this->config->get('config_url') . 'image/' . $product_image['image'];
                         }
                     }
                 }
@@ -2292,21 +2292,21 @@ class ControllerOpenbayEbay extends Controller {
                 $data['gallery_plus'] = $profile_template['data']['ebay_gallery_plus'];
                 $data['gallery_super'] = $profile_template['data']['ebay_supersize'];
 
-                $data['main_image'] = 0;
-                $data['img'] = array();
+                $data['main_image_location'] = 0;
+                $data['image_locations'] = array();
 
                 $product_images = $this->model_catalog_product->getProductImages($post['product_id']);
 
                 $product_info['product_images'] = array();
 
                 if (!empty($product_info['image'])) {
-                    $data['img'][] = $product_info['image'];
+                    $data['image_locations'][] = $this->config->get('config_url') . 'image/' . $product_info['image'];
                 }
 
                 if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
                     foreach ($product_images as $product_image) {
                         if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-                            $data['img'][] =  $product_image['image'];
+                            $data['image_locations'][] =  $this->config->get('config_url') . 'image/' . $product_image['image'];
                         }
                     }
                 }
