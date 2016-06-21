@@ -1644,10 +1644,10 @@
                         });
                     }
                 } else {
-                    if (data.msg == null) {
+                    if (data.error_message == '') {
                         alert('<?php echo $error_catalog_load; ?>');
                     } else {
-                        alert(data.msg);
+                        alert(data.error_message);
                     }
                 }
 
