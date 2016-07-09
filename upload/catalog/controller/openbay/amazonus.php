@@ -303,6 +303,8 @@ class ControllerOpenbayAmazonus extends Controller {
 		if($this->config->get('openbay_amazonus_notify_admin') == 1){
 			$this->openbay->newOrderAdminNotify($order_id, $order_status);
 		}
+		
+		$this->event->trigger('model/checkout/order/addOrderHistory/after', array('model/checkout/order/addOrderHistory/after', '', $order_id));
 
 		$logger->write("Ok");
 		$this->response->setOutput('Ok');
@@ -564,7 +566,11 @@ class ControllerOpenbayAmazonus extends Controller {
 		}
 	}
 
-	public function eventAddOrderHistory($route, $order_id, $order_status_id, $comment = '', $notify = false, $override = false) {
+	public function eventAddOrderHistory($route, $output, $order_id) {
+		$logger = new \Log('amazonus.log');
+		$logger->write('eventAddOrderHistory Event fired: ' . $route);
+		$logger->write('eventAddOrderHistory Order ID: ' . $order_id);
+
 		if (!empty($order_id)) {
 			$this->load->model('openbay/amazonus_order');
 

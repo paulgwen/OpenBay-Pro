@@ -3,7 +3,7 @@ class ModelOpenbayAmazon extends Model {
 	public function install() {
 		$this->load->model('extension/event');
 
-		$this->model_extension_event->addEvent('openbaypro_amazon', 'catalog/model/checkout/order/addOrderHistory/before', 'openbay/amazon/eventAddOrderHistory');
+		$this->model_extension_event->addEvent('openbay_amazon_add_order', 'catalog/model/checkout/order/addOrderHistory/after', 'openbay/amazon/eventAddOrderHistory');
 
 		$this->db->query("
 			CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "amazon_order` (
@@ -107,7 +107,10 @@ class ModelOpenbayAmazon extends Model {
 
 	public function patch() {
 		if ($this->config->get('openbay_amazon_status') == 1) {
-
+			// replace the events to ensure the latest
+			$this->load->model('extension/event');
+			$this->model_extension_event->deleteEvent('openbaypro_amazon');
+			$this->model_extension_event->addEvent('openbay_amazon_add_order', 'catalog/model/checkout/order/addOrderHistory/after', 'openbay/amazon/eventAddOrderHistory');
 		}
 	}
 

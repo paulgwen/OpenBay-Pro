@@ -3,7 +3,7 @@ class ModelOpenbayEtsy extends Model{
 	public function install() {
 		$this->load->model('extension/event');
 
-		$this->model_extension_event->addEvent('openbaypro_etsy', 'catalog/model/checkout/order/addOrderHistory/after', 'openbay/etsy/eventAddOrderHistory');
+		$this->model_extension_event->addEvent('openbay_etsy_add_order', 'catalog/model/checkout/order/addOrderHistory/after', 'openbay/etsy/eventAddOrderHistory');
 
 		$settings                 = array();
 		$settings["etsy_token"]   = '';
@@ -59,7 +59,10 @@ class ModelOpenbayEtsy extends Model{
 
 	public function patch() {
 		if ($this->config->get('etsy_status') == 1) {
-
+			// replace the events to ensure the latest
+			$this->load->model('extension/event');
+			$this->model_extension_event->deleteEvent('openbaypro_etsy');
+			$this->model_extension_event->addEvent('openbay_etsy_add_order', 'catalog/model/checkout/order/addOrderHistory/after', 'openbay/etsy/eventAddOrderHistory');
 		}
 	}
 

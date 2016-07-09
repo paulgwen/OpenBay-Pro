@@ -58,13 +58,9 @@ class ControllerOpenbayEtsy extends Controller {
 		}
 	}
 
-	public function eventAddOrderHistory($route, $output, $order_id, $order_status_id, $comment = '', $notify = false, $override = false) {
-		$this->openbay->etsy->log("eventAddOrderHistory event triggered (" . $route . ")");
-		$this->openbay->etsy->log("Order ID (" . $order_id . ")");
-		$this->openbay->etsy->log("Order status ID (" . $order_status_id . ")");
-		$this->openbay->etsy->log("Comment (" . $comment . ")");
-		$this->openbay->etsy->log("Notify (" . $notify . ")");
-		$this->openbay->etsy->log("Overide (" . $override . ")");
+	public function eventAddOrderHistory($route, $output, $order_id) {
+		$this->openbay->etsy->log('eventAddOrderHistory Event fired: ' . $route);
+		$this->openbay->etsy->log('eventAddOrderHistory Order ID: ' . $order_id);
 
 		if (!empty($order_id)) {
 			$this->load->model('openbay/etsy_order');
