@@ -439,8 +439,8 @@ class ControllerOpenbayEbayListing extends Controller {
 				if (isset($profile_return['data']['returns_accepted'])) {
 					$product_data['returns_accepted'] = $profile_return['data']['returns_accepted'];
 				}
-				if (isset($profile_return['data']['returns_policy'])) {
-					$product_data['return_policy'] = $profile_return['data']['returns_policy'];
+				if (isset($profile_return['data']['return_policy'])) {
+					$product_data['return_policy'] = $profile_return['data']['return_policy'];
 				}
 				if (isset($profile_return['data']['returns_option'])) {
 					$product_data['returns_option'] = $profile_return['data']['returns_option'];

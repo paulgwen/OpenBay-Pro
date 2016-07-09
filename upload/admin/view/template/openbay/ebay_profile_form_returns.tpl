@@ -123,14 +123,14 @@
 
                         <?php if($setting['returns']['description'] == true) { ?>
 
-                            <?php if(!isset($data['returns_policy'])){ $data['returns_policy'] = ''; } ?>
+                            <?php if(!isset($data['return_policy'])){ $data['return_policy'] = ''; } ?>
 
                             <tr>
-                                <td><label for="returns_policy"><?php echo $lang_returns_inst; ?></td>
-                                <td><textarea name="data[returns_policy]" id="returns_policy" maxlength="5000" style="width:400px; height:70px;"><?php echo $data['returns_policy'];?></textarea></td>
+                                <td><label for="return_policy"><?php echo $lang_returns_inst; ?></td>
+                                <td><textarea name="data[return_policy]" id="return_policy" maxlength="5000" style="width:400px; height:70px;"><?php echo $data['return_policy'];?></textarea></td>
                             </tr>
                         <?php }else{ ?>
-                            <input type="hidden" name="data[returns_policy]" value="" />
+                            <input type="hidden" name="data[return_policy]" value="" />
                         <?php } ?>
 
                         <?php if(!empty($setting['returns']['restocking_fee'])) { ?>
