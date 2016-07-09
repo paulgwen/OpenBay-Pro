@@ -2314,8 +2314,8 @@
                       if ($('#returns_within').length) {
                           $('#returns_within').val(data.data.returns_within);
                       }
-                      if ($('#returns_policy').length) {
-                          $('#returns_policy').val(data.data.returns_policy);
+                      if ($('#return_policy').length) {
+                          $('#return_policy').val(data.data.return_policy);
                       }
                       if ($('#returns_shipping').length) {
                           $('#returns_shipping').val(data.data.returns_shipping);

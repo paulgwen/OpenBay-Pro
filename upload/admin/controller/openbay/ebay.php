@@ -1856,8 +1856,8 @@ class ControllerOpenbayEbay extends Controller {
 				if (isset($profile_return['data']['returns_accepted'])) {
 					$data['returns_accepted'] = $profile_return['data']['returns_accepted'];
 				}
-				if (isset($profile_return['data']['returns_policy'])) {
-					$data['return_policy'] = $profile_return['data']['returns_policy'];
+				if (isset($profile_return['data']['return_policy'])) {
+					$data['return_policy'] = $profile_return['data']['return_policy'];
 				}
 				if (isset($profile_return['data']['returns_option'])) {
 					$data['returns_option'] = $profile_return['data']['returns_option'];
@@ -2145,8 +2145,8 @@ class ControllerOpenbayEbay extends Controller {
 				if (isset($profile_return['data']['returns_accepted'])) {
 					$data['returns_accepted'] = $profile_return['data']['returns_accepted'];
 				}
-				if (isset($profile_return['data']['returns_policy'])) {
-					$data['return_policy'] = $profile_return['data']['returns_policy'];
+				if (isset($profile_return['data']['return_policy'])) {
+					$data['return_policy'] = $profile_return['data']['return_policy'];
 				}
 				if (isset($profile_return['data']['returns_option'])) {
 					$data['returns_option'] = $profile_return['data']['returns_option'];
