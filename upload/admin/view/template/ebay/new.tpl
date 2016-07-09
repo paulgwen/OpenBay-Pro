@@ -646,7 +646,7 @@
                     <?php if($setting['returns']['description'] == true) { ?>
                     <tr>
                         <td><?php echo $lang_return_policy; ?></td>
-                        <td><textarea name="return_policy" id="returns_policy" class="returns_input" style="width:400px; height:100px;"></textarea></td>
+                        <td><textarea name="return_policy" id="return_policy" class="returns_input" style="width:400px; height:100px;"></textarea></td>
                     </tr>
                     <?php } ?>
 
@@ -1725,8 +1725,8 @@
                         if($('#returns_within').length){
                             $('#returns_within').val(data.data.returns_within);
                         }
-                        if($('#returns_policy').length){
-                            $('#returns_policy').val(data.data.returns_policy);
+                        if($('#return_policy').length){
+                            $('#return_policy').val(data.data.return_policy);
                         }
                         if($('#returns_shipping').length){
                             $('#returns_shipping').val(data.data.returns_shipping);
