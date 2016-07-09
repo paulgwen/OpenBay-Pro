@@ -114,15 +114,15 @@
               <input type="hidden" name="data[returns_option]" value="" />
               <?php } ?>
               <?php if ($setting['returns']['description'] == true) { ?>
-                <?php if (!isset($data['returns_policy'])){ $data['returns_policy'] = ''; } ?>
+                <?php if (!isset($data['return_policy'])){ $data['return_policy'] = ''; } ?>
                 <div class="form-group">
                   <label class="col-sm-2 control-label"><?php echo $text_returns_inst; ?></label>
                   <div class="col-sm-10">
-                    <textarea name="data[returns_policy]" class="form-control" rows="3" maxlength="5000"><?php echo $data['returns_policy'];?></textarea>
+                    <textarea name="data[return_policy]" class="form-control" rows="3" maxlength="5000"><?php echo $data['return_policy'];?></textarea>
                   </div>
                 </div>
               <?php }else{ ?>
-                <input type="hidden" name="data[returns_policy]" value="" />
+                <input type="hidden" name="data[return_policy]" value="" />
               <?php } ?>
               <?php if (!empty($setting['returns']['restocking_fee'])) { ?>
               <div class="form-group">
