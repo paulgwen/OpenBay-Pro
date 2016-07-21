@@ -1002,7 +1002,7 @@ class ModelOpenbayOpenbay extends Model {
 		if ($store_info) {
 			$url = $store_info['ssl'];
 		} else {
-			$url = $this->config->get('config_url');
+			$url = HTTPS_CATALOG;
 		}
 
 		if (isset($this->session->data['cookie'])) {

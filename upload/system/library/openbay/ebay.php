@@ -41,7 +41,13 @@ final class Ebay {
 				$this->log('call(' . $call . ') - Data: ' .  json_encode($post));
 			}
 
-			$data = array('token' => $this->token, 'secret' => $this->secret, 'server' => $this->server, 'domain' => $this->config->get('config_url'), 'openbay_version' => (int)$this->config->get('openbay_version'), 'opencart_version' => VERSION, 'data' => $post, 'content_type' => $content_type, 'language' => $this->config->get('openbay_language'));
+            if (defined("HTTPS_CATALOG")) {
+				$domain = HTTPS_CATALOG;
+			} else {
+				$domain = HTTPS_SERVER;
+			}
+
+			$data = array('token' => $this->token, 'secret' => $this->secret, 'server' => $this->server, 'domain' => $domain, 'openbay_version' => (int)$this->config->get('openbay_version'), 'opencart_version' => VERSION, 'data' => $post, 'content_type' => $content_type, 'language' => $this->config->get('openbay_language'));
 
 			$defaults = array(
 				CURLOPT_POST            => 1,
@@ -104,7 +110,13 @@ final class Ebay {
 		if ($this->config->get('ebay_status') == 1) {
 			$this->log('openbay_noresponse_call(' . $call . ') - Data :' .  json_encode($post));
 
-			$data = array('token' => $this->token, 'secret' => $this->secret, 'server' => $this->server, 'domain' => $this->config->get('config_url'), 'openbay_version' => (int)$this->config->get('openbay_version'), 'opencart_version' => VERSION, 'data' => $post, 'content_type' => $content_type, 'language' => $this->config->get('openbay_language'));
+            if (defined("HTTPS_CATALOG")) {
+				$domain = HTTPS_CATALOG;
+			} else {
+				$domain = HTTPS_SERVER;
+			}
+
+			$data = array('token' => $this->token, 'secret' => $this->secret, 'server' => $this->server, 'domain' => $domain, 'openbay_version' => (int)$this->config->get('openbay_version'), 'opencart_version' => VERSION, 'data' => $post, 'content_type' => $content_type, 'language' => $this->config->get('openbay_language'));
 
 			$defaults = array(
 				CURLOPT_POST            => 1,
@@ -126,7 +138,7 @@ final class Ebay {
 			$this->log(curl_error($ch));
 			curl_close($ch);
 		} else {
-			$this->log('openbay_noresponse_call() - OpenBay Pro not active . ');
+			$this->log('openbay_noresponse_call() - OpenBay Pro not active.');
 		}
 	}
 

@@ -118,7 +118,7 @@ class ModelOpenbayAmazon extends Model {
 		$log = new Log('amazon.log');
 
 		$request_xml = '<Request>
-  <ResponseURL>' . $this->config->get('config_url') . 'index.php?route=openbay/amazon/order</ResponseURL>
+  <ResponseURL>' . HTTPS_CATALOG . 'index.php?route=openbay/amazon/order</ResponseURL>
   <MarketplaceIDs>';
 
 		foreach ($data['openbay_amazon_orders_marketplace_ids'] as $marketplace_id) {

@@ -1465,7 +1465,7 @@ class ControllerOpenbayEbay extends Controller {
 					$product_info['product_images'][] = array(
 						'image' => $product_info['image'],
 						'preview' => $this->model_tool_image->resize($product_info['image'], 100, 100),
-						'full' => $this->config->get('config_url') . 'image/' . $product_info['image'],
+						'full' => HTTPS_CATALOG . 'image/' . $product_info['image'],
 						'width' => $img_info[0],
 						'height' => $img_info[1],
 					);
@@ -1478,7 +1478,7 @@ class ControllerOpenbayEbay extends Controller {
 						$product_info['product_images'][] = array(
 							'image' => $product_image['image'],
 							'preview' => $this->model_tool_image->resize($product_image['image'], 100, 100),
-							'full' => $this->config->get('config_url') . 'image/' . $product_image['image'],
+							'full' => HTTPS_CATALOG . 'image/' . $product_image['image'],
 							'width' => $img_info[0],
 							'height' => $img_info[1],
 						);
@@ -1982,13 +1982,13 @@ class ControllerOpenbayEbay extends Controller {
                 $product_info['product_images'] = array();
 
                 if (!empty($product_info['image'])) {
-                    $data['image_locations'][] = $this->config->get('config_url') . 'image/' . $product_info['image'];
+                    $data['image_locations'][] = HTTPS_CATALOG . 'image/' . $product_info['image'];
                 }
 
                 if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
                     foreach ($product_images as $product_image) {
                         if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-                            $data['image_locations'][] =  $this->config->get('config_url') . 'image/' . $product_image['image'];
+                            $data['image_locations'][] =  HTTPS_CATALOG . 'image/' . $product_image['image'];
                         }
                     }
                 }
@@ -2301,13 +2301,13 @@ class ControllerOpenbayEbay extends Controller {
                 $product_info['product_images'] = array();
 
                 if (!empty($product_info['image'])) {
-                    $data['image_locations'][] = $this->config->get('config_url') . 'image/' . $product_info['image'];
+                    $data['image_locations'][] = HTTPS_CATALOG . 'image/' . $product_info['image'];
                 }
 
                 if (isset($profile_template['data']['ebay_img_ebay']) && $profile_template['data']['ebay_img_ebay'] == 1) {
                     foreach ($product_images as $product_image) {
                         if ($product_image['image'] && file_exists(DIR_IMAGE . $product_image['image'])) {
-                            $data['image_locations'][] =  $this->config->get('config_url') . 'image/' . $product_image['image'];
+                            $data['image_locations'][] =  HTTPS_CATALOG . 'image/' . $product_image['image'];
                         }
                     }
                 }
