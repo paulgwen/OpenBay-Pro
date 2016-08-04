@@ -1597,6 +1597,10 @@ final class Ebay {
 
 				$this->log("pullBusinessPolicies() - Add latest profiles");
 
+				if (count($response['paymentProfileList']) == 1) {
+					$response['paymentProfileList']['PaymentProfile'] = array(0 => $response['paymentProfileList']['PaymentProfile']);
+				}
+
 				foreach ($response['paymentProfileList']['PaymentProfile'] as $profile) {
 					$this->db->query("
 						INSERT INTO `" . DB_PREFIX . "ebay_business_policy` SET
@@ -1613,6 +1617,10 @@ final class Ebay {
 					}
 				}
 
+				if (count($response['returnPolicyProfileList']) == 1) {
+					$response['returnPolicyProfileList']['ReturnPolicyProfile'] = array(0 => $response['returnPolicyProfileList']['ReturnPolicyProfile']);
+				}
+
 				foreach ($response['returnPolicyProfileList']['ReturnPolicyProfile'] as $profile) {
 					$this->db->query("
 						INSERT INTO `" . DB_PREFIX . "ebay_business_policy` SET
@@ -1627,6 +1635,10 @@ final class Ebay {
 					foreach ($profile['categoryGroups'] as $category_group) {
 						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
 					}
+				}
+
+				if (count($response['shippingPolicyProfile']) == 1) {
+					$response['shippingPolicyProfile']['ShippingPolicyProfile'] = array(0 => $response['shippingPolicyProfile']['ShippingPolicyProfile']);
 				}
 
 				foreach ($response['shippingPolicyProfile']['ShippingPolicyProfile'] as $profile) {
