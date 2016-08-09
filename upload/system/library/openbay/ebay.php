@@ -1601,8 +1601,9 @@ final class Ebay {
 					$response['paymentProfileList']['PaymentProfile'] = array(0 => $response['paymentProfileList']['PaymentProfile']);
 				}
 
-				foreach ($response['paymentProfileList']['PaymentProfile'] as $profile) {
-					$this->db->query("
+				if (!empty($response['paymentProfileList']['PaymentProfile'])) {
+					foreach ($response['paymentProfileList']['PaymentProfile'] as $profile) {
+						$this->db->query("
 						INSERT INTO `" . DB_PREFIX . "ebay_business_policy` SET
 							`profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "',
 							`type` = 'payment',
@@ -1612,8 +1613,9 @@ final class Ebay {
 							`policy_info`  = '" . $this->db->escape(json_encode($profile['paymentInfo'])) . "'
 					");
 
-					foreach ($profile['categoryGroups'] as $category_group) {
-						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+						foreach ($profile['categoryGroups'] as $category_group) {
+							$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+						}
 					}
 				}
 
@@ -1621,8 +1623,9 @@ final class Ebay {
 					$response['returnPolicyProfileList']['ReturnPolicyProfile'] = array(0 => $response['returnPolicyProfileList']['ReturnPolicyProfile']);
 				}
 
-				foreach ($response['returnPolicyProfileList']['ReturnPolicyProfile'] as $profile) {
-					$this->db->query("
+				if (!empty($response['returnPolicyProfileList']['ReturnPolicyProfile'])) {
+					foreach ($response['returnPolicyProfileList']['ReturnPolicyProfile'] as $profile) {
+						$this->db->query("
 						INSERT INTO `" . DB_PREFIX . "ebay_business_policy` SET
 							`profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "',
 							`type` = 'return_policy',
@@ -1632,8 +1635,9 @@ final class Ebay {
 							`policy_info`  = '" . $this->db->escape(json_encode($profile['returnPolicyInfo'])) . "'
 					");
 
-					foreach ($profile['categoryGroups'] as $category_group) {
-						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+						foreach ($profile['categoryGroups'] as $category_group) {
+							$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+						}
 					}
 				}
 
@@ -1641,8 +1645,9 @@ final class Ebay {
 					$response['shippingPolicyProfile']['ShippingPolicyProfile'] = array(0 => $response['shippingPolicyProfile']['ShippingPolicyProfile']);
 				}
 
-				foreach ($response['shippingPolicyProfile']['ShippingPolicyProfile'] as $profile) {
-					$this->db->query("
+				if (!empty($response['shippingPolicyProfile']['ShippingPolicyProfile'])) {
+					foreach ($response['shippingPolicyProfile']['ShippingPolicyProfile'] as $profile) {
+						$this->db->query("
 						INSERT INTO `" . DB_PREFIX . "ebay_business_policy` SET
 							`profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "',
 							`type` = 'shipping',
@@ -1652,8 +1657,9 @@ final class Ebay {
 							`policy_info`  = '" . $this->db->escape(json_encode($profile['shippingPolicyInfo'])) . "'
 					");
 
-					foreach ($profile['categoryGroups'] as $category_group) {
-						$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+						foreach ($profile['categoryGroups'] as $category_group) {
+							$this->db->query("INSERT INTO `" . DB_PREFIX . "ebay_business_policy_group` SET `profile_id` = '" . $this->db->escape((string)$profile['profileId']) . "', `default` = '" . ((string)$category_group['default'] == 'true' ? 1 : 0) . "', `name` = '" . $this->db->escape((string)$category_group['name']) . "'");
+						}
 					}
 				}
 			}
