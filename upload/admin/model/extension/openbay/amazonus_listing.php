@@ -12,7 +12,7 @@ class ModelExtensionOpenBayAmazonusListing extends Model {
 
 		$products = array();
 
-		if (!empty($results)) {
+		if (isset($results['Products']) && !empty($results['Products'])) {
 			foreach ($results['Products'] as $result) {
 				if ($result['price']['amount'] && $result['price']['currency']) {
 					$price = $result['price']['amount'] . ' ' . $result['price']['currency'];
