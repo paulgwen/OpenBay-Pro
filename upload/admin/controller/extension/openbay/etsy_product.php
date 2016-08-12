@@ -496,7 +496,7 @@ class ControllerExtensionOpenbayEtsyProduct extends Controller {
 		);
 
 		$data['breadcrumbs'][] = array(
-			'href' => $this->url->link('extension/openbay/etsy_product/itemLinks', 'token=' . $this->session->data['token'], true),
+			'href' => $this->url->link('extension/openbay/etsy_product/links', 'token=' . $this->session->data['token'], true),
 			'text' => $this->language->get('heading_title'),
 		);
 
@@ -564,7 +564,7 @@ class ControllerExtensionOpenbayEtsyProduct extends Controller {
 		);
 
 		$data['breadcrumbs'][] = array(
-			'href' => $this->url->link('extension/openbay/etsy_product/itemLinks', 'token=' . $this->session->data['token'], true),
+			'href' => $this->url->link('extension/openbay/etsy_product/links', 'token=' . $this->session->data['token'], true),
 			'text' => $this->language->get('heading_title'),
 		);
 

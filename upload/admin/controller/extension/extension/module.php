@@ -1,9 +1,9 @@
 <?php
-class ControllerExtensionModule extends Controller {
+class ControllerExtensionExtensionModule extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->load->language('extension/module');
+		$this->load->language('extension/extension/module');
 
 		$this->load->model('extension/extension');
 
@@ -13,7 +13,7 @@ class ControllerExtensionModule extends Controller {
 	}
 
 	public function install() {
-		$this->load->language('extension/module');
+		$this->load->language('extension/extension/module');
 
 		$this->load->model('extension/extension');
 
@@ -31,13 +31,15 @@ class ControllerExtensionModule extends Controller {
 			$this->load->controller('extension/module/' . $this->request->get['extension'] . '/install');
 
 			$this->session->data['success'] = $this->language->get('text_success');
+		} else {
+			$this->session->data['error'] = $this->error['warning'];
 		}
-
+	
 		$this->getList();
 	}
 
 	public function uninstall() {
-		$this->load->language('extension/module');
+		$this->load->language('extension/extension/module');
 
 		$this->load->model('extension/extension');
 
@@ -58,7 +60,7 @@ class ControllerExtensionModule extends Controller {
 	}
 	
 	public function add() {
-		$this->load->language('extension/extension');
+		$this->load->language('extension/extension/module');
 
 		$this->load->model('extension/extension');
 
@@ -76,7 +78,7 @@ class ControllerExtensionModule extends Controller {
 	}
 
 	public function delete() {
-		$this->load->language('extension/module');
+		$this->load->language('extension/extension/module');
 
 		$this->load->model('extension/extension');
 
@@ -87,7 +89,7 @@ class ControllerExtensionModule extends Controller {
 
 			$this->session->data['success'] = $this->language->get('text_success');
 		}
-
+		
 		$this->getList();
 	}
 
@@ -153,15 +155,15 @@ class ControllerExtensionModule extends Controller {
 						'module_id' => $module['module_id'],
 						'name'      => $module['name'],
 						'edit'      => $this->url->link('extension/module/' . $extension, 'token=' . $this->session->data['token'] . '&module_id=' . $module['module_id'], true),
-						'delete'    => $this->url->link('extension/module/delete', 'token=' . $this->session->data['token'] . '&module_id=' . $module['module_id'], true)
+						'delete'    => $this->url->link('extension/extension/module/delete', 'token=' . $this->session->data['token'] . '&module_id=' . $module['module_id'], true)
 					);
 				}
 
 				$data['extensions'][] = array(
 					'name'      => $this->language->get('heading_title'),
 					'module'    => $module_data,
-					'install'   => $this->url->link('extension/module/install', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
-					'uninstall' => $this->url->link('extension/module/uninstall', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
+					'install'   => $this->url->link('extension/extension/module/install', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
+					'uninstall' => $this->url->link('extension/extension/module/uninstall', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
 					'installed' => in_array($extension, $extensions),
 					'edit'      => $this->url->link('extension/module/' . $extension, 'token=' . $this->session->data['token'], true)
 				);
@@ -176,11 +178,11 @@ class ControllerExtensionModule extends Controller {
 
 		array_multisort($sort_order, SORT_ASC, $data['extensions']);
 
-		$this->response->setOutput($this->load->view('extension/module', $data));
+		$this->response->setOutput($this->load->view('extension/extension/module', $data));
 	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/module')) {
+		if (!$this->user->hasPermission('modify', 'extension/extension/module')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 

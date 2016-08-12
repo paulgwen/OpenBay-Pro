@@ -15,9 +15,11 @@ class ControllerStartupPermission extends Controller {
 			}
 
 			// If a 3rd part is found we need to check if its under one of the extension folders.
-			$routes = array(
+			$extension = array(
+				'extension/dashboard',
 				'extension/analytics',
 				'extension/captcha',
+				'extension/extension',
 				'extension/feed',
 				'extension/fraud',
 				'extension/module',
@@ -26,8 +28,8 @@ class ControllerStartupPermission extends Controller {
 				'extension/theme',
 				'extension/total'
 			);
-			
-			if (isset($part[2]) && (in_array(substr($this->request->get['route'], 0, 10), $routes))) {
+
+			if (isset($part[2]) && in_array($route, $extension)) {
 				$route .= '/' . $part[2];
 			}
 			
@@ -39,15 +41,7 @@ class ControllerStartupPermission extends Controller {
 				'common/forgotten',
 				'common/reset',
 				'error/not_found',
-				'error/permission',
-				'dashboard/order',
-				'dashboard/sale',
-				'dashboard/customer',
-				'dashboard/online',
-				'dashboard/map',
-				'dashboard/activity',
-				'dashboard/chart',
-				'dashboard/recent'
+				'error/permission'
 			);
 
 			if (!in_array($route, $ignore) && !$this->user->hasPermission('access', $route)) {

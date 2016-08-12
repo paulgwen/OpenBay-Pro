@@ -39,7 +39,7 @@ class ControllerExtensionOpenbay extends Controller {
 
 		$this->load->model('extension/extension');
 
-		if (!$this->user->hasPermission('modify', 'extension/feed/openbay')) {
+		if (!$this->user->hasPermission('modify', 'extension/openbay')) {
 			$this->session->data['error'] = $this->language->get('error_permission');
 
 			$this->response->redirect($this->url->link('extension/openbay', 'token=' . $this->session->data['token'], true));
@@ -1812,7 +1812,9 @@ class ControllerExtensionOpenbay extends Controller {
 		$this->response->redirect($this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true));
 	}
 
-	public function eventDeleteProduct($route, $response, $product_id) {
+	public function eventDeleteProduct($route, $data) {
+		$this->openbay->log('eventDeleteProduct fired: ' . $route);
+		
 		foreach ($this->openbay->installed_markets as $market) {
 			if ($market == 'amazon') {
 				$status = $this->config->get('openbay_amazon_status');
@@ -1823,12 +1825,14 @@ class ControllerExtensionOpenbay extends Controller {
 			}
 
 			if ($status == 1) {
-				$this->openbay->{$market}->deleteProduct($product_id);
+				$this->openbay->{$market}->deleteProduct((int)$data[0]);
 			}
 		}
 	}
 
-	public function eventEditProduct($route, $response, $product_id, $data) {
+	public function eventEditProduct($route, $data) {
+		$this->openbay->log('eventEditProduct fired: ' . $route);
+		
 		foreach ($this->openbay->installed_markets as $market) {
 			if ($market == 'amazon') {
 				$status = $this->config->get('openbay_amazon_status');
@@ -1839,8 +1843,214 @@ class ControllerExtensionOpenbay extends Controller {
 			}
 
 			if ($status == 1) {
-				$this->openbay->{$market}->productUpdateListen((int)$product_id, $data);
+				$this->openbay->{$market}->productUpdateListen((int)$data[0], $data[1]);
 			}
+		}
+	}
+
+	public function eventMenu($route, &$data) {
+		// OpenBay Pro Menu
+		$openbay_menu = array();
+
+		$this->language->load('extension/openbay/openbay_menu');
+
+		if ($this->user->hasPermission('access', 'extension/openbay')) {
+			$openbay_menu[] = array(
+				'name'	   => $this->language->get('text_openbay_dashboard'),
+				'href'     => $this->url->link('extension/openbay', 'token=' . $this->session->data['token'], true),
+				'children' => array()
+			);
+
+			$openbay_menu[] = array(
+				'name'	   => $this->language->get('text_openbay_orders'),
+				'href'     => $this->url->link('extension/openbay/orderlist', 'token=' . $this->session->data['token'], true),
+				'children' => array()
+			);
+
+			$openbay_menu[] = array(
+				'name'	   => $this->language->get('text_openbay_items'),
+				'href'     => $this->url->link('extension/openbay/items', 'token=' . $this->session->data['token'], true),
+				'children' => array()
+			);
+
+			// eBay sub menu
+			$ebay = array();
+
+			if ($this->user->hasPermission('access', 'extension/openbay/ebay') && $this->config->get('ebay_status') == 1) {
+				$ebay[] = array(
+					'name'     => $this->language->get('text_openbay_dashboard'),
+					'href'     => $this->url->link('extension/openbay/ebay', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$ebay[] = array(
+					'name'	   => $this->language->get('text_openbay_settings'),
+					'href'     => $this->url->link('extension/openbay/ebay/settings', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$ebay[] = array(
+					'name'	   => $this->language->get('text_openbay_links'),
+					'href'     => $this->url->link('extension/openbay/ebay/viewitemlinks', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$ebay[] = array(
+					'name'	   => $this->language->get('text_openbay_order_import'),
+					'href'     => $this->url->link('extension/openbay/ebay/vieworderimport', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($ebay) {
+				$openbay_menu[] = array(
+					'name'	   => $this->language->get('text_openbay_ebay'),
+					'href'     => '',
+					'children' => $ebay
+				);
+			}
+
+			// Amazon EU sub menu
+			$amazon_eu = array();
+
+			if ($this->user->hasPermission('access', 'extension/openbay/amazon') && $this->config->get('openbay_amazon_status') == 1) {
+				$amazon_eu[] = array(
+					'name'     => $this->language->get('text_openbay_dashboard'),
+					'href'     => $this->url->link('extension/openbay/amazon', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$amazon_eu[] = array(
+					'name'	   => $this->language->get('text_openbay_settings'),
+					'href'     => $this->url->link('extension/openbay/amazon/settings', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$amazon_eu[] = array(
+					'name'	   => $this->language->get('text_openbay_links'),
+					'href'     => $this->url->link('extension/openbay/amazon/itemlinks', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($amazon_eu) {
+				$openbay_menu[] = array(
+					'name'	   => $this->language->get('text_openbay_amazon'),
+					'href'     => '',
+					'children' => $amazon_eu
+				);
+			}
+
+			// Amazon US sub menu
+			$amazon_us = array();
+
+			if ($this->user->hasPermission('access', 'extension/openbay/amazonus') && $this->config->get('openbay_amazonus_status') == 1) {
+				$amazon_us[] = array(
+					'name'     => $this->language->get('text_openbay_dashboard'),
+					'href'     => $this->url->link('extension/openbay/amazonus', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$amazon_us[] = array(
+					'name'	   => $this->language->get('text_openbay_settings'),
+					'href'     => $this->url->link('extension/openbay/amazonus/settings', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$amazon_us[] = array(
+					'name'	   => $this->language->get('text_openbay_links'),
+					'href'     => $this->url->link('extension/openbay/amazonus/itemlinks', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($amazon_us) {
+				$openbay_menu[] = array(
+					'name'	   => $this->language->get('text_openbay_amazonus'),
+					'href'     => '',
+					'children' => $amazon_us
+				);
+			}
+
+			// Etsy sub menu
+			$etsy = array();
+
+			if ($this->user->hasPermission('access', 'extension/openbay/etsy') && $this->config->get('etsy_status') == 1) {
+				$etsy[] = array(
+					'name'     => $this->language->get('text_openbay_dashboard'),
+					'href'     => $this->url->link('extension/openbay/etsy', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$etsy[] = array(
+					'name'	   => $this->language->get('text_openbay_settings'),
+					'href'     => $this->url->link('extension/openbay/etsy/settings', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				if ($this->user->hasPermission('access', 'extension/openbay/etsy_product')) {
+					$etsy[] = array(
+						'name'	   => $this->language->get('text_openbay_links'),
+						'href'     => $this->url->link('extension/openbay/etsy_product/links', 'token=' . $this->session->data['token'], true),
+						'children' => array()
+					);
+				}
+			}
+
+			if ($etsy) {
+				$openbay_menu[] = array(
+					'name'	   => $this->language->get('text_openbay_etsy'),
+					'href'     => '',
+					'children' => $etsy
+				);
+			}
+
+			// FBA sub menu
+			$fba = array();
+
+			if ($this->user->hasPermission('access', 'extension/openbay/fba') && $this->config->get('openbay_fba_status') == 1) {
+				$fba[] = array(
+					'name'     => $this->language->get('text_openbay_dashboard'),
+					'href'     => $this->url->link('extension/openbay/fba', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$fba[] = array(
+					'name'	   => $this->language->get('text_openbay_settings'),
+					'href'     => $this->url->link('extension/openbay/fba/settings', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$fba[] = array(
+					'name'	   => $this->language->get('text_openbay_fulfillmentlist'),
+					'href'     => $this->url->link('extension/openbay/fba/fulfillmentlist', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+
+				$fba[] = array(
+					'name'	   => $this->language->get('text_openbay_orderlist'),
+					'href'     => $this->url->link('extension/openbay/fba/orderlist', 'token=' . $this->session->data['token'], true),
+					'children' => array()
+				);
+			}
+
+			if ($fba) {
+				$openbay_menu[] = array(
+					'name'	   => $this->language->get('text_openbay_fba'),
+					'href'     => '',
+					'children' => $fba
+				);
+			}
+		}
+
+		if ($openbay_menu) {
+			$data['menus'][] = array(
+				'id'       => 'menu-openbay',
+				'icon'	   => 'fa-cubes',
+				'name'	   => $this->language->get('text_openbay_extension'),
+				'href'     => '',
+				'children' => $openbay_menu
+			);
 		}
 	}
 
@@ -1882,24 +2092,24 @@ class ControllerExtensionOpenbay extends Controller {
 			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_transaction`");
 
 			if ($this->config->get('ebay_status') == 1) {
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_category`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_category_history`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_image_import`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_listing`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_listing_pending`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_stock_reserve`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_payment_method`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_profile`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_setting_option`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_shipping`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_shipping_location`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_shipping_location_exclude`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_template`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_category`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_category_history`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_image_import`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_listing`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_listing_pending`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_stock_reserve`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_payment_method`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_profile`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_setting_option`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_shipping`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_shipping_location`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_shipping_location_exclude`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "ebay_template`");
 			}
 
 			if ($this->config->get('etsy_status') == 1) {
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "etsy_listing`");
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "etsy_setting_option`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "etsy_listing`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "etsy_setting_option`");
 			}
 
 			$this->db->query("TRUNCATE `" . DB_PREFIX . "etsy_order`");
@@ -1928,9 +2138,9 @@ class ControllerExtensionOpenbay extends Controller {
 			$this->db->query("TRUNCATE `" . DB_PREFIX . "option_value_description`");
 
 			if ($this->openbay->addonLoad('openstock')) {
-				$this->db->query("TRUNCATE `" . DB_PREFIX . "product_option_relation`");
+			$this->db->query("TRUNCATE `" . DB_PREFIX . "product_option_relation`");
 			}
-			*/
+			 */
 
 			$this->log->write('Data cleared');
 			$json = array('msg' => 'Data cleared');
@@ -1938,15 +2148,5 @@ class ControllerExtensionOpenbay extends Controller {
 
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
-	}
-
-	public function testingEvent($route, $f, $g) {
-//		echo $route;
-//		echo '<pre>';
-//		print_r($f);
-//		echo '</pre>';
-//		echo '<pre>';
-//		print_r($g);
-//		echo '</pre>';
 	}
 }

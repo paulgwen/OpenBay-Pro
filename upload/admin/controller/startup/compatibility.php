@@ -1,20 +1,8 @@
 <?php
 class ControllerStartupCompatibility extends Controller {
 	public function index() {
-		// Adding a rewrite so any link to the extension page is changed to to the new extension system  
-		$this->url->addRewrite($this);
-	}
-	
-	public function	rewrite($link) {
-		// The below code will old extensions compatible with the extension page move 
-		if (isset($this->request->get['route']) && ($this->request->get['route'] != 'extension/extension')) {
-			$url_info = parse_url(str_replace('&amp;', '&', $link));
-			
-			$data = array();
-
-			parse_str($url_info['query'], $data);
-		
-			$routes = array(
+		if (isset($this->request->get['route'])) {
+			$extension = array(
 				'extension/analytics',
 				'extension/captcha',
 				'extension/feed',
@@ -24,21 +12,19 @@ class ControllerStartupCompatibility extends Controller {
 				'extension/shipping',
 				'extension/theme',
 				'extension/total'
-			);		
+			);
+		
+			$part = explode('/', $this->request->get['route']);
 			
-			if (in_array($data['route'], $routes)) {
-				$query  = '?route=extension/extension&type=' . substr($data['route'], 10);
+			if (isset($part[0]) && isset($part[1]) && in_array($part[0] . '/' . $part[1], $extension)) {
+				$route = '';
 				
-				unset($data['route']);
+				if (isset($part[2])) {
+					$route = '/' . $part[2];
+				}
 				
-				$query .= '&' . http_build_query($data);
-				
-				return $url_info['scheme'] . '://' . $url_info['host'] . (isset($url_info['port']) ? ':' . $url_info['port'] : '') . $url_info['path'] . $query;
-			} else {
-				return $link;
+				$this->response->redirect('extension/extension' . $route, 'token=' . $this->session->data['token'], true);	
 			}
-		} else {
-			return $link;
 		}
 	}
 }

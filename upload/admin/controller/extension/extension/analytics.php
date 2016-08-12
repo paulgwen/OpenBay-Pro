@@ -1,9 +1,9 @@
 <?php
-class ControllerExtensionAnalytics extends Controller {
+class ControllerExtensionExtensionAnalytics extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->load->language('extension/analytics');
+		$this->load->language('extension/extension/analytics');
 
 		$this->load->model('extension/extension');
 
@@ -11,7 +11,7 @@ class ControllerExtensionAnalytics extends Controller {
 	}
 
 	public function install() {
-		$this->load->language('extension/analytics');
+		$this->load->language('extension/extension/analytics');
 
 		$this->load->model('extension/extension');
 
@@ -22,6 +22,10 @@ class ControllerExtensionAnalytics extends Controller {
 
 			$this->model_user_user_group->addPermission($this->user->getGroupId(), 'access', 'extension/analytics/' . $this->request->get['extension']);
 			$this->model_user_user_group->addPermission($this->user->getGroupId(), 'modify', 'extension/analytics/' . $this->request->get['extension']);
+			
+			// Compatibility
+			$this->model_user_user_group->addPermission($this->user->getGroupId(), 'access', 'analytics/' . $this->request->get['extension']);
+			$this->model_user_user_group->addPermission($this->user->getGroupId(), 'modify', 'analytics/' . $this->request->get['extension']);
 
 			// Call install method if it exsits
 			$this->load->controller('extension/analytics/' . $this->request->get['extension'] . '/install');
@@ -33,7 +37,7 @@ class ControllerExtensionAnalytics extends Controller {
 	}
 
 	public function uninstall() {
-		$this->load->language('extension/analytics');
+		$this->load->language('extension/extension/analytics');
 
 		$this->load->model('extension/extension');
 
@@ -121,19 +125,19 @@ class ControllerExtensionAnalytics extends Controller {
 
 				$data['extensions'][] = array(
 					'name'      => $this->language->get('heading_title'),
-					'install'   => $this->url->link('extension/analytics/install', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
-					'uninstall' => $this->url->link('extension/analytics/uninstall', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
+					'install'   => $this->url->link('extension/extension/analytics/install', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
+					'uninstall' => $this->url->link('extension/extension/analytics/uninstall', 'token=' . $this->session->data['token'] . '&extension=' . $extension, true),
 					'installed' => in_array($extension, $extensions),
 					'store'     => $store_data
 				);
 			}
 		}
 
-		$this->response->setOutput($this->load->view('extension/analytics', $data));
+		$this->response->setOutput($this->load->view('extension/extension/analytics', $data));
 	}
 
 	protected function validate() {
-		if (!$this->user->hasPermission('modify', 'extension/analytics')) {
+		if (!$this->user->hasPermission('modify', 'extension/extension/analytics')) {
 			$this->error['warning'] = $this->language->get('error_permission');
 		}
 
