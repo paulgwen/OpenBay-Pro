@@ -1597,7 +1597,7 @@ final class Ebay {
 
 				$this->log("pullBusinessPolicies() - Add latest profiles");
 
-				if (count($response['paymentProfileList']) == 1) {
+				if (isset($response['paymentProfileList']['PaymentProfile']['profileName'])) {
 					$response['paymentProfileList']['PaymentProfile'] = array(0 => $response['paymentProfileList']['PaymentProfile']);
 				}
 
@@ -1619,7 +1619,7 @@ final class Ebay {
 					}
 				}
 
-				if (count($response['returnPolicyProfileList']) == 1) {
+				if (isset($response['returnPolicyProfileList']['ReturnPolicyProfile']['profileName'])) {
 					$response['returnPolicyProfileList']['ReturnPolicyProfile'] = array(0 => $response['returnPolicyProfileList']['ReturnPolicyProfile']);
 				}
 
@@ -1641,7 +1641,7 @@ final class Ebay {
 					}
 				}
 
-				if (count($response['shippingPolicyProfile']) == 1) {
+				if (isset($response['shippingPolicyProfile']['ShippingPolicyProfile']['profileName'])) {
 					$response['shippingPolicyProfile']['ShippingPolicyProfile'] = array(0 => $response['shippingPolicyProfile']['ShippingPolicyProfile']);
 				}
 
