@@ -166,34 +166,40 @@ class ModelExtensionOpenBayAmazonOrder extends Model {
 	public function getProductOptionsByVar($product_var) {
 		$options = array();
 
-		$option_value_ids = explode(':', $product_var);
-		foreach ($option_value_ids as $option_value_id) {
-			$option_details_row = $this->db->query("SELECT
-				pov.product_option_id,
-				pov.product_option_value_id,
-				od.name,
-				ovd.name as value,
-				opt.type
-			FROM `" . DB_PREFIX . "product_option_value` as pov,
-				 `" . DB_PREFIX . "product_option` as po,
-				 `" . DB_PREFIX . "option` as opt,
-				 `" . DB_PREFIX . "option_value_description` as ovd,
-				 `" . DB_PREFIX . "option_description` as od
-			WHERE pov.product_option_value_id = '" . (int)$option_value_id . "' AND
-				po.product_option_id = pov.product_option_id AND
-				opt.option_id = pov.option_id AND
-				ovd.option_value_id = pov.option_value_id AND ovd.language_id = '" . (int)$this->config->get('config_language_id') . "' AND
-				od.option_id = pov.option_id AND od.language_id = '" . (int)$this->config->get('config_language_id') . "'
-			")->row;
+		// search for the product_option_variant_id
+		$product_option_variant = $this->db->query("SELECT `product_option_variant_id` FROM `" . DB_PREFIX . "product_option_variant` WHERE `sku` = '" . $this->db->escape($product_var) . "' LIMIT 1")->row;
 
-			if (!empty($option_details_row)) {
-				$options[] = array(
-					'product_option_id' => (int)$option_details_row['product_option_id'],
-					'product_option_value_id' => (int)$option_details_row['product_option_value_id'],
-					'name' => $option_details_row['name'],
-					'value' => $option_details_row['value'],
-					'type' => $option_details_row['type']
-				);
+		if ($product_option_variant) {
+			$product_option_variant_values = $this->db->query("
+			SELECT
+				`pov`.`product_option_value_id`,
+				`po`.`product_option_id`,
+				`o`.`type`,
+				`od`.`name` AS `option_name`,
+				`ovd`.`name`  AS `option_value_name`
+			FROM `" . DB_PREFIX . "product_option_variant_value` `povv`
+			LEFT JOIN `" . DB_PREFIX . "product_option_value` `pov` ON `povv`.`product_option_value_id` = `pov`.`product_option_value_id`
+			LEFT JOIN `" . DB_PREFIX . "product_option` `po` ON `pov`.`product_option_id` = `po`.`product_option_id`
+			LEFT JOIN `" . DB_PREFIX . "option` `o` ON `po`.`option_id` = `o`.`option_id`
+			LEFT JOIN `" . DB_PREFIX . "option_description` `od` ON `o`.`option_id` = `od`.`option_id`
+			LEFT JOIN `" . DB_PREFIX . "option_value_description` `ovd` ON `pov`.`option_value_id` = `ovd`.`option_value_id`
+			WHERE `povv`.`product_option_variant_id` = '" . (int)$product_option_variant['product_option_variant_id'] . "' 
+			AND `od`.`language_id` = '" . (int)$this->config->get('config_language_id') . "'
+			AND `ovd`.`language_id` = '" . (int)$this->config->get('config_language_id') . "'
+			ORDER BY `povv`.`sort_order` ASC
+			");
+
+			if ($product_option_variant_values->num_rows > 0) {
+				// get all of the option data for the variant ordered by sort
+				foreach ($product_option_variant_values->rows as $variant_value) {
+					$options[] = array(
+						'product_option_id' => (int)$variant_value['product_option_id'],
+						'product_option_value_id' => (int)$variant_value['product_option_value_id'],
+						'name' => $variant_value['option_name'],
+						'value' => $variant_value['option_value_name'],
+						'type' => $variant_value['type']
+					);
+				}
 			}
 		}
 
