@@ -714,6 +714,7 @@
                   var html_inj2 = '';
                   var show_other = 0;
                   var show_other_value = '';
+                  var spec_count_id = 0;
 
                   if (data.data) {
                     html_inj = '';
@@ -761,13 +762,13 @@
 
                                     html_inj += '<div class="row">';
                                       html_inj += '<div class="col-sm-7">';
-                                        html_inj += '<select name="feat[' + option_specific_value.name + ']" class="openbay_data_' + id + ' form-control" id="spec_sel_' + id + '" onchange="toggleSpecOther(' + id + ');">' + html_inj2 + '</select>';
+                                        html_inj += '<select name="feat[' + option_specific_value.name + ']" class="openbay_data_' + id + ' form-control" id="spec_sel_' + id + '_' + spec_count_id + '" onchange="toggleSpecOther(' + id + ', ' + spec_count_id + ');">' + html_inj2 + '</select>';
                                       html_inj += '</div>';
 
                                       if (show_other == true) {
-                                        html_inj += '<div class="col-sm-5" id="spec_' + id + '_other">';
+                                        html_inj += '<div class="col-sm-5" id="spec_' + id + '_' + spec_count_id + '_other">';
                                       } else {
-                                        html_inj += '<div class="col-sm-5" id="spec_' + id + '_other" style="display:none;">';
+                                        html_inj += '<div class="col-sm-5" id="spec_' + id + '_' + spec_count_id + '_other" style="display:none;">';
                                       }
                                       html_inj += '<input placeholder="<?php echo $text_other; ?>" type="text" name="featother[' + option_specific_value.name + ']" class="form-control openbay_data_' + id + '" value="' + show_other_value + '"/>';
                                       html_inj += '</div>';
@@ -792,6 +793,8 @@
 
                                   html_inj += '</div>';
                                 html_inj += '</div>';
+
+                                spec_count_id++;
                               });
                             html_inj += '</div>';
                           html_inj += '</div>';
@@ -819,12 +822,12 @@
       });
   }
 
-  function toggleSpecOther(id) {
-    var selectVal = $('#spec_sel_'+id).val();
+  function toggleSpecOther(id, count_id) {
+    var selectVal = $('#spec_sel_' + id + '_' + count_id).val();
     if (selectVal == 'Other') {
-      $('#spec_'+id+'_other').show();
+      $('#spec_' + id + '_' + count_id + '_other').show();
     } else {
-      $('#spec_'+id+'_other').hide();
+      $('#spec_' + id + '_' + count_id + '_other').hide();
     }
   }
 
