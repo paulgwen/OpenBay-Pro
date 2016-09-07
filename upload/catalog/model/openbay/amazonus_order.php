@@ -167,11 +167,12 @@ class ModelOpenbayAmazonusOrder extends Model {
 	public function getProductOptionsByVar($product_var) {
 		$options = array();
 
-		// search for the product_option_variant_id
-		$product_option_variant = $this->db->query("SELECT `product_option_variant_id` FROM `" . DB_PREFIX . "product_option_variant` WHERE `sku` = '" . $this->db->escape($product_var) . "' LIMIT 1")->row;
+        if ($this->openbay->addonLoad('openstock')) {
+            // search for the product_option_variant_id
+            $product_option_variant = $this->db->query("SELECT `product_option_variant_id` FROM `" . DB_PREFIX . "product_option_variant` WHERE `sku` = '" . $this->db->escape($product_var) . "' LIMIT 1")->row;
 
-		if ($product_option_variant) {
-			$product_option_variant_values = $this->db->query("
+            if ($product_option_variant) {
+                $product_option_variant_values = $this->db->query("
 			SELECT
 				`pov`.`product_option_value_id`,
 				`po`.`product_option_id`,
@@ -190,19 +191,20 @@ class ModelOpenbayAmazonusOrder extends Model {
 			ORDER BY `povv`.`sort_order` ASC
 			");
 
-			if ($product_option_variant_values->num_rows > 0) {
-				// get all of the option data for the variant ordered by sort
-				foreach ($product_option_variant_values->rows as $variant_value) {
-					$options[] = array(
-						'product_option_id' => (int)$variant_value['product_option_id'],
-						'product_option_value_id' => (int)$variant_value['product_option_value_id'],
-						'name' => $variant_value['option_name'],
-						'value' => $variant_value['option_value_name'],
-						'type' => $variant_value['type']
-					);
-				}
-			}
-		}
+                if ($product_option_variant_values->num_rows > 0) {
+                    // get all of the option data for the variant ordered by sort
+                    foreach ($product_option_variant_values->rows as $variant_value) {
+                        $options[] = array(
+                            'product_option_id' => (int)$variant_value['product_option_id'],
+                            'product_option_value_id' => (int)$variant_value['product_option_value_id'],
+                            'name' => $variant_value['option_name'],
+                            'value' => $variant_value['option_value_name'],
+                            'type' => $variant_value['type']
+                        );
+                    }
+                }
+            }
+        }
 
 		return $options;
 	}
