@@ -451,8 +451,7 @@ final class Ebay {
 	}
 
 	public function putStockUpdate($item_id, $stock, $sku = null) {
-		$this->log('putStockUpdate()');
-		$this->log('putStockUpdate() - New local stock: ' . $stock);
+		$this->log('putStockUpdate() - ' . $item_id . '/' . $stock . '/'. $sku);
 
 		$listing    = $this->call('item/getItem', array('itemId' => $item_id));
 		$product_id = $this->getProductId($item_id);
@@ -685,11 +684,11 @@ final class Ebay {
 		if ($sku == '' || $sku == null) {
 			$qry = $this->db->query("SELECT `quantity`, `status` FROM `" . DB_PREFIX . "product` WHERE `product_id` = '" . (int)$product_id . "' LIMIT 1");
 
-			return array('quantity' => (int)$qry->row['quantity'], 'status' => ($qry->row['status']));
+			return array('quantity' => (int)$qry->row['quantity'], 'status' => $qry->row['status']);
 		} else {
 			$qry = $this->db->query("SELECT `stock`, `active` FROM `" . DB_PREFIX . "product_option_variant` WHERE `product_id` = '" . (int)$product_id . "' AND `sku` = '" . $this->db->escape($sku) . "' LIMIT 1");
 
-			return array('quantity' => (int)$qry->row['stock'], 'status' => ($qry->row['active']));
+			return array('quantity' => (int)$qry->row['stock'], 'status' => $qry->row['active']);
 		}
 	}
 

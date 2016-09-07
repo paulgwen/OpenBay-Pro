@@ -127,7 +127,11 @@ class ModelOpenbayEbayOrder extends Model{
 	}
 
 	public function cancel($order_id) {
+		$this->openbay->ebay->log('cancel() - Testing for order id: ' . $order_id);
+
 		$order_lines = $this->getOrderLines($order_id);
+
+		$this->openbay->ebay->log('cancel() - ' . json_encode($order_lines));
 
 		foreach ($order_lines as $line) {
 			$this->modifyStock($line['product_id'], $line['qty'], '+', $line['sku']);
