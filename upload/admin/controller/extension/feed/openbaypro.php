@@ -46,6 +46,8 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 	}
 
 	public function install() {
+        $this->load->language('extension/feed/openbaypro');
+
 		$this->load->model('setting/setting');
 		$this->load->model('extension/event');
 
@@ -61,6 +63,10 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 		$this->model_extension_event->addEvent('openbay_product_edit_after', 'admin/model/catalog/product/editProduct/after', 'extension/openbay/eventEditProduct');
 
 		$this->model_extension_event->addEvent('openbay_menu', 'admin/view/common/column_left/before', 'extension/openbay/eventMenu');
+
+        $this->session->data['success'] = $this->language->get('text_success');
+
+        $this->response->redirect($this->url->link('extension/openbay', 'token=' . $this->session->data['token'], true));
 	}
 
 	public function uninstall() {
