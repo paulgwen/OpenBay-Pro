@@ -3,38 +3,7 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 	private $error = array();
 
 	public function index() {
-		$this->load->language('extension/feed/openbaypro');
-
-		$this->document->setTitle($this->language->get('heading_title'));
-
-		$data['breadcrumbs'] = array();
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_home'),
-			'href' => $this->url->link('common/dashboard', 'token=' . $this->session->data['token'], true),
-		);
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('text_module'),
-			'href' => $this->url->link('extension/extension', 'token=' . $this->session->data['token'], true),
-		);
-
-		$data['breadcrumbs'][] = array(
-			'text' => $this->language->get('heading_title'),
-			'href' => $this->url->link('extension/feed/openbay', 'token=' . $this->session->data['token'], true),
-		);
-
-		$data['cancel'] = $this->url->link('extension/extension', 'token=' . $this->session->data['token'] . '&type=feed', true);
-
-		$data['heading_title'] = $this->language->get('heading_title');
-		$data['button_cancel'] = $this->language->get('button_cancel');
-		$data['text_installed'] = $this->language->get('text_installed');
-
-		$data['header'] = $this->load->controller('common/header');
-		$data['column_left'] = $this->load->controller('common/column_left');
-		$data['footer'] = $this->load->controller('common/footer');
-
-		$this->response->setOutput($this->load->view('extension/feed/openbaypro', $data));
+        $this->response->redirect($this->url->link('extension/openbay', 'token=' . $this->session->data['token'], true));
 	}
 
 	protected function validate() {
@@ -46,8 +15,6 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 	}
 
 	public function install() {
-        $this->load->language('extension/feed/openbaypro');
-
 		$this->load->model('setting/setting');
 		$this->load->model('extension/event');
 
@@ -63,10 +30,6 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 		$this->model_extension_event->addEvent('openbay_product_edit_after', 'admin/model/catalog/product/editProduct/after', 'extension/openbay/eventEditProduct');
 
 		$this->model_extension_event->addEvent('openbay_menu', 'admin/view/common/column_left/before', 'extension/openbay/eventMenu');
-
-        $this->session->data['success'] = $this->language->get('text_success');
-
-        $this->response->redirect($this->url->link('extension/openbay', 'token=' . $this->session->data['token'], true));
 	}
 
 	public function uninstall() {
