@@ -4,9 +4,9 @@
     <div class="form-group">
       <label class="col-sm-2 control-label" for="carrier-id"><?php echo $entry_courier; ?></label>
       <div class="col-sm-10">
-        <select name="carrier_id" id="carrier-id" class="form-control openbay-data">
+        <select name="courier_id" id="carrier-id" class="form-control openbay-data">
           <?php foreach($couriers as $carrier){ ?>
-            <option <?php if (isset($order_info['carrier_id']) && $order_info['carrier_id'] == $carrier){ echo ' selected'; } ?>><?php echo $carrier; ?></option>
+            <option <?php if (isset($order_info['courier_id']) && $order_info['courier_id'] == $carrier){ echo ' selected'; } ?>><?php echo $carrier; ?></option>
           <?php } ?>
         </select>
       </div>
