@@ -33,14 +33,22 @@ class ModelOpenbayEtsyOrder extends Model {
 				} else {
 					$order_id = $this->create($order);
 
+					$order_status_id = $this->config->get('etsy_order_status_new');
+
 					// is paid?
 					if ($order->paid == 1) {
+						$order_status_id = $this->config->get('etsy_order_status_paid');
 						$this->updatePaid($order_id, $order->paid);
 
 						// is shipped?
 						if ($order->shipped == 1) {
+							$order_status_id = $this->config->get('etsy_order_status_shipped');
 							$this->updateShipped($order_id, $order->shipped);
 						}
+					}
+
+					if($this->config->get('openbay_amazon_notify_admin') == 1){
+						$this->openbay->newOrderAdminNotify($order_id, $order_status_id);
 					}
 
 					$this->openbay->etsy->log('Created new order: ' . $order_id);
