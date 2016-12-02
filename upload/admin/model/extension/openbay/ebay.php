@@ -57,7 +57,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `BestOfferEnabled` tinyint(1) NOT NULL,
 					  `AutoPayEnabled` tinyint(1) NOT NULL,
 					  PRIMARY KEY (`ebay_category_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_category_history` (
@@ -66,7 +66,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `breadcrumb` varchar(255) NOT NULL,
 					  `used` int(6) NOT NULL,
 					  PRIMARY KEY (`ebay_category_history_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_listing` (
@@ -77,7 +77,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `status` SMALLINT(3) NOT NULL DEFAULT '1',
 					  PRIMARY KEY (`ebay_listing_id`),
   						KEY `product_id` (`product_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 		;
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_listing_pending` (
@@ -88,7 +88,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `variant` int(11) NOT NULL,
 					  PRIMARY KEY (`ebay_listing_pending_id`),
   						KEY `product_id` (`product_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_shipping` (
@@ -103,7 +103,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `ShippingTimeMin` int(11) NOT NULL,
 					  `ShippingTimeMax` int(11) NOT NULL,
 					  PRIMARY KEY (`ebay_shipping_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_shipping_location` (
@@ -113,7 +113,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `shipping_location` varchar(100) NOT NULL,
 					  `update_time` varchar(100) NOT NULL,
 					  PRIMARY KEY (`ebay_shipping_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_payment_method` (
@@ -121,7 +121,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					  `ebay_name` char(50) NOT NULL,
 					  `local_name` char(50) NOT NULL,
 					  PRIMARY KEY (`ebay_payment_method_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1 AUTO_INCREMENT=5;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci AUTO_INCREMENT=5;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_transaction` (
@@ -141,7 +141,7 @@ class ModelExtensionOpenBayEbay extends Model{
   						KEY `product_id` (`product_id`),
   						KEY `order_id` (`order_id`),
   						KEY `smp_id` (`smp_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_order` (
@@ -155,7 +155,7 @@ class ModelExtensionOpenBayEbay extends Model{
   						KEY `order_id` (`order_id`),
   						KEY `smp_id` (`smp_id`),
   						KEY `parent_ebay_order_id` (`parent_ebay_order_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 					CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_profile` (
@@ -166,7 +166,7 @@ class ModelExtensionOpenBayEbay extends Model{
 						`default` TINYINT(1) NOT NULL,
 						`data` text NOT NULL,
 						PRIMARY KEY (`ebay_profile_id`)
-					) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+					) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_setting_option` (
@@ -175,7 +175,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					`last_updated` DATETIME NOT NULL,
 					`data` TEXT NOT NULL,
 					PRIMARY KEY (`ebay_setting_option_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_image_import` (
@@ -186,7 +186,7 @@ class ModelExtensionOpenBayEbay extends Model{
 				  `product_id` int(11) NOT NULL,
 				  `imgcount` int(11) NOT NULL,
 				  PRIMARY KEY (`id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_shipping_location_exclude` (
@@ -195,7 +195,7 @@ class ModelExtensionOpenBayEbay extends Model{
 					`location` varchar(100) NOT NULL,
 					`region` varchar(100) NOT NULL,
 					PRIMARY KEY (`ebay_shipping_exclude_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=latin1;");
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_stock_reserve` (
@@ -206,13 +206,13 @@ class ModelExtensionOpenBayEbay extends Model{
 				  `reserve` int(11) NOT NULL,
 				  PRIMARY KEY (`id`),
   					KEY `product_id` (`product_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_order_lock` (
 				  `smp_id` int(11) NOT NULL,
 				  PRIMARY KEY (`smp_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 
 		$this->db->query("
 				CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ebay_template` (
@@ -220,7 +220,7 @@ class ModelExtensionOpenBayEbay extends Model{
 				  `name` VARCHAR(100) NOT NULL,
 				  `html` MEDIUMTEXT NOT NULL,
 				  PRIMARY KEY (`template_id`)
-				) ENGINE=MyISAM  DEFAULT CHARSET=utf8;");
+				) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;");
 	}
 
 	public function uninstall() {
