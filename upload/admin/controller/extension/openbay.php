@@ -1043,19 +1043,10 @@ class ControllerExtensionOpenbay extends Controller {
 
 		$api_login = $this->model_extension_openbay_openbay->apiLogin($api_key);
 
-		$errors = array();
-
 		if (isset($api_info['error']) || isset($api_login['error'])) {
 			$this->session->data['error'] = isset($api_info['error']) ? $api_info['error'] : $api_login['error'];
 			$this->response->redirect($this->url->link('extension/openbay/orderList', 'token=' . $this->session->data['token'], true));
 		} else {
-			$order_statuses = $this->model_localisation_order_status->getOrderStatuses();
-			$status_mapped = array();
-
-			foreach ($order_statuses as $status) {
-				$status_mapped[$status['order_status_id']] = $status['name'];
-			}
-
 			//Amazon EU
 			if ($this->config->get('openbay_amazon_status') == 1) {
 				$this->load->model('extension/openbay/amazon');
@@ -1178,7 +1169,7 @@ class ControllerExtensionOpenbay extends Controller {
 
 				$add_history = $this->model_extension_openbay_openbay->addOrderHistory($order_id, $data, $api_login);
 
-				if ($add_history['error']) {
+				if (isset($add_history['error'])) {
 					$this->session->data['error_orders'][] = array(
 						'order_id' => $order_id,
 						'error' => $add_history['error']
@@ -1188,7 +1179,7 @@ class ControllerExtensionOpenbay extends Controller {
 				$i++;
 			}
 
-			$this->session->data['success'] = sprintf($this->language->get('text_confirmed'), $i, $status_mapped[$this->request->post['order_status_id']]);
+			$this->session->data['success'] = sprintf($this->language->get('text_confirmed'), $i);
 		}
 
 		$this->response->redirect($this->url->link('extension/openbay/orderList', 'token=' . $this->session->data['token'], true));
