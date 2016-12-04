@@ -130,15 +130,15 @@ class ModelOpenbayOpenbay extends Model {
 			CURLOPT_FILE => $handle
 		);
 
-		$ch = curl_init();
-		curl_setopt_array($ch, $defaults);
-		curl_exec($ch);
+		$curl = curl_init();
+		curl_setopt_array($curl, $defaults);
+		curl_exec($curl);
 
-		$curl_error = curl_error ($ch);
+		$curl_error = curl_error ($curl);
 
 		$this->openbay->log('Download errors: ' . $curl_error);
 
-		curl_close($ch);
+		curl_close($curl);
 
 		return array('error' => 0, 'response' => $curl_error, 'percent_complete' => 60, 'status_message' => $this->language->get('text_extracting'));
 	}
@@ -673,10 +673,10 @@ class ModelOpenbayOpenbay extends Model {
 			CURLOPT_POSTFIELDS => http_build_query($data, '', "&")
 		);
 
-		$ch = curl_init();
-		curl_setopt_array($ch, ($options + $defaults));
-		$result = curl_exec($ch);
-		curl_close($ch);
+		$curl = curl_init();
+		curl_setopt_array($curl, ($options + $defaults));
+		$result = curl_exec($curl);
+		curl_close($curl);
 
 		if ($content_type == 'json') {
 			$encoding = mb_detect_encoding($result);
@@ -992,7 +992,7 @@ class ModelOpenbayOpenbay extends Model {
 		return $query->rows;
 	}
 
-	public function addOrderHistory($order_id, $data, $store_id = 0) {
+	public function addOrderHistoryOld($order_id, $data, $store_id = 0) {
 		$json = array();
 
 		$this->load->model('setting/store');
@@ -1031,5 +1031,83 @@ class ModelOpenbayOpenbay extends Model {
 		}
 
 		return $json;
+	}
+
+	public function addOrderHistory($order_id, $data, $api_login) {
+		$defaults = array(
+			CURLOPT_HEADER => false,
+			CURLOPT_USERAGENT => $this->request->server['HTTP_USER_AGENT'],
+			CURLOPT_SSL_VERIFYPEER => 0,
+			CURLOPT_SSL_VERIFYHOST => 0,
+			CURLOPT_FORBID_REUSE => true,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_URL => HTTPS_CATALOG . 'index.php?route=api/order/history&order_id=' . $order_id . '&token=' . $api_login['token'],
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => http_build_query($data, '', "&"),
+			CURLOPT_TIMEOUT => 60,
+			CURLOPT_COOKIE => "PHPSESSID=" . $api_login['session_id'],
+		);
+
+		// Set SSL if required
+		if (substr(HTTPS_CATALOG, 0, 5) == 'https') {
+			$defaults[CURLOPT_PORT] = 443;
+		}
+
+		$curl = curl_init();
+		curl_setopt_array($curl, $defaults);
+		$result = curl_exec($curl);
+		curl_close($curl);
+
+		$result = json_decode($result, 1);
+
+		return $result;
+	}
+
+	public function apiLogin($key) {
+		$defaults = array(
+			CURLOPT_HEADER => true,
+			CURLINFO_HEADER_OUT => true,
+			CURLOPT_USERAGENT => $this->request->server['HTTP_USER_AGENT'],
+			CURLOPT_SSL_VERIFYPEER => 0,
+			CURLOPT_SSL_VERIFYHOST => 0,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_URL => HTTPS_CATALOG . 'index.php?route=api/login',
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => http_build_query(array('key' => $key)),
+			CURLOPT_TIMEOUT => 60,
+		);
+
+		// Set SSL if required
+		if (substr(HTTPS_CATALOG, 0, 5) == 'https') {
+			$defaults[CURLOPT_PORT] = 443;
+		}
+
+		$curl = curl_init();
+		curl_setopt_array($curl, $defaults);
+		$result = curl_exec($curl);
+		$header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+		curl_close($curl);
+
+		$header = substr($result, 0, $header_size);
+		$body = substr($result, $header_size);
+
+		$json = json_decode($body, true);
+
+		preg_match_all("/^Set-cookie: (.*?);/ism", $header, $cookies);
+		foreach( $cookies[1] as $cookie ){
+			$buffer_explode = strpos($cookie, "=");
+			$header_cookies[ substr($cookie,0,$buffer_explode) ] = substr($cookie,$buffer_explode+1);
+		}
+
+		if (isset($json['success']) && isset($header_cookies['PHPSESSID'])) {
+			$response = [
+				'token' => $json['token'],
+				'session_id' => $header_cookies['PHPSESSID']
+			];
+		} else {
+			$response['error'] = $json['error'];
+		}
+
+		return $response;
 	}
 }

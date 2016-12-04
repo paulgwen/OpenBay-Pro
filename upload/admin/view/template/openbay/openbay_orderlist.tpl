@@ -15,9 +15,18 @@
   </div>
   <div class="container-fluid">
     <?php if ($error_warning) { ?>
-    <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $error_warning; ?>
-      <button type="button" class="close" data-dismiss="alert">&times;</button>
-    </div>
+      <?php foreach ($error_warning as $warning) { ?>
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $warning; ?>
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+      <?php } ?>
+    <?php } ?>
+    <?php if ($error_orders) { ?>
+      <?php foreach ($error_orders as $warning) { ?>
+        <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> <?php echo $warning['order_id'] . ' - ' . $warning['error']; ?>
+          <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+      <?php } ?>
     <?php } ?>
     <?php if ($success) { ?>
     <div class="alert alert-success"><i class="fa fa-check-circle"></i> <?php echo $success; ?>
