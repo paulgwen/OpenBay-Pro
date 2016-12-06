@@ -67,9 +67,9 @@ class ControllerOpenbayAmazon extends Controller {
 
 		/* SKU => ORDER_ITEM_ID */
 		$product_mapping = array();
+		$product_gift_messages = array();
 
 		foreach ($order_xml->Items->Item as $item) {
-
 			$total_price = $this->currency->convert((double)$item->Totals->Price, $order_currency, $currency_to);
 			$tax_total = (double)$item->Totals->Tax;
 
@@ -129,6 +129,15 @@ class ControllerOpenbayAmazon extends Controller {
 			);
 
 			$product_mapping[(string)$item->Sku] = (string)$item->OrderItemId;
+
+			if ($item->gift_message != '') {
+				$product_gift_messages[] = (string)$item->Title . ' : ' . (string)$item->gift_message;
+			}
+		}
+
+		$order_comment = '';
+		if (count($product_gift_messages) > 0) {
+			$order_comment = $this->language->get('text_gift_message') . '<br />' . implode('<br />', $product_gift_messages);
 		}
 
 		$total = sprintf('%.4f', $this->currency->convert((double)$order_xml->Payment->Amount, $order_currency, $currency_to));
@@ -223,7 +232,7 @@ class ControllerOpenbayAmazon extends Controller {
 			'payment_code' => 'amazon.amazon',
 			'payment_company_id' => 0,
 			'payment_tax_id' => 0,
-			'comment' => '',
+			'comment' => $order_comment,
 			'total' => $total,
 			'affiliate_id' => '0',
 			'commission' => '0.00',
