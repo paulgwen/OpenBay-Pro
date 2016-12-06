@@ -336,6 +336,8 @@ class ModelOpenbayEbayOpenbay extends Model{
 			} else {
 				if ($txn->item->sku != '') {
 					$order_product_name = $txn->item->name . ' [' . $txn->item->sku . ']';
+				} else {
+					$order_product_name = $txn->item->name;
 				}
 			}
 
