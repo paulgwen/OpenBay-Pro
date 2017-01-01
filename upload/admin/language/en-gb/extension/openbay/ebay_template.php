@@ -20,6 +20,7 @@ $_['text_confirm_delete'] = 'Are you sure you want to delete the template?';
 $_['text_list']           = 'Template list';
 $_['text_add']      	  = 'Add profile';
 $_['text_edit']      	  = 'Edit profile';
+$_['text_title_list_edit']= 'Edit Listing Template';
 
 // Error
 $_['error_name']          = 'You must enter a template name';
