@@ -130,6 +130,15 @@ class ControllerAmazonOrder extends Controller {
 			);
 
 			$productMapping[(string)$item->Sku] = (string)$item->OrderItemId;
+
+			if ($item->GiftMessage != '') {
+				$product_gift_messages[] = (string)$item->Title . ' : ' . (string)$item->GiftMessage;
+			}
+		}
+
+		$order_comment = '';
+		if (count($product_gift_messages) > 0) {
+			$order_comment = $this->language->get('text_gift_message') . '<br />' . implode('<br />', $product_gift_messages);
 		}
 
 		$total = sprintf('%.4f', $this->currency->convert((double)$orderXml->Payment->Amount, $orderCurrency, $currencyTo));
@@ -224,7 +233,7 @@ class ControllerAmazonOrder extends Controller {
 			'payment_code' => 'amazon.amazon',
 			'payment_company_id' => 0,
 			'payment_tax_id' => 0,
-			'comment' => '',
+			'comment' => $order_comment,
 			'total' => $total,
 			'affiliate_id' => '0',
 			'commission' => '0.00',
