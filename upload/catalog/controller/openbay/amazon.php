@@ -128,8 +128,8 @@ class ControllerOpenbayAmazon extends Controller {
 
 			$product_mapping[(string)$item->Sku] = (string)$item->OrderItemId;
 
-			if ($item->gift_message != '') {
-				$product_gift_messages[] = (string)$item->Title . ' : ' . (string)$item->gift_message;
+			if ($item->GiftMessage != '') {
+				$product_gift_messages[] = (string)$item->Title . ' : ' . (string)$item->GiftMessage;
 			}
 		}
 
