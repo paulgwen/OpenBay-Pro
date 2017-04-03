@@ -131,7 +131,7 @@ class ModelOpenbayEtsyOrder extends Model {
 		   `store_id`                 = '" . (int)$this->config->get('config_store_id') . "',
 		   `store_name`               = '" . $this->db->escape($this->config->get('config_name') . ' / Etsy') . "',
 		   `store_url`                = '" . $this->db->escape($this->config->get('config_url')) . "',
-		   `customer_id`              = 0,,
+		   `customer_id`              = 0, 
 		   `customer_group_id`        = '" . (int)$this->config->get('config_customer_group_id') . "',
 		   `firstname`				  = '" . $this->db->escape((string)$customer_name['firstname']) . "',
 		   `lastname`				  = '" . $this->db->escape((string)$customer_name['surname']) . "',
