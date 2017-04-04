@@ -899,7 +899,7 @@ final class Ebay {
 			$status_sql = ' AND `status` = 1';
 		}
 
-		$qry = $this->db->query("SELECT `product_id` FROM `" . DB_PREFIX . "ebay_listing` WHERE `ebay_item_id` = '" . $this->db->escape($ebay_item) . "'" . $status_sql . " ORDER BY `status`, `ebay_listing_id` DESC LIMIT 1");
+		$qry = $this->db->query("SELECT `product_id` FROM `" . DB_PREFIX . "ebay_listing` WHERE `ebay_item_id` = '" . $this->db->escape($ebay_item) . "'" . $status_sql . " ORDER BY `status` DESC, `ebay_listing_id` DESC LIMIT 1");
 
 		if (!$qry->num_rows) {
 			return false;
