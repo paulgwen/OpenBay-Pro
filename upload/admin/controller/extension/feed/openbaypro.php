@@ -21,9 +21,9 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 		$this->model_user_user_group->addPermission($this->user->getGroupId(), 'access', 'extension/openbay');
 		$this->model_user_user_group->addPermission($this->user->getGroupId(), 'modify', 'extension/openbay');
 
-		$settings = $this->model_setting_setting->getSetting('openbaypro');
+		$settings = $this->model_setting_setting->getSetting('openbay');
 		$settings['openbaypro_status'] = 1;
-		$this->model_setting_setting->editSetting('openbaypro', $settings);
+		$this->model_setting_setting->editSetting('openbay', $settings);
 
 		$this->model_extension_event->addEvent('openbay_product_del_after', 'admin/model/catalog/product/deleteProduct/after', 'extension/openbay/eventDeleteProduct');
 
@@ -36,9 +36,9 @@ class ControllerExtensionFeedOpenbaypro extends Controller {
 		$this->load->model('setting/setting');
 		$this->load->model('extension/event');
 
-		$settings = $this->model_setting_setting->getSetting('openbaypro');
+		$settings = $this->model_setting_setting->getSetting('openbay');
 		$settings['openbaypro_status'] = 0;
-		$this->model_setting_setting->editSetting('openbaypro', $settings);
+		$this->model_setting_setting->editSetting('openbay', $settings);
 
 		$this->model_extension_event->deleteEvent('openbay_product_del_after');
 		$this->model_extension_event->deleteEvent('openbay_product_edit_after');
